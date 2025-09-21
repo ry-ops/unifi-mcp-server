@@ -154,6 +154,6 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
 
 The UniFi MCP Server is under active development, with new features and API integrations planned.  
 
-Check out the [ROADMAP.md](./ROADMAP.md) for the full list of planned resources, tools, and prompts, organized by phase.  
+Check out the [roadmap.md](./roadmap.md) for the full list of planned resources, tools, and prompts, organized by phase.  
 
 
