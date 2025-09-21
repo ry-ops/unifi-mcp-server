@@ -79,6 +79,7 @@ Start the MCP development server:
 uv run mcp dev main.py
 ```
 The MCP Inspector will be available at [http://localhost:5173](http://localhost:5173) for testing and debugging.
+The MCP Inspector will be available at http://localhost with a randomly assigned port (typically in the 5173+ range) for testing and debugging. The inspector will automatically launch in a new web browser window when started. This accounts for the dynamic port assignment behavior and the automatic browser launch feature of the MCP Inspector.
 
 ## AI Agent Integration
 
