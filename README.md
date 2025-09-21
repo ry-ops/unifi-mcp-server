@@ -27,6 +27,7 @@ A server implementation for managing and controlling UniFi network devices throu
 
 - Python 3.8 or higher
 - `uv` package manager
+- Install <a href="https://docs.astral.sh/uv/getting-started/" rel>`uv`</a> which we’ll use for managing the Python project.
 - UniFi Network application (running locally or on UniFi OS)
 - UniFi API key (obtained from UniFi console)
 
