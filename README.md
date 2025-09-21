@@ -112,25 +112,47 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
 
 ---
 
-## UniFi API Capability Matrix
+# UniFi API Capability Matrix (at a glance)
 
-| API                                   | Base Path                                             | Auth                                           | Read Coverage (✅)                                              | Write/Config (✍️)                                                       | Typical Gaps / 404s                                       | In This MCP                                                                                                                                             |
-| ------------------------------------- | ----------------------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Network Integration API**           | `https://<host>:<port>/proxy/network/integrations/v1` | `X-API-Key`                                    | Sites, Devices, Clients (incl. `/clients/active`), some Events | Limited actions (kick/block client, locate device)                      | WLAN/SSID config, Networks/VLANs, firewall, many settings | Resources: `sites://`, `.../devices`, `.../clients` • Tools: `block_client`, `unblock_client`, `kick_client`, `locate_device`                           |
-| **Legacy Network API**                | `https://<host>:<port>/proxy/network/api`             | Cookie session (`/api/auth/login`)             | Broad stats + inventory, historical data                       | Full controller config: WLANs, networks, port overrides, firewall, etc. | Requires credentials; shapes differ by version            | Fallback for `sites://{site_id}/wlans` • Tool: `wlan_set_enabled_legacy`                                                                                |
-| **UniFi Access API**                  | `https://<host>:<port>/proxy/access/api/v1`           | `X-API-Key`                                    | Doors, Readers, Users, Events                                  | Door unlock (if supported)                                              | Actions depend on controller build                        | Resources: `access://doors`, `.../readers`, `.../users`, `.../events` • Tool: `access_unlock_door`                                                      |
-| **UniFi Protect API**                 | `https://<host>:<port>/proxy/protect/api`             | API Key first, fallback to cookie              | NVR bootstrap, Cameras, Events, Streams                        | Camera reboot, LED toggle, privacy mode                                 | Some mutations require exact payloads per firmware/model  | Resources: `protect://nvr`, `.../cameras`, `.../events`, `.../streams` • Tools: `protect_camera_reboot`, `protect_camera_led`, `protect_toggle_privacy` |
-| **Site Manager (Cloud)** *(optional)* | `https://unifi.ui.com`                                | Bearer token (`Authorization: Bearer <token>`) | Org-wide inventory, site metadata                              | Varies by account/role                                                  | Endpoints not consistently documented                     | Capability probe included                                                                                                                               |
+| API                  | Read (✅) | Write (✍️) | Notes / Typical Gaps             |
+| -------------------- | --------- | ---------- | -------------------------------- |
+| **Network Integration** | ✅ Sites, Devices, Clients | ✍️ Limited (kick/block, locate) | No WLAN/SSID, Networks, firewall |
+| **Legacy Network**   | ✅ Broad stats, inventory | ✍️ Full config (WLANs, networks) | Requires user/pass; version quirks |
+| **UniFi Access**     | ✅ Doors, Readers, Users | ✍️ Unlock door (momentary) | Some model/firmware-dependent gaps |
+| **UniFi Protect**    | ✅ NVR, Cameras, Events | ✍️ Camera reboot, LED, privacy | Mutations vary by firmware |
+| **Site Manager (Cloud)** *(opt)* | ✅ Org-wide metadata | ✍️ Limited, role-based | Endpoints inconsistent by account |
+
+---
+Here’s a clean, GitHub-ready Markdown version of your UniFi API Capability Matrix and quick reference section. It will render properly in your README:
+
+```markdown
+# UniFi API Capability Matrix (what you’re using now)
+
+| API                                   | Base Path                                             | Auth                                              | Read Coverage (✅)                                              | Write/Config (✍️)                                                                    | Typical Gaps / 404s                                           | In Your MCP (resources & tools)                                                                                                                                                                           |
+| ------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Network Integration API**           | `https://<host>:<port>/proxy/network/integrations/v1` | `X-API-Key`                                       | Sites, Devices, Clients (incl. `/clients/active`), some Events | Limited actions (kick/block client, locate device)                                   | WLAN/SSID config, Networks/VLANs, firewall, many settings     | Resources: `sites://`, `sites://{site_id}/devices`, `.../clients`, `.../clients/active`<br>Tools: `block_client`, `unblock_client`, `kick_client`, `locate_device`                                         |
+| **Legacy Network API**                | `https://<host>:<port>/proxy/network/api`             | Cookie session (`/api/auth/login` with user/pass) | Broad stats + inventory, historical data                       | **Full controller config**: WLANs (`/rest/wlanconf`), networks, port overrides, more | Requires credentials; shapes differ by version                | Used as **fallback**: `sites://{site_id}/wlans` (when Integration lacks WLANs)<br>Tool: `wlan_set_enabled_legacy`                                                                                          |
+| **UniFi Access API**                  | `https://<host>:<port>/proxy/access/api/v1`           | `X-API-Key`                                       | Doors, Readers, Users, Events                                  | Momentary door unlock (where supported)                                              | Some actions model/firmware-dependent                         | Resources: `access://doors`, `.../readers`, `.../users`, `.../events`<br>Tool: `access_unlock_door`                                                                                                        |
+| **UniFi Protect API**                 | `https://<host>:<port>/proxy/protect/api`             | `X-API-Key` **then** legacy cookie fallback       | NVR bootstrap, Cameras, Events, Streams info                   | Camera reboot, LED toggle, privacy mode (varies by model/fw)                         | Some mutations need exact payloads per firmware               | Resources: `protect://nvr`, `.../cameras`, `.../camera/{id}`, `.../events`, `.../events/range/{...}`, `.../streams/{id}`<br>Tools: `protect_camera_reboot`, `protect_camera_led`, `protect_toggle_privacy` |
+| **Site Manager (Cloud)** *(optional)* | `https://unifi.ui.com` (or org-specific)              | `Authorization: Bearer <token>`                   | Org-wide inventory, site metadata (varies by role)             | Varies; often management & view ops                                                  | Endpoints aren’t consistently public; depends on your account | Generic bearer stubs (capability probe only in current file)                                                                                                                                              |
 
 ---
 
-## License
+## Quick Reference
 
-MIT
+**Env vars:**
+- Integration/Access/Protect: `UNIFI_API_KEY`, `UNIFI_GATEWAY_HOST`, `UNIFI_GATEWAY_PORT`, `UNIFI_VERIFY_TLS`
+- Legacy fallback: `UNIFI_USERNAME`, `UNIFI_PASSWORD`
+- Site Manager (optional): `UNIFI_SITEMGR_BASE`, `UNIFI_SITEMGR_TOKEN`
 
+**Where you’ll see 404s:**  
+- WLANs/SSIDs on **Integration** → use legacy fallback.
+
+**Start here to verify:**  
+- Call `unifi://capabilities` in MCP Inspector.
 ```
 
 ---
 
-Do you want me to also generate a **`docs/` folder** with a more detailed breakdown per API (with example request/response payloads), or just keep this README as the primary documentation?
-```
+
+
