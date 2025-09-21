@@ -35,41 +35,38 @@ A server implementation for managing and controlling UniFi network devices throu
    # or
    .venv\Scripts\activate  # On Windows
 
-
 3. **Install dependencies:**
 
-bash
+```bash
    uv sync
 
 4. **Configure environment variables:**
 
-bash
+```bash
    export UNIFI_API_KEY="your_api_key_here"
    export UNIFI_GATEWAY_HOST="192.168.1.1"
    export UNIFI_GATEWAY_PORT="443"
    export UNIFI_VERIFY_TLS=false   # set to true if you use a valid TLS cert
-   ```
-````
+
    *(Optional)* If you want to enable legacy features (WLAN config, Protect fallback):
 
- bash
+ ```bash
    export UNIFI_USERNAME="admin"
    export UNIFI_PASSWORD="your_password"
 
 
    *(Optional)* For Site Manager (cloud API):
 
-bash
+```bash
    export UNIFI_SITEMGR_BASE="https://unifi.ui.com"
    export UNIFI_SITEMGR_TOKEN="Bearer <your_token>"
-   ```
-````
+
 ## Running the Server
 
 Start the MCP development server:
 
 
-bash
+```bash
 uv run mcp dev main.py
 
 The MCP Inspector will be available at [http://localhost:5173](http://localhost:5173) for testing and debugging.
@@ -94,7 +91,7 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
 1. Open Claude and go to **Settings » Developer » Edit Config**
 2. Add to your `claude_desktop_config.json`:
 
-json
+```json
    {
        "mcpServers": {
            "unifi": {
