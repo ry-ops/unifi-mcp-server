@@ -20,7 +20,7 @@ A server implementation for managing and controlling UniFi network devices throu
 - Manage UniFi **Protect** (cameras, events, streams, camera actions)
 - Supports both the **Integration API** (modern, key-based) and **Legacy API** (session login)  
 - Local server implementation that connects directly to your UniFi console
-- Compatible with both Claude Desktop
+- Compatible with Claude Desktop
 - Secure API key-based authentication with optional legacy fallback
 
 ## Prerequisites
