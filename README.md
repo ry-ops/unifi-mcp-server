@@ -1,4 +1,4 @@
-<img src="https://github.com/ry-ops/mcp-server-unifi/blob/main/unifi-mcp-server.png" width="800">
+<img src="https://github.com/ry-ops/mcp-server-unifi/blob/main/unifi-mcp-server.png" width="100%">
 
 
 <p align="center">
