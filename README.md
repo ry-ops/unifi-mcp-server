@@ -34,44 +34,43 @@ A server implementation for managing and controlling UniFi network devices throu
    source .venv/bin/activate  # On Unix/macOS
    # or
    .venv\Scripts\activate  # On Windows
-````
+
 
 3. **Install dependencies:**
 
-   ```bash
+bash
    uv sync
-   ```
 
 4. **Configure environment variables:**
 
-   ```bash
+bash
    export UNIFI_API_KEY="your_api_key_here"
    export UNIFI_GATEWAY_HOST="192.168.1.1"
    export UNIFI_GATEWAY_PORT="443"
    export UNIFI_VERIFY_TLS=false   # set to true if you use a valid TLS cert
    ```
-
+````
    *(Optional)* If you want to enable legacy features (WLAN config, Protect fallback):
 
-   ```bash
+ bash
    export UNIFI_USERNAME="admin"
    export UNIFI_PASSWORD="your_password"
-   ```
+
 
    *(Optional)* For Site Manager (cloud API):
 
-   ```bash
+bash
    export UNIFI_SITEMGR_BASE="https://unifi.ui.com"
    export UNIFI_SITEMGR_TOKEN="Bearer <your_token>"
    ```
-
+````
 ## Running the Server
 
 Start the MCP development server:
 
-```bash
+
+bash
 uv run mcp dev main.py
-```
 
 The MCP Inspector will be available at [http://localhost:5173](http://localhost:5173) for testing and debugging.
 
@@ -88,13 +87,14 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
    * **Command:**
      `/Users/username/.local/bin/uv --directory /path/to/mcp-server-unifi run main.py`
    * **Environment Variables:** Set `UNIFI_API_KEY` to your API key
-
+````
+````
 ### Claude Desktop Setup
 
 1. Open Claude and go to **Settings » Developer » Edit Config**
 2. Add to your `claude_desktop_config.json`:
 
-   ```json
+json
    {
        "mcpServers": {
            "unifi": {
@@ -108,9 +108,6 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
            }
        }
    }
-   ```
-
----
 
 # UniFi API Capability Matrix (at a glance)
 
@@ -122,10 +119,6 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
 | **UniFi Protect**    | ✅ NVR, Cameras, Events | ✍️ Camera reboot, LED, privacy | Mutations vary by firmware |
 | **Site Manager (Cloud)** *(opt)* | ✅ Org-wide metadata | ✍️ Limited, role-based | Endpoints inconsistent by account |
 
----
-Here’s a clean, GitHub-ready Markdown version of your UniFi API Capability Matrix and quick reference section. It will render properly in your README:
-
-```markdown
 # UniFi API Capability Matrix (what you’re using now)
 
 | API                                   | Base Path                                             | Auth                                              | Read Coverage (✅)                                              | Write/Config (✍️)                                                                    | Typical Gaps / 404s                                           | In Your MCP (resources & tools)                                                                                                                                                                           |
@@ -135,8 +128,6 @@ Here’s a clean, GitHub-ready Markdown version of your UniFi API Capability Mat
 | **UniFi Access API**                  | `https://<host>:<port>/proxy/access/api/v1`           | `X-API-Key`                                       | Doors, Readers, Users, Events                                  | Momentary door unlock (where supported)                                              | Some actions model/firmware-dependent                         | Resources: `access://doors`, `.../readers`, `.../users`, `.../events`<br>Tool: `access_unlock_door`                                                                                                        |
 | **UniFi Protect API**                 | `https://<host>:<port>/proxy/protect/api`             | `X-API-Key` **then** legacy cookie fallback       | NVR bootstrap, Cameras, Events, Streams info                   | Camera reboot, LED toggle, privacy mode (varies by model/fw)                         | Some mutations need exact payloads per firmware               | Resources: `protect://nvr`, `.../cameras`, `.../camera/{id}`, `.../events`, `.../events/range/{...}`, `.../streams/{id}`<br>Tools: `protect_camera_reboot`, `protect_camera_led`, `protect_toggle_privacy` |
 | **Site Manager (Cloud)** *(optional)* | `https://unifi.ui.com` (or org-specific)              | `Authorization: Bearer <token>`                   | Org-wide inventory, site metadata (varies by role)             | Varies; often management & view ops                                                  | Endpoints aren’t consistently public; depends on your account | Generic bearer stubs (capability probe only in current file)                                                                                                                                              |
-
----
 
 ## Quick Reference
 
@@ -150,9 +141,7 @@ Here’s a clean, GitHub-ready Markdown version of your UniFi API Capability Mat
 
 **Start here to verify:**  
 - Call `unifi://capabilities` in MCP Inspector.
-```
 
----
 
 
 
