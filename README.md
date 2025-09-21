@@ -26,23 +26,22 @@ A server implementation for managing and controlling UniFi network devices throu
    - Navigate to **Settings » Control Plane » Integrations**
    - Click **Create API Key**
 
-2. **Clone and set up the repository:**
-   ```bash
-   git clone https://github.com/yourusername/mcp-server-unifi
-   cd mcp-server-unifi
-   uv venv
-   source .venv/bin/activate  # On Unix/macOS
-   # or
-   .venv\Scripts\activate  # On Windows
+2. Clone and set up the repository:
+```bash
+git clone https://github.com/zcking/mcp-server-unifi
+cd mcp-server-unifi
+uv venv
+source .venv/bin/activate  # On Unix/macOS
+# or
+.venv\Scripts\activate  # On Windows
 ```
-```
-3. **Install dependencies:**
 
+3. **Install dependencies:**
 ```bash
    uv sync
 ```
-4. **Configure environment variables:**
 
+4. **Configure environment variables:**
 ```bash
    export UNIFI_API_KEY="your_api_key_here"
    export UNIFI_GATEWAY_HOST="192.168.1.1"
@@ -55,7 +54,6 @@ A server implementation for managing and controlling UniFi network devices throu
    export UNIFI_USERNAME="admin"
    export UNIFI_PASSWORD="your_password"
 ```
-
    *(Optional)* For Site Manager (cloud API):
 
 ```bash
