@@ -69,6 +69,7 @@
 </p>
 
 
+
 # MCP Server UniFi
 
 A server implementation for managing and controlling UniFi network devices through MCP (Management Control Protocol). This server enables natural language interactions with your UniFi network using AI agents like Goose and Claude by wrapping the UniFi Network, Access, and Protect APIs.
