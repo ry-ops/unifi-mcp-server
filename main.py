@@ -2,7 +2,8 @@
 # UniFi MCP Server – Integration + Legacy + Access + Protect (+ Site Manager stubs)
 # - Rich resources for reads, curated tools for safe actions, prompt playbooks
 # - Dual-mode auth (API key first; fall back to legacy cookie where needed)
-# - Adds health alias (health://unifi) and debug_registry tool
+# - Includes health alias (health://unifi) and debug_registry tool
+# - Safer URL building to avoid line-wrap identifier breaks
 
 from typing import Any, Dict, List, Optional
 import os, json, requests, urllib3
@@ -11,14 +12,14 @@ from mcp.server.fastmcp import FastMCP
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ========= Configuration =========
-UNIFI_API_KEY   = os.getenv("UNIFI_API_KEY", "API_KEY_HERE")
-UNIFI_HOST      = os.getenv("UNIFI_GATEWAY_HOST", "GATEWAY_HOST_HERE")
+UNIFI_API_KEY   = os.getenv("UNIFI_API_KEY", "API")
+UNIFI_HOST      = os.getenv("UNIFI_GATEWAY_HOST", "HOST")
 UNIFI_PORT      = os.getenv("UNIFI_GATEWAY_PORT", "443")
 VERIFY_TLS      = os.getenv("UNIFI_VERIFY_TLS", "false").lower() in ("1", "true", "yes")
 
 # Legacy credentials (optional; enable for config endpoints not in Integration API)
-LEGACY_USER     = os.getenv("UNIFI_USERNAME", "UNIFI_USERNAME_HERE")
-LEGACY_PASS     = os.getenv("UNIFI_PASSWORD", "UNIFI_PASSWORD_HERE")
+LEGACY_USER     = os.getenv("UNIFI_USERNAME", "USERNAME")
+LEGACY_PASS     = os.getenv("UNIFI_PASSWORD", "PASSWORD")
 
 # Site Manager (cloud) – generic bearer pass-through (optional)
 SM_BASE         = os.getenv("UNIFI_SITEMGR_BASE", "").rstrip("/")
@@ -113,6 +114,59 @@ def protect_post(path: str, body=None) -> Dict[str, Any]:
     r = LEGACY.post(f"{PROTECT_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
+# ========= UniFi Health (triple-registered) =========
+
+def _health_check() -> Dict[str, Any]:
+    """
+    Minimal controller sanity check against Integration API.
+    Returns ok: True with sites count, or ok: False with error.
+    """
+    try:
+        resp = _get("/".join([NET_INTEGRATION_BASE, "sites"]), _h_key())
+        return {
+            "ok": True,
+            "integration_sites_count": resp.get("count"),
+            "base": NET_INTEGRATION_BASE,
+            "verify_tls": VERIFY_TLS,
+        }
+    except Exception as e:
+        return {"ok": False, "error": str(e), "base": NET_INTEGRATION_BASE, "verify_tls": VERIFY_TLS}
+
+# 1) Original scheme you tried
+@mcp.resource("unifi://health")
+async def unifi_health_resource() -> Dict[str, Any]:
+    return _health_check()
+
+# 2) Alternate scheme many inspectors display reliably
+@mcp.resource("health://unifi")
+async def health_alias_resource() -> Dict[str, Any]:
+    return _health_check()
+
+# 3) Extra alias (belt & suspenders)
+@mcp.resource("status://unifi")
+async def status_alias_resource() -> Dict[str, Any]:
+    return _health_check()
+
+# Tool fallback (always visible in Tools tab)
+@mcp.tool()
+def unifi_health() -> Dict[str, Any]:
+    """Ping the UniFi Integration API and report basic health."""
+    return _health_check()
+
+# Prompt so agents know how to call it
+@mcp.prompt("how_to_check_unifi_health")
+def how_to_check_unifi_health():
+    return {
+        "description": "Check UniFi controller health via Integration API.",
+        "messages": [{
+            "role": "system",
+            "content": (
+                "To check UniFi health, call 'health://unifi' (or 'unifi://health' / 'status://unifi'). "
+                "If resources are unavailable, call the 'unifi_health' tool instead."
+            )
+        }]
+    }
+
 # ========= Utilities =========
 def paginate_integration(path: str, extra_params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     params = {"limit": 200, "offset": 0}
@@ -142,20 +196,20 @@ async def capabilities() -> Dict[str, Any]:
             out[label] = {"url": url, "error": str(e)}
 
     # Network Integration
-    try_get("integration.sites", f"{NET_INTEGRATION_BASE}/sites", _h_key())
-    try_get("integration.devices_default", f"{NET_INTEGRATION_BASE}/sites/default/devices", _h_key())
-    try_get("integration.clients_default", f"{NET_INTEGRATION_BASE}/sites/default/clients", _h_key())
-    try_get("integration.wlans_default", f"{NET_INTEGRATION_BASE}/sites/default/wlans", _h_key())
+    try_get("integration.sites", "/".join([NET_INTEGRATION_BASE, "sites"]), _h_key())
+    try_get("integration.devices_default", "/".join([NET_INTEGRATION_BASE, "sites", "default", "devices"]), _h_key())
+    try_get("integration.clients_default", "/".join([NET_INTEGRATION_BASE, "sites", "default", "clients"]), _h_key())
+    try_get("integration.wlans_default", "/".join([NET_INTEGRATION_BASE, "sites", "default", "wlans"]), _h_key())
 
     # Access
-    try_get("access.doors", f"{ACCESS_BASE}/doors", _h_key())
-    try_get("access.readers", f"{ACCESS_BASE}/readers", _h_key())
-    try_get("access.events", f"{ACCESS_BASE}/events", _h_key())
+    try_get("access.doors", "/".join([ACCESS_BASE, "doors"]), _h_key())
+    try_get("access.readers", "/".join([ACCESS_BASE, "readers"]), _h_key())
+    try_get("access.events", "/".join([ACCESS_BASE, "events"]), _h_key())
 
     # Legacy quick check
     try:
         legacy_login()
-        r = LEGACY.get(f"{LEGACY_BASE}/s/default/stat/sta", verify=VERIFY_TLS, timeout=6)
+        r = LEGACY.get("/".join([LEGACY_BASE, "s", "default", "stat", "sta"]), verify=VERIFY_TLS, timeout=6)
         out["legacy.stat_sta"] = {"url": r.request.url, "status": r.status_code}
     except Exception as e:
         out["legacy.stat_sta"] = {"error": str(e)}
@@ -163,7 +217,6 @@ async def capabilities() -> Dict[str, Any]:
     # Protect
     def try_get_protect(label: str, path: str):
         try:
-            # API key
             r = requests.get(f"{PROTECT_BASE}{path}", headers=_h_key(), verify=VERIFY_TLS, timeout=6)
             if r.status_code in (401, 403) and LEGACY_USER and LEGACY_PASS:
                 legacy_login()
@@ -188,7 +241,7 @@ async def capabilities() -> Dict[str, Any]:
 @mcp.resource("unifi://health")
 async def health() -> Dict[str, Any]:
     try:
-        me = _get(f"{NET_INTEGRATION_BASE}/sites", _h_key())  # simple check
+        me = _get("/".join([NET_INTEGRATION_BASE, "sites"]), _h_key())  # simple check
         return {"ok": True, "integration_sites_count": me.get("count")}
     except Exception as e:
         return {"ok": False, "error": str(e)}
@@ -245,12 +298,13 @@ async def clients(site_id: str) -> List[Dict[str, Any]]:
 async def clients_active(site_id: str) -> List[Dict[str, Any]]:
     return paginate_integration(f"/sites/{site_id}/clients/active")
 
-# WLANs with graceful fallback (Integration -> Legacy)
+# WLANs with graceful fallback (Integration -> Legacy) and safe URL joins
 @mcp.resource("sites://{site_id}/wlans")
 async def wlans(site_id: str):
     # 1) Integration attempt (often 404/not exposed)
     try:
-        res = _get(f"{NET_INTEGRATION_BASE}/sites/{site_id}/wlans", _h_key())
+        url = "/".join([NET_INTEGRATION_BASE, "sites", site_id, "wlans"])
+        res = _get(url, _h_key())
         return res.get("data", [])
     except UniFiHTTPError as e:
         if "404" not in str(e):
@@ -264,4 +318,194 @@ async def wlans(site_id: str):
         "ok": False,
         "reason": "WLANs not exposed by Integration API and no legacy credentials provided.",
         "tried": [
-            f"{NET_INTEGRATION_
+            "/".join([NET_INTEGRATION_BASE, "sites", site_id, "wlans"]),
+            f"{LEGACY_BASE}/s/{site_id}/rest/wlanconf (legacy)"
+        ],
+        "how_to_enable_legacy": "Set UNIFI_USERNAME and UNIFI_PASSWORD."
+    }
+
+# Search helpers
+@mcp.resource("sites://{site_id}/search/clients/{query}")
+async def search_clients(site_id: str, query: str):
+    cs = await clients(site_id)
+    q = query.lower()
+    def hit(c): return any(q in str(c.get(k, "")).lower() for k in ("hostname", "name", "mac", "ip", "user"))
+    return [c for c in cs if hit(c)]
+
+@mcp.resource("sites://{site_id}/search/devices/{query}")
+async def search_devices(site_id: str, query: str):
+    ds = await devices(site_id)
+    q = query.lower()
+    def hit(d): return any(q in str(d.get(k, "")).lower() for k in ("name", "model", "mac", "ip", "ip_address"))
+    return [d for d in ds if hit(d)]
+
+# ========= UniFi Access: resources =========
+@mcp.resource("access://doors")
+async def access_doors() -> List[Dict[str, Any]]:
+    res = _get("/".join([ACCESS_BASE, "doors"]), _h_key())
+    return res.get("data", res)
+
+@mcp.resource("access://readers")
+async def access_readers() -> List[Dict[str, Any]]:
+    res = _get("/".join([ACCESS_BASE, "readers"]), _h_key())
+    return res.get("data", res)
+
+@mcp.resource("access://users")
+async def access_users() -> List[Dict[str, Any]]:
+    res = _get("/".join([ACCESS_BASE, "users"]), _h_key())
+    return res.get("data", res)
+
+@mcp.resource("access://events")
+async def access_events() -> List[Dict[str, Any]]:
+    res = _get("/".join([ACCESS_BASE, "events"]), _h_key())
+    return res.get("data", res)
+
+# ========= UniFi Protect: resources =========
+@mcp.resource("protect://nvr")
+async def protect_nvr() -> Dict[str, Any]:
+    return protect_get("/bootstrap")
+
+@mcp.resource("protect://cameras")
+async def protect_cameras() -> List[Dict[str, Any]]:
+    res = protect_get("/cameras")
+    if isinstance(res, dict) and "cameras" in res:
+        return res["cameras"]
+    return res
+
+@mcp.resource("protect://camera/{camera_id}")
+async def protect_camera(camera_id: str) -> Dict[str, Any]:
+    return protect_get(f"/cameras/{camera_id}")
+
+@mcp.resource("protect://events")
+async def protect_events() -> List[Dict[str, Any]]:
+    res = protect_get("/events")
+    if isinstance(res, dict) and "events" in res:
+        return res["events"]
+    return res
+
+@mcp.resource("protect://events/range/{start_ts}/{end_ts}")
+async def protect_events_range(start_ts: str, end_ts: str) -> List[Dict[str, Any]]:
+    res = protect_get("/events", params={"start": start_ts, "end": end_ts})
+    if isinstance(res, dict) and "events" in res:
+        return res["events"]
+    return res
+
+@mcp.resource("protect://streams/{camera_id}")
+async def protect_streams(camera_id: str) -> Dict[str, Any]:
+    cam = protect_get(f"/cameras/{camera_id}")
+    return {
+        "id": cam.get("id"),
+        "name": cam.get("name"),
+        "channels": cam.get("channels"),
+        "isRtspEnabled": cam.get("isRtspEnabled")
+    }
+
+# ========= Action tools =========
+# Integration API – safe set
+@mcp.tool()
+def block_client(site_id: str, mac: str) -> Dict[str, Any]:
+    return _post("/".join([NET_INTEGRATION_BASE, "sites", site_id, "clients", "block"]), _h_key(), {"mac": mac})
+
+@mcp.tool()
+def unblock_client(site_id: str, mac: str) -> Dict[str, Any]:
+    return _post("/".join([NET_INTEGRATION_BASE, "sites", site_id, "clients", "unblock"]), _h_key(), {"mac": mac})
+
+@mcp.tool()
+def kick_client(site_id: str, mac: str) -> Dict[str, Any]:
+    return _post("/".join([NET_INTEGRATION_BASE, "sites", site_id, "clients", "kick"]), _h_key(), {"mac": mac})
+
+@mcp.tool()
+def locate_device(site_id: str, device_id: str, seconds: int = 30) -> Dict[str, Any]:
+    return _post("/".join([NET_INTEGRATION_BASE, "sites", site_id, "devices", device_id, "locate"]), _h_key(), {"duration": seconds})
+
+# Legacy-only example for WLAN toggle
+@mcp.tool()
+def wlan_set_enabled_legacy(site_id: str, wlan_id: str, enabled: bool) -> Dict[str, Any]:
+    """Toggle WLAN (legacy API) when Integration API doesn't expose WLANs."""
+    body = {"_id": wlan_id, "enabled": bool(enabled)}
+    return legacy_post(f"/s/{site_id}/rest/wlanconf/{wlan_id}", body)
+
+# Access – sample action (varies by build)
+@mcp.tool()
+def access_unlock_door(door_id: str, seconds: int = 5) -> Dict[str, Any]:
+    return _post("/".join([ACCESS_BASE, "doors", door_id, "unlock"]), _h_key(), {"duration": seconds})
+
+# Protect – safe starters
+@mcp.tool()
+def protect_camera_reboot(camera_id: str) -> Dict[str, Any]:
+    return protect_post(f"/cameras/{camera_id}/reboot")
+
+@mcp.tool()
+def protect_camera_led(camera_id: str, enabled: bool) -> Dict[str, Any]:
+    body = {"ledSettings": {"isEnabled": bool(enabled)}}
+    return protect_post(f"/cameras/{camera_id}", body)
+
+@mcp.tool()
+def protect_toggle_privacy(camera_id: str, enabled: bool) -> Dict[str, Any]:
+    body = {"privacyMode": bool(enabled)}
+    return protect_post(f"/cameras/{camera_id}", body)
+
+# ========= Prompt playbooks =========
+@mcp.prompt("how_to_find_device")
+def how_to_find_device():
+    return {
+        "description": "Find a network device and flash its LEDs.",
+        "messages": [{"role": "system",
+                      "content": "Search device via 'sites://{site_id}/search/devices/{query}', confirm, then call 'locate_device' for ~30s."}]
+    }
+
+@mcp.prompt("how_to_block_client")
+def how_to_block_client():
+    return {
+        "description": "Find & block a client safely.",
+        "messages": [{"role": "system",
+                      "content": "List 'sites://{site_id}/clients/active', match MAC/host, confirm with user, then call 'block_client'. Offer 'unblock_client' as a reversal."}]
+    }
+
+@mcp.prompt("how_to_toggle_wlan")
+def how_to_toggle_wlan():
+    return {
+        "description": "Toggle a WLAN using Integration if available, else Legacy.",
+        "messages": [{"role": "system",
+                      "content": "Fetch 'sites://{site_id}/wlans'. If returns an error object with ok:false, request legacy creds, then call 'wlan_set_enabled_legacy'."}]
+    }
+
+@mcp.prompt("how_to_manage_access")
+def how_to_manage_access():
+    return {
+        "description": "Check doors/readers and perform a momentary unlock.",
+        "messages": [{"role": "system",
+                      "content": "List 'access://doors' to choose a door, confirm with the user, then call 'access_unlock_door' with a short duration."}]
+    }
+
+@mcp.prompt("how_to_find_camera")
+def how_to_find_camera():
+    return {
+        "description": "Find a Protect camera and show its streams.",
+        "messages": [{"role": "system",
+                      "content": "Call 'protect://cameras', match by name/model, then 'protect://streams/{camera_id}' to present channels/RTSP."}]
+    }
+
+@mcp.prompt("how_to_review_motion")
+def how_to_review_motion():
+    return {
+        "description": "Review recent motion/smart events in Protect.",
+        "messages": [{"role": "system",
+                      "content": "Fetch 'protect://events' or 'protect://events/range/{start_ts}/{end_ts}', then summarize by camera and type."}]
+    }
+
+@mcp.prompt("how_to_reboot_camera")
+def how_to_reboot_camera():
+    return {
+        "description": "Safely reboot a Protect camera after confirmation.",
+        "messages": [{"role": "system",
+                      "content": "List 'protect://cameras', confirm the camera with the user, then call 'protect_camera_reboot' and warn about brief downtime."}]
+    }
+
+# ========= Entrypoint =========
+if __name__ == "__main__":
+    print("🚀 UniFi MCP – Integration + Legacy + Access + Protect (+ Site Manager stubs)")
+    print(f"→ Controller: https://{UNIFI_HOST}:{UNIFI_PORT}  TLS verify={VERIFY_TLS}")
+    if not UNIFI_API_KEY:
+        print("⚠️ UNIFI_API_KEY not set — Integration/Access/Protect key-based calls may fail.")
+    mcp.run(transport="stdio")
