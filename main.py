@@ -190,6 +190,22 @@ async def health() -> Dict[str, Any]:
         return {"ok": True, "integration_sites_count": me.get("count")}
     except Exception as e:
         return {"ok": False, "error": str(e)}
+# --- Health Fix ---
+
+# Alias resource (some UIs list this more reliably)
+@mcp.resource("health://unifi")
+async def health_alias() -> Dict[str, Any]:
+    return await health()  # reuse the same check
+
+# Simple tool version so you can invoke it from the Tools tab
+@mcp.tool()
+def ping_unifi() -> Dict[str, Any]:
+    try:
+        me = _get(f"{NET_INTEGRATION_BASE}/sites", _h_key())
+        return {"ok": True, "integration_sites_count": me.get("count")}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 
 # ========= Network Integration: resources =========
 @mcp.resource("sites://")
