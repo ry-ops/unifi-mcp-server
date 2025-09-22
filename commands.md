@@ -1,744 +1,166 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2822
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\fnil\fcharset0 AppleColorEmoji;\f2\froman\fcharset0 Times-Bold;
-\f3\fmodern\fcharset0 Courier;\f4\fmodern\fcharset0 Courier-Bold;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red109\green109\blue109;}
-{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c50196\c50196\c50196;}
-{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\deftab720
-\pard\pardeftab720\sa240\partightenfactor0
-
-\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 Great choice 
-\f1 \uc0\u55357 \u56397 
-\f0  Here\'92s a 
-\f2\b Markdown command reference table
-\f0\b0  (
-\f3\fs26 COMMANDS.md
-\f0\fs24 ) for your repo.\
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa321\partightenfactor0
-
-\f1\fs48 \cf0 \strokec2 \uc0\u55357 \u56534 
-\f2\b  MCP Server UniFi \'96 Command Reference\
-\pard\pardeftab720\sa240\partightenfactor0
-
-\f0\b0\fs24 \cf0 This document lists all available 
-\f2\b resources
-\f0\b0 , 
-\f2\b tools
-\f0\b0 , and 
-\f2\b prompts
-\f0\b0  provided by the UniFi MCP Server.\
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa298\partightenfactor0
-
-\f1\fs36 \cf0 \strokec2 \uc0\u55356 \u57104 
-\f2\b  UniFi Network (Integration + Legacy)\
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-
-\fs24 \cf0 Type\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Command\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Description\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f0\b0 \cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List all UniFi sites\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://\{site_id\}/devices
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List devices in a site\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://\{site_id\}/clients
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List all clients in a site\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://\{site_id\}/clients/active
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List active clients\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://\{site_id\}/wlans
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List WLANs (Integration, Legacy fallback)\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://\{site_id\}/search/clients/\{query\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Search clients by hostname/MAC/IP/user\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sites://\{site_id\}/search/devices/\{query\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Search devices by name/model/MAC/IP\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 block_client(site_id, mac)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Block a client\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 unblock_client(site_id, mac)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Unblock a client\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 kick_client(site_id, mac)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Kick a client\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 locate_device(site_id, device_id, seconds=30)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Locate a device (flash LEDs)\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 wlan_set_enabled_legacy(site_id, wlan_id, enabled)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Toggle WLAN (Legacy API)\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_find_device
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Find a device and flash its LEDs\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_block_client
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Find & block a client\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth7801\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth4178\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_toggle_wlan
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Toggle a WLAN (Integration/Legacy)\cell \lastrow\row
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa298\partightenfactor0
-
-\f1\fs36 \cf0 \strokec2 \uc0\u55357 \u56592 
-\f2\b  UniFi Access\
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-
-\fs24 \cf0 Type\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Command\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Description\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f0\b0 \cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 access://doors
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List doors\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 access://readers
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List readers\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 access://users
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List access users\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 access://events
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List access events\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 access_unlock_door(door_id, seconds=5)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Unlock door temporarily\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth5929\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3492\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_manage_access
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Manage doors/readers, unlock doors\cell \lastrow\row
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa298\partightenfactor0
-
-\f1\fs36 \cf0 \strokec2 \uc0\u55357 \u56569 
-\f2\b  UniFi Protect\
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-
-\fs24 \cf0 Type\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Command\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Description\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f0\b0 \cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect://nvr
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Get NVR bootstrap info\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect://cameras
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List cameras\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect://camera/\{camera_id\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Get camera details\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect://events
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List events\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect://events/range/\{start_ts\}/\{end_ts\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Events in a time range\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect://streams/\{camera_id\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Camera stream info (channels, RTSP)\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect_camera_reboot(camera_id)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Reboot a camera\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect_camera_led(camera_id, enabled)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Toggle camera LED\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 protect_toggle_privacy(camera_id, enabled)
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Toggle camera privacy mode\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_find_camera
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Find a camera and show streams\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_review_motion
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Review Protect motion/smart events\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth6553\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3631\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_reboot_camera
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Reboot a camera\cell \lastrow\row
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa298\partightenfactor0
-
-\f1\fs36 \cf0 \strokec2 \uc0\u9729 \u65039 
-\f2\b  UniFi Site Manager (Cloud)\
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-
-\fs24 \cf0 Type\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Command\cell 
-\pard\intbl\itap1\pardeftab720\qc\partightenfactor0
-\cf0 Description\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f0\b0 \cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://hosts
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List hosts\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://hosts/\{host_id\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Get host by ID\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://sites
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List cloud sites\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://sites/\{site_id\}/devices
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List devices in a cloud site\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://isp/metrics
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List/describe ISP metrics\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://sdwan/configs
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List SD-WAN configs\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://sdwan/configs/\{config_id\}
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Get SD-WAN config by ID\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Resource\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sitemanager://sdwan/configs/\{config_id\}/status
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Get SD-WAN config status\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Tool\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 sm_isp_metrics_query(metric, start, end, granularity="5m", filters_json="\{\}")
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Query ISP metrics\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_list_cloud_sites
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List cloud sites\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_list_cloud_devices
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 List devices in a cloud site\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_query_isp_metrics
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Query ISP performance metrics\cell \row
-
-\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
-\clvertalc \clshdrawnil \clwWidth893\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
-\clvertalc \clshdrawnil \clwWidth11269\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
-\clvertalc \clshdrawnil \clwWidth3237\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Prompt\cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-
-\f3\fs26 \cf0 how_to_view_sdwan_status
-\f0\fs24 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 Inspect SD-WAN configs and status\cell \lastrow\row
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa298\partightenfactor0
-
-\f1\fs36 \cf0 \strokec2 \uc0\u55357 \u56522 
-\f2\b  Summary\
-\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
-\ls1\ilvl0
-\fs24 \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 Resources:
-\f0\b0  25\
-\ls1\ilvl0
-\f2\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 Tools:
-\f0\b0  10\
-\ls1\ilvl0
-\f2\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 Prompts:
-\f0\b0  11\
-\ls1\ilvl0
-\f2\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 Total MCP Commands:
-\f0\b0  
-\f2\b 46
-\f0\b0 \
-\pard\pardeftab720\partightenfactor0
-\cf3 \strokec3 \
-\pard\pardeftab720\sa240\partightenfactor0
-\cf0 \strokec2 Would you like me to also 
-\f2\b cross-link this 
-\f4\fs26 COMMANDS.md
-\f2\fs24  in your README.md
-\f0\b0  (like we did with 
-\f3\fs26 ROADMAP.md
-\f0\fs24 ) so contributors/users can quickly find it?\
-}
+📖 UniFi MCP Server – Command Reference
+This document lists all available resources, tools, and prompts provided by the UniFi MCP Server.
+
+🌐 UniFi Network (Integration + Legacy)
+Type
+Command
+Description
+Resource
+sites://
+List all UniFi sites
+Resource
+sites://{site_id}/devices
+List devices in a site
+Resource
+sites://{site_id}/clients
+List all clients in a site
+Resource
+sites://{site_id}/clients/active
+List active clients
+Resource
+sites://{site_id}/wlans
+List WLANs (Integration, Legacy fallback)
+Resource
+sites://{site_id}/search/clients/{query}
+Search clients by hostname/MAC/IP/user
+Resource
+sites://{site_id}/search/devices/{query}
+Search devices by name/model/MAC/IP
+Tool
+block_client(site_id, mac)
+Block a client
+Tool
+unblock_client(site_id, mac)
+Unblock a client
+Tool
+kick_client(site_id, mac)
+Kick a client
+Tool
+locate_device(site_id, device_id, seconds=30)
+Locate a device (flash LEDs)
+Tool
+wlan_set_enabled_legacy(site_id, wlan_id, enabled)
+Toggle WLAN (Legacy API)
+Prompt
+how_to_find_device
+Find a device and flash its LEDs
+Prompt
+how_to_block_client
+Find & block a client
+Prompt
+how_to_toggle_wlan
+Toggle a WLAN (Integration/Legacy)
+
+🔐 UniFi Access
+Type
+Command
+Description
+Resource
+access://doors
+List doors
+Resource
+access://readers
+List readers
+Resource
+access://users
+List access users
+Resource
+access://events
+List access events
+Tool
+access_unlock_door(door_id, seconds=5)
+Unlock door temporarily
+Prompt
+how_to_manage_access
+Manage doors/readers, unlock doors
+
+📹 UniFi Protect
+Type
+Command
+Description
+Resource
+protect://nvr
+Get NVR bootstrap info
+Resource
+protect://cameras
+List cameras
+Resource
+protect://camera/{camera_id}
+Get camera details
+Resource
+protect://events
+List events
+Resource
+protect://events/range/{start_ts}/{end_ts}
+Events in a time range
+Resource
+protect://streams/{camera_id}
+Camera stream info (channels, RTSP)
+Tool
+protect_camera_reboot(camera_id)
+Reboot a camera
+Tool
+protect_camera_led(camera_id, enabled)
+Toggle camera LED
+Tool
+protect_toggle_privacy(camera_id, enabled)
+Toggle camera privacy mode
+Prompt
+how_to_find_camera
+Find a camera and show streams
+Prompt
+how_to_review_motion
+Review Protect motion/smart events
+Prompt
+how_to_reboot_camera
+Reboot a camera
+
+☁️ UniFi Site Manager (Cloud)
+Type
+Command
+Description
+Resource
+sitemanager://hosts
+List hosts
+Resource
+sitemanager://hosts/{host_id}
+Get host by ID
+Resource
+sitemanager://sites
+List cloud sites
+Resource
+sitemanager://sites/{site_id}/devices
+List devices in a cloud site
+Resource
+sitemanager://isp/metrics
+List/describe ISP metrics
+Resource
+sitemanager://sdwan/configs
+List SD-WAN configs
+Resource
+sitemanager://sdwan/configs/{config_id}
+Get SD-WAN config by ID
+Resource
+sitemanager://sdwan/configs/{config_id}/status
+Get SD-WAN config status
+Tool
+sm_isp_metrics_query(metric, start, end, granularity="5m", filters_json="{}")
+Query ISP metrics
+Prompt
+how_to_list_cloud_sites
+List cloud sites
+Prompt
+how_to_list_cloud_devices
+List devices in a cloud site
+Prompt
+how_to_query_isp_metrics
+Query ISP performance metrics
+Prompt
+how_to_view_sdwan_status
+Inspect SD-WAN configs and status
+
+📊 Summary
+	•	Resources: 25
+	•	Tools: 10
+	•	Prompts: 11
+	•	Total MCP Commands: 46
