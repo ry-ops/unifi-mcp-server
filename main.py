@@ -7,9 +7,49 @@
 
 from typing import Any, Dict, List, Optional
 import os, json, requests, urllib3
+from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# ========= Load Environment Variables from secrets.env =========
+def load_env_file(env_file: str = "secrets.env"):
+    """Load environment variables from a .env file"""
+    env_path = Path(env_file)
+    if env_path.exists():
+        print(f"📁 Loading environment from: {env_path.absolute()}")
+        with open(env_path, 'r') as f:
+            for line_num, line in enumerate(f, 1):
+                line = line.strip()
+                # Skip empty lines and comments
+                if not line or line.startswith('#'):
+                    continue
+                
+                # Parse KEY=VALUE format
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+                    
+                    # Remove quotes if present
+                    if (value.startswith('"') and value.endswith('"')) or \
+                       (value.startswith("'") and value.endswith("'")):
+                        value = value[1:-1]
+                    
+                    # Set environment variable if not already set
+                    if key not in os.environ:
+                        os.environ[key] = value
+                        print(f"  ✓ Loaded: {key}")
+                    else:
+                        print(f"  ⚠️  Skipped {key} (already set in environment)")
+                else:
+                    print(f"  ⚠️  Invalid format on line {line_num}: {line}")
+    else:
+        print(f"⚠️  Environment file not found: {env_path.absolute()}")
+        print("   Create secrets.env with your UniFi credentials")
+
+# Load environment variables first
+load_env_file()
 
 # ========= Configuration =========
 UNIFI_API_KEY   = os.getenv("UNIFI_API_KEY", "API")
@@ -237,19 +277,8 @@ async def capabilities() -> Dict[str, Any]:
 
     return out
 
-# ========= Health =========
-@mcp.resource("unifi://health")
-async def health() -> Dict[str, Any]:
-    try:
-        me = _get("/".join([NET_INTEGRATION_BASE, "sites"]), _h_key())  # simple check
-        return {"ok": True, "integration_sites_count": me.get("count")}
-    except Exception as e:
-        return {"ok": False, "error": str(e)}
-
-# Alias resource for UIs that list this scheme more reliably
-@mcp.resource("health://unifi")
-async def health_alias() -> Dict[str, Any]:
-    return await health()
+# ========= Health (consolidated) =========
+# Note: The individual health resources are defined above in the triple-registered section
 
 # Debug tool to see what FastMCP registered
 @mcp.tool()
