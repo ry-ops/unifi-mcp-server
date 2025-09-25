@@ -277,9 +277,6 @@ async def capabilities() -> Dict[str, Any]:
 
     return out
 
-# ========= Health (consolidated) =========
-# Note: The individual health resources are defined above in the triple-registered section
-
 # Debug tool to see what FastMCP registered
 @mcp.tool()
 def debug_registry() -> Dict[str, Any]:
@@ -311,10 +308,6 @@ def debug_registry() -> Dict[str, Any]:
     }
 
 # ========= Network Integration: resources =========
-@mcp.resource("sites://")
-async def sites() -> List[Dict[str, Any]]:
-    return paginate_integration("/sites")
-
 @mcp.resource("sites://{site_id}/devices")
 async def devices(site_id: str) -> List[Dict[str, Any]]:
     return paginate_integration(f"/sites/{site_id}/devices")
@@ -368,66 +361,8 @@ async def search_devices(site_id: str, query: str):
     def hit(d): return any(q in str(d.get(k, "")).lower() for k in ("name", "model", "mac", "ip", "ip_address"))
     return [d for d in ds if hit(d)]
 
-# ========= UniFi Access: resources =========
-@mcp.resource("access://doors")
-async def access_doors() -> List[Dict[str, Any]]:
-    res = _get("/".join([ACCESS_BASE, "doors"]), _h_key())
-    return res.get("data", res)
-
-@mcp.resource("access://readers")
-async def access_readers() -> List[Dict[str, Any]]:
-    res = _get("/".join([ACCESS_BASE, "readers"]), _h_key())
-    return res.get("data", res)
-
-@mcp.resource("access://users")
-async def access_users() -> List[Dict[str, Any]]:
-    res = _get("/".join([ACCESS_BASE, "users"]), _h_key())
-    return res.get("data", res)
-
-@mcp.resource("access://events")
-async def access_events() -> List[Dict[str, Any]]:
-    res = _get("/".join([ACCESS_BASE, "events"]), _h_key())
-    return res.get("data", res)
-
-# ========= UniFi Protect: resources =========
-@mcp.resource("protect://nvr")
-async def protect_nvr() -> Dict[str, Any]:
-    return protect_get("/bootstrap")
-
-@mcp.resource("protect://cameras")
-async def protect_cameras() -> List[Dict[str, Any]]:
-    res = protect_get("/cameras")
-    if isinstance(res, dict) and "cameras" in res:
-        return res["cameras"]
-    return res
-
-@mcp.resource("protect://camera/{camera_id}")
-async def protect_camera(camera_id: str) -> Dict[str, Any]:
-    return protect_get(f"/cameras/{camera_id}")
-
-@mcp.resource("protect://events")
-async def protect_events() -> List[Dict[str, Any]]:
-    res = protect_get("/events")
-    if isinstance(res, dict) and "events" in res:
-        return res["events"]
-    return res
-
-@mcp.resource("protect://events/range/{start_ts}/{end_ts}")
-async def protect_events_range(start_ts: str, end_ts: str) -> List[Dict[str, Any]]:
-    res = protect_get("/events", params={"start": start_ts, "end": end_ts})
-    if isinstance(res, dict) and "events" in res:
-        return res["events"]
-    return res
-
-@mcp.resource("protect://streams/{camera_id}")
-async def protect_streams(camera_id: str) -> Dict[str, Any]:
-    cam = protect_get(f"/cameras/{camera_id}")
-    return {
-        "id": cam.get("id"),
-        "name": cam.get("name"),
-        "channels": cam.get("channels"),
-        "isRtspEnabled": cam.get("isRtspEnabled")
-    }
+# ========= Access and Protect resources removed =========
+# All access:// and protect:// resources have been removed per user request
 
 # ========= Action tools =========
 # Integration API – safe set
