@@ -9,13 +9,17 @@ import os
 import json
 import requests
 import urllib3
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+
+# Load environment variables from secrets.env
+load_dotenv('secrets.env')
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ========= Configuration =========
-UNIFI_API_KEY   = os.getenv("UNIFI_API_KEY", "API_KEY_HERE")
-UNIFI_HOST      = os.getenv("UNIFI_GATEWAY_HOST", "GATEWAY_HOST_HERE")
+UNIFI_API_KEY   = os.getenv("UNIFI_API_KEY", "")
+UNIFI_HOST      = os.getenv("UNIFI_GATEWAY_HOST", "")
 UNIFI_PORT      = os.getenv("UNIFI_GATEWAY_PORT", "443")
 VERIFY_TLS      = os.getenv("UNIFI_VERIFY_TLS", "false").lower() in ("1", "true", "yes")
 
@@ -31,10 +35,10 @@ SM_TOKEN  = os.getenv("UNIFI_SITEMGR_TOKEN", "")
 SM_PREFIX = os.getenv("UNIFI_SITEMGR_PREFIX", "/v1").rstrip("/")  # default to stable /v1
 
 # Base URLs for local controller
-NET_INTEGRATION_BASE = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/network/integrations/v1"
-LEGACY_BASE          = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/network/api"
-ACCESS_BASE          = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/access/api/v1"
-PROTECT_BASE         = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/protect/api"
+NET_INTEGRATION_BASE = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/network/integrations/v1" if UNIFI_HOST else ""
+LEGACY_BASE          = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/network/api" if UNIFI_HOST else ""
+ACCESS_BASE          = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/access/api/v1" if UNIFI_HOST else ""
+PROTECT_BASE         = f"https://{UNIFI_HOST}:{UNIFI_PORT}/proxy/protect/api" if UNIFI_HOST else ""
 
 REQUEST_TIMEOUT_S    = int(os.getenv("UNIFI_TIMEOUT_S", "15"))
 
@@ -55,6 +59,8 @@ def _raise_for(r: requests.Response) -> Dict[str, Any]:
         raise UniFiHTTPError(f"{r.request.method} {r.url} -> {r.status_code} {r.reason}; body: {body}") from e
 
 def _h_key() -> Dict[str, str]:
+    if not UNIFI_API_KEY:
+        raise UniFiHTTPError("UNIFI_API_KEY not configured.")
     return {"X-API-Key": UNIFI_API_KEY, "Content-Type": "application/json"}
 
 def _get(url: str, headers: Dict[str, str], params=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
@@ -69,6 +75,8 @@ LEGACY = requests.Session()
 def legacy_login():
     if not (LEGACY_USER and LEGACY_PASS):
         raise UniFiHTTPError("Legacy login requires UNIFI_USERNAME and UNIFI_PASSWORD.")
+    if not UNIFI_HOST:
+        raise UniFiHTTPError("Legacy login requires UNIFI_GATEWAY_HOST.")
     r = LEGACY.post(
         f"https://{UNIFI_HOST}:{UNIFI_PORT}/api/auth/login",
         json={"username": LEGACY_USER, "password": LEGACY_PASS},
@@ -78,12 +86,16 @@ def legacy_login():
     _raise_for(r)
 
 def legacy_get(path: str, params=None) -> Dict[str, Any]:
+    if not LEGACY_BASE:
+        raise UniFiHTTPError("Legacy API requires UNIFI_GATEWAY_HOST.")
     if not LEGACY.cookies:
         legacy_login()
     r = LEGACY.get(f"{LEGACY_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 def legacy_post(path: str, body=None) -> Dict[str, Any]:
+    if not LEGACY_BASE:
+        raise UniFiHTTPError("Legacy API requires UNIFI_GATEWAY_HOST.")
     if not LEGACY.cookies:
         legacy_login()
     r = LEGACY.post(f"{LEGACY_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
@@ -92,14 +104,21 @@ def legacy_post(path: str, body=None) -> Dict[str, Any]:
 # ========= UniFi Protect helpers =========
 def protect_get(path: str, params=None) -> Dict[str, Any]:
     """Use API key first; gracefully fall back to legacy cookie if 401/403."""
-    try:
-        r = requests.get(f"{PROTECT_BASE}{path}", headers=_h_key(), params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
-        if r.status_code == 200:
-            return _raise_for(r)
-        if r.status_code not in (401, 403):
-            return _raise_for(r)
-    except Exception:
-        pass
+    if not PROTECT_BASE:
+        raise UniFiHTTPError("Protect API requires UNIFI_GATEWAY_HOST.")
+    
+    # Try API key first
+    if UNIFI_API_KEY:
+        try:
+            r = requests.get(f"{PROTECT_BASE}{path}", headers=_h_key(), params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+            if r.status_code == 200:
+                return _raise_for(r)
+            if r.status_code not in (401, 403):
+                return _raise_for(r)
+        except requests.exceptions.RequestException:
+            pass  # Fall back to legacy auth
+    
+    # Fall back to legacy cookie auth
     if not LEGACY.cookies:
         legacy_login()
     r = LEGACY.get(f"{PROTECT_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
@@ -107,14 +126,21 @@ def protect_get(path: str, params=None) -> Dict[str, Any]:
 
 def protect_post(path: str, body=None) -> Dict[str, Any]:
     """Use API key first; gracefully fall back to legacy cookie if 401/403."""
-    try:
-        r = requests.post(f"{PROTECT_BASE}{path}", headers=_h_key(), json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
-        if r.status_code in (200, 204):
-            return _raise_for(r)
-        if r.status_code not in (401, 403):
-            return _raise_for(r)
-    except Exception:
-        pass
+    if not PROTECT_BASE:
+        raise UniFiHTTPError("Protect API requires UNIFI_GATEWAY_HOST.")
+    
+    # Try API key first
+    if UNIFI_API_KEY:
+        try:
+            r = requests.post(f"{PROTECT_BASE}{path}", headers=_h_key(), json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+            if r.status_code in (200, 204):
+                return _raise_for(r)
+            if r.status_code not in (401, 403):
+                return _raise_for(r)
+        except requests.exceptions.RequestException:
+            pass  # Fall back to legacy auth
+    
+    # Fall back to legacy cookie auth
     if not LEGACY.cookies:
         legacy_login()
     r = LEGACY.post(f"{PROTECT_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
@@ -297,14 +323,44 @@ def how_to_view_sdwan_status():
         }]
     }
 
+# ========= Configuration validation =========
+def validate_config():
+    """Validate configuration and provide helpful warnings."""
+    issues = []
+    
+    if not SM_BASE or not SM_TOKEN:
+        issues.append("⚠️ Site Manager not configured (ISP metrics, cloud sites/devices unavailable)")
+    
+    if not UNIFI_HOST:
+        issues.append("⚠️ Local controller not configured (Protect, Access, Legacy features unavailable)")
+    elif not UNIFI_API_KEY and not (LEGACY_USER and LEGACY_PASS):
+        issues.append("⚠️ No authentication configured for local controller")
+    
+    return issues
+
 # ========= Entrypoint =========
 if __name__ == "__main__":
     print("🚀 UniFi MCP – Integration + Legacy + Access + Protect + Site Manager")
-    print(f"→ Controller: https://{UNIFI_HOST}:{UNIFI_PORT}  TLS verify={VERIFY_TLS}")
-    if not UNIFI_API_KEY:
-        print("⚠️ UNIFI_API_KEY not set — Integration/Access/Protect key-based calls may fail.")
-    if not SM_BASE or not SM_TOKEN:
-        print("⚠️ Site Manager not configured — set UNIFI_SITEMGR_BASE (e.g., https://api.ui.com) and UNIFI_SITEMGR_TOKEN (Bearer or raw token).")
-    else:
+    
+    # Validate configuration
+    config_issues = validate_config()
+    
+    if UNIFI_HOST:
+        print(f"→ Controller: https://{UNIFI_HOST}:{UNIFI_PORT}  TLS verify={VERIFY_TLS}")
+        if UNIFI_API_KEY:
+            print("✅ API key configured for local controller")
+        if LEGACY_USER and LEGACY_PASS:
+            print("✅ Legacy credentials configured")
+    
+    if SM_BASE and SM_TOKEN:
         print(f"→ Site Manager: {SM_BASE}{SM_PREFIX}  (ISP metrics served via /ea)")
+        print("✅ Site Manager configured")
+    
+    # Print any configuration issues
+    for issue in config_issues:
+        print(issue)
+    
+    if not config_issues:
+        print("✅ All systems configured and ready!")
+    
     mcp.run(transport="stdio")
