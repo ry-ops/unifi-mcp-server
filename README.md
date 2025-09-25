@@ -1,32 +1,30 @@
 <img src="https://github.com/ry-ops/unifi-mcp-server/blob/main/UniFi-MCP-Server.png" width="100%">
 
-
 <p align="center">
   <a href="#-features"><img alt="Status" src="https://img.shields.io/badge/Status-Active-brightgreen"></a>
   <a href="#-setup"><img alt="uv" src="https://img.shields.io/badge/Runtime-uv-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-informational"></a>
 </p>
 
-
-
 # UniFi MCP Server
 
-A server implementation for managing and controlling UniFi network devices through MCP (Management Control Protocol). This server enables natural language interactions with your UniFi network using AI agents like Goose and Claude by wrapping the UniFi Network, Access, and Protect APIs.
+A server implementation for managing and controlling UniFi network devices through MCP (Management Control Protocol). This server enables natural language interactions with your UniFi network using AI agents like Goose and Claude by wrapping the UniFi Network Integration API with Legacy API fallback.
 
 ## Features
 
 - Query UniFi **sites, devices, and clients** using natural language through AI agents
-- Manage UniFi **Access** (doors, readers, users, events)
-- Manage UniFi **Protect** (cameras, events, streams, camera actions)
-- Supports both the **Integration API** (modern, key-based) and **Legacy API** (session login)  
+- Search functionality for finding specific devices and clients
+- WLAN management with graceful fallback to Legacy API when needed
+- Health monitoring and capability probing
+- Supports both the **Integration API** (modern, key-based) and **Legacy API** (session login fallback)  
 - Local server implementation that connects directly to your UniFi console
-- Compatible with Claude Desktop
+- Compatible with Claude Desktop and other MCP clients
 - Secure API key-based authentication with optional legacy fallback
 
 ## Prerequisites
 
 - Python 3.8 or higher
-- Install <a href="https://docs.astral.sh/uv/getting-started/" rel>`uv`</a> which we’ll use for managing the Python project.
+- Install <a href="https://docs.astral.sh/uv/getting-started/" rel>`uv`</a> which we'll use for managing the Python project.
 - UniFi Network application (running locally or on UniFi OS)
 - UniFi API key (obtained from UniFi console)
 
@@ -53,24 +51,21 @@ source .venv/bin/activate  # On Unix/macOS
 ```
 
 4. **Configure environment variables:**
-```bash
-   export UNIFI_API_KEY="your_api_key_here"
-   export UNIFI_GATEWAY_HOST="192.168.1.1"
-   export UNIFI_GATEWAY_PORT="443"
-   export UNIFI_VERIFY_TLS=false   # set to true if you use a valid TLS cert
-```
-   *(Optional)* If you want to enable legacy features (WLAN config, Protect fallback):
 
- ```bash
-   export UNIFI_USERNAME="admin"
-   export UNIFI_PASSWORD="your_password"
-```
-   *(Optional)* For Site Manager (cloud API):
+Create a `secrets.env` file in the project root:
 
 ```bash
-   export UNIFI_SITEMGR_BASE="https://unifi.ui.com"
-   export UNIFI_SITEMGR_TOKEN="Bearer <your_token>"
+# UniFi Controller Settings
+UNIFI_API_KEY=your_actual_api_key_here
+UNIFI_GATEWAY_HOST=192.168.1.1
+UNIFI_GATEWAY_PORT=443
+UNIFI_VERIFY_TLS=false
+
+# Legacy credentials (optional - for WLAN management fallback)
+UNIFI_USERNAME=admin
+UNIFI_PASSWORD="your_password_with_special_chars!"
 ```
+
 ## Running the Server
 
 Start the MCP development server:
@@ -93,8 +88,9 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
    * **Command:**
 ```bash
      `/Users/username/.local/bin/uv --directory /path/to/mcp-server-unifi run main.py`
-   * **Environment Variables:** Set `UNIFI_API_KEY` to your API key
 ```
+   * **Environment Variables:** Configure using `secrets.env` file as shown above
+
 ### Claude Desktop Setup
 
 1. Open Claude and go to **Settings » Developer » Edit Config**
@@ -115,45 +111,76 @@ The MCP Inspector will be available at [http://localhost:5173](http://localhost:
        }
    }
 ```
-# UniFi API Capability Matrix (at a glance)
 
-| API                  | Read (✅) | Write (✍️) | Notes / Typical Gaps             |
-| -------------------- | --------- | ---------- | -------------------------------- |
-| **Network Integration** | ✅ Sites, Devices, Clients | ✍️ Limited (kick/block, locate) | No WLAN/SSID, Networks, firewall |
-| **Legacy Network**   | ✅ Broad stats, inventory | ✍️ Full config (WLANs, networks) | Requires user/pass; version quirks |
-| **UniFi Access**     | ✅ Doors, Readers, Users | ✍️ Unlock door (momentary) | Some model/firmware-dependent gaps |
-| **UniFi Protect**    | ✅ NVR, Cameras, Events | ✍️ Camera reboot, LED, privacy | Mutations vary by firmware |
-| **Site Manager (Cloud)** *(opt)* | ✅ Org-wide metadata | ✍️ Limited, role-based | Endpoints inconsistent by account |
+## Current Resources
 
-# UniFi API (Full) Capability Matrix
+| Resource | Description |
+|----------|-------------|
+| `health://unifi` | Health check and controller connectivity status |
+| `unifi://capabilities` | Probe available API endpoints and their status |
+| `sites://{site_id}/devices` | List all network devices for a site |
+| `sites://{site_id}/clients` | List all clients for a site |
+| `sites://{site_id}/clients/active` | List only active/connected clients |
+| `sites://{site_id}/wlans` | WLAN configurations (Integration API → Legacy fallback) |
+| `sites://{site_id}/search/clients/{query}` | Search clients by hostname, MAC, IP, etc. |
+| `sites://{site_id}/search/devices/{query}` | Search devices by name, model, MAC, IP |
 
-| API                                   | Base Path                                             | Auth                                              | Read Coverage (✅)                                              | Write/Config (✍️)                                                                    | Typical Gaps / 404s                                           | In Your MCP (resources & tools)                                                                                                                                                                           |
-| ------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Network Integration API**           | `https://<host>:<port>/proxy/network/integrations/v1` | `X-API-Key`                                       | Sites, Devices, Clients (incl. `/clients/active`), some Events | Limited actions (kick/block client, locate device)                                   | WLAN/SSID config, Networks/VLANs, firewall, many settings     | Resources: `sites://`, `sites://{site_id}/devices`, `.../clients`, `.../clients/active`<br>Tools: `block_client`, `unblock_client`, `kick_client`, `locate_device`                                         |
-| **Legacy Network API**                | `https://<host>:<port>/proxy/network/api`             | Cookie session (`/api/auth/login` with user/pass) | Broad stats + inventory, historical data                       | **Full controller config**: WLANs (`/rest/wlanconf`), networks, port overrides, more | Requires credentials; shapes differ by version                | Used as **fallback**: `sites://{site_id}/wlans` (when Integration lacks WLANs)<br>Tool: `wlan_set_enabled_legacy`                                                                                          |
-| **UniFi Access API**                  | `https://<host>:<port>/proxy/access/api/v1`           | `X-API-Key`                                       | Doors, Readers, Users, Events                                  | Momentary door unlock (where supported)                                              | Some actions model/firmware-dependent                         | Resources: `access://doors`, `.../readers`, `.../users`, `.../events`<br>Tool: `access_unlock_door`                                                                                                        |
-| **UniFi Protect API**                 | `https://<host>:<port>/proxy/protect/api`             | `X-API-Key` **then** legacy cookie fallback       | NVR bootstrap, Cameras, Events, Streams info                   | Camera reboot, LED toggle, privacy mode (varies by model/fw)                         | Some mutations need exact payloads per firmware               | Resources: `protect://nvr`, `.../cameras`, `.../camera/{id}`, `.../events`, `.../events/range/{...}`, `.../streams/{id}`<br>Tools: `protect_camera_reboot`, `protect_camera_led`, `protect_toggle_privacy` |
-| **Site Manager (Cloud)** *(optional)* | `https://unifi.ui.com` (or org-specific)              | `Authorization: Bearer <token>`                   | Org-wide inventory, site metadata (varies by role)             | Varies; often management & view ops                                                  | Endpoints aren’t consistently public; depends on your account | Generic bearer stubs (capability probe only in current file)                                                                                                                                              |
+## Available Tools
 
-## Quick Reference
+| Tool | Description |
+|------|-------------|
+| `unifi_health` | Check controller connectivity and status |
+| `debug_registry` | List all registered resources, tools, and prompts |
+| `block_client` | Block a client by MAC address |
+| `unblock_client` | Unblock a previously blocked client |
+| `kick_client` | Disconnect a client from the network |
+| `locate_device` | Flash LEDs on a device to locate it physically |
+| `wlan_set_enabled_legacy` | Enable/disable WLAN using Legacy API |
 
-**Env vars:**
-- Integration/Access/Protect: `UNIFI_API_KEY`, `UNIFI_GATEWAY_HOST`, `UNIFI_GATEWAY_PORT`, `UNIFI_VERIFY_TLS`
-- Legacy fallback: `UNIFI_USERNAME`, `UNIFI_PASSWORD`
-- Site Manager (optional): `UNIFI_SITEMGR_BASE`, `UNIFI_SITEMGR_TOKEN`
+## API Authentication
 
-**Where you’ll see 404s:**  
-- WLANs/SSIDs on **Integration** → use legacy fallback.
+The server uses a dual-authentication approach:
 
-**Start here to verify:**  
-- Call `unifi://capabilities` in MCP Inspector.
+1. **Primary**: Integration API with `X-API-Key` header (modern, recommended)
+2. **Fallback**: Legacy cookie-based session authentication (for WLAN management and older features)
 
----
+The server automatically falls back to legacy authentication when the Integration API doesn't support a feature (like WLAN configuration).
+
+## Troubleshooting
+
+**Check connectivity:**
+```bash
+# Use the health check resource
+curl -X POST http://localhost:5173/health://unifi
+
+# Or check capabilities
+curl -X POST http://localhost:5173/unifi://capabilities
+```
+
+**Common issues:**
+- Ensure your API key has sufficient permissions
+- Verify `UNIFI_GATEWAY_HOST` can reach your UniFi controller
+- For WLAN management, legacy credentials (`UNIFI_USERNAME`/`UNIFI_PASSWORD`) are required
+- Set `UNIFI_VERIFY_TLS=false` if using self-signed certificates
+
+## API Coverage
+
+| API Component | Read Support | Write Support | Notes |
+|---------------|--------------|---------------|-------|
+| **Network Integration** | ✅ Sites, Devices, Clients | ✅ Limited actions | No WLAN config support |
+| **Legacy Network** | ✅ WLAN configurations | ✅ WLAN enable/disable | Requires username/password |
+
+**Integration API Gaps:** WLAN/SSID configuration, network settings, firewall rules
+**Solution:** Automatic fallback to Legacy API for unsupported features
 
 ## 📌 Roadmap
 
-The UniFi MCP Server is under active development, with new features and API integrations planned.  
+The UniFi MCP Server is under active development. Future phases may include:
 
-Check out the [roadmap.md](./roadmap.md) for the full list of planned resources, tools, and prompts, organized by phase.  
+- UniFi Access integration (doors, readers, events)
+- UniFi Protect integration (cameras, events, streams)  
+- Site Manager cloud API integration
+- Additional network configuration tools
+- Enhanced search and filtering capabilities
 
-
+Check out the [roadmap.md](./roadmap.md) for the full development plan.
