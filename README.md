@@ -1,4 +1,4 @@
-<img src="https://github.com/ry-ops/unifi-mcp-server/blob/main/UniFi-MCP-Server.png" width="100%">
+<img src="https://github.com/ry-ops/unifi-mcp-server/blob/main/unifi-mcp-server.png" width="100%">
 
 <p align="center">
   <a href="#-features"><img alt="Status" src="https://img.shields.io/badge/Status-Active-brightgreen"></a>
