@@ -1,186 +1,227 @@
 <img src="https://github.com/ry-ops/unifi-mcp-server/blob/main/unifi-mcp-server.png" width="100%">
 
-<p align="center">
-  <a href="#-features"><img alt="Status" src="https://img.shields.io/badge/Status-Active-brightgreen"></a>
-  <a href="#-setup"><img alt="uv" src="https://img.shields.io/badge/Runtime-uv-blue"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-informational"></a>
-</p>
+# UniFi MCP Server - Infrastructure Monitoring
 
-# UniFi MCP Server
+A streamlined Model Context Protocol (MCP) server for monitoring UniFi infrastructure through the Site Manager API.
 
-A server implementation for managing and controlling UniFi network devices through MCP (Management Control Protocol). This server enables natural language interactions with your UniFi network using AI agents like Goose and Claude by wrapping the UniFi Network Integration API with Legacy API fallback.
+## Overview
+
+This MCP server provides cloud-based monitoring of UniFi networks through Ubiquiti's Site Manager API. It's optimized for reliable infrastructure monitoring using only the working endpoints from your UniFi setup.
+
+**Current Capabilities:**
+- Infrastructure overview and monitoring
+- Device inventory and search across your network
+- Host and site management
+- Cloud-based UniFi network analysis
+
+**Architecture:** This server focuses on the three core Site Manager endpoints that provide consistent access: hosts, sites, and devices. It removes non-functional endpoints to provide a clean, reliable monitoring experience.
 
 ## Features
 
-- Query UniFi **sites, devices, and clients** using natural language through AI agents
-- Search functionality for finding specific devices and clients
-- WLAN management with graceful fallback to Legacy API when needed
-- Health monitoring and capability probing
-- Supports both the **Integration API** (modern, key-based) and **Legacy API** (session login fallback)  
-- Local server implementation that connects directly to your UniFi console
-- Compatible with Claude Desktop and other MCP clients
-- Secure API key-based authentication with optional legacy fallback
+### Resources
+- `sitemanager://hosts` - List all UniFi OS consoles
+- `sitemanager://hosts/{host_id}` - Get specific console details  
+- `sitemanager://sites` - List all network sites
+- `sitemanager://devices` - List all devices across infrastructure
+- `sitemanager://devices/{device_id}` - Get specific device details
 
-## Prerequisites
+### Tools
+- `sm_get_infrastructure_overview` - Complete network summary with statistics
+- `sm_search_devices` - Search and filter devices by name, type, or host
+- `sm_get_host_summary` - Detailed host analysis with related sites and devices
 
-- Python 3.8 or higher
-- Install <a href="https://docs.astral.sh/uv/getting-started/" rel>`uv`</a> which we'll use for managing the Python project.
-- UniFi Network application (running locally or on UniFi OS)
-- UniFi API key (obtained from UniFi console)
+### Guided Workflows
+- Infrastructure monitoring guidance
+- Device search and filtering workflows
+- Site analysis procedures
 
-## Setup
+## Installation
 
-1. **Create an API key:**
-   - Go to your UniFi console at https://unifi.ui.com
-   - Navigate to **Settings » Control Plane » Integrations**
-   - Click **Create API Key**
+### Prerequisites
+- Python 3.8+
+- UniFi Site Manager account with API access
+- Valid Site Manager API key
 
-2. Clone and set up the repository:
+### Setup
+
+1. **Clone the repository:**
 ```bash
-git clone https://github.com/zcking/mcp-server-unifi
-cd mcp-server-unifi
-uv venv
-source .venv/bin/activate  # On Unix/macOS
+git clone <repository-url>
+cd unifi-mcp-server
+```
+
+2. **Install dependencies:**
+```bash
+uv install
 # or
-.venv\Scripts\activate  # On Windows
+pip install -r requirements.txt
 ```
 
-3. **Install dependencies:**
+3. **Create secrets.env file:**
+```env
+UNIFI_SITEMGR_BASE=https://api.ui.com
+UNIFI_SITEMGR_TOKEN=your_site_manager_api_key_here
+UNIFI_TIMEOUT_S=15
+```
+
+4. **Get your Site Manager API key:**
+   - Sign in to [UniFi Site Manager](https://unifi.ui.com)
+   - Navigate to API section in left sidebar
+   - Click "Create API Key"
+   - Copy the generated key to your `secrets.env` file
+
+## Usage
+
+### Running the Server
 ```bash
-   uv sync
+uv run main.py
+# or
+python main.py
 ```
 
-4. **Configure environment variables:**
-
-Create a `secrets.env` file in the project root:
-
+### Testing Connectivity
 ```bash
-# UniFi Controller Settings
-UNIFI_API_KEY=your_actual_api_key_here
-UNIFI_GATEWAY_HOST=192.168.1.1
-UNIFI_GATEWAY_PORT=443
-UNIFI_VERIFY_TLS=false
+# Test what endpoints are accessible
+uv run test_working_features.py
 
-# Legacy credentials (optional - for WLAN management fallback)
-UNIFI_USERNAME=admin
-UNIFI_PASSWORD="your_password_with_special_chars!"
+# Get your site and host IDs
+uv run get_site_host_ids.py
 ```
 
-## Running the Server
+### MCP Client Integration
 
-Start the MCP development server:
-
-```bash
-uv run mcp dev main.py
-```
-The MCP Inspector will be available at [http://localhost:5173](http://localhost:5173) with a randomly assigned port (typically 5173+) and will automatically launch in a new browser window for testing and debugging.
-
-## AI Agent Integration
-
-### Goose AI Setup
-
-1. Open Goose and go to **Settings » Extensions » Add custom extension**
-2. Configure the extension:
-
-   * **ID:** unifi
-   * **Name:** unifi
-   * **Description:** Get information about your UniFi network
-   * **Command:**
-```bash
-     `/Users/username/.local/bin/uv --directory /path/to/mcp-server-unifi run main.py`
-```
-   * **Environment Variables:** Configure using `secrets.env` file as shown above
-
-### Claude Desktop Setup
-
-1. Open Claude and go to **Settings » Developer » Edit Config**
-2. Add to your `claude_desktop_config.json`:
-
+Add to your MCP client configuration:
 ```json
-   {
-       "mcpServers": {
-           "unifi": {
-               "command": "/Users/username/.local/bin/uv",
-               "args": [
-                   "--directory",
-                   "/path/to/mcp-server-unifi",
-                   "run",
-                   "main.py"
-               ]
-           }
-       }
-   }
+{
+  "mcpServers": {
+    "unifi": {
+      "command": "uv",
+      "args": ["run", "main.py"],
+      "cwd": "/path/to/unifi-mcp-server"
+    }
+  }
+}
 ```
 
-## Current Resources
+## Example Queries
 
-| Resource | Description |
-|----------|-------------|
-| `health://unifi` | Health check and controller connectivity status |
-| `unifi://capabilities` | Probe available API endpoints and their status |
-| `sites://{site_id}/devices` | List all network devices for a site |
-| `sites://{site_id}/clients` | List all clients for a site |
-| `sites://{site_id}/clients/active` | List only active/connected clients |
-| `sites://{site_id}/wlans` | WLAN configurations (Integration API → Legacy fallback) |
-| `sites://{site_id}/search/clients/{query}` | Search clients by hostname, MAC, IP, etc. |
-| `sites://{site_id}/search/devices/{query}` | Search devices by name, model, MAC, IP |
+### Get Infrastructure Overview
+```
+Use the 'sm_get_infrastructure_overview' tool
+```
 
-## Available Tools
+### Search for Specific Devices
+```
+Use 'sm_search_devices' with name_filter="living room"
+```
 
-| Tool | Description |
-|------|-------------|
-| `unifi_health` | Check controller connectivity and status |
-| `debug_registry` | List all registered resources, tools, and prompts |
-| `block_client` | Block a client by MAC address |
-| `unblock_client` | Unblock a previously blocked client |
-| `kick_client` | Disconnect a client from the network |
-| `locate_device` | Flash LEDs on a device to locate it physically |
-| `wlan_set_enabled_legacy` | Enable/disable WLAN using Legacy API |
+### List All Hosts
+```
+Access resource: sitemanager://hosts
+```
 
-## API Authentication
+### Get Device Details
+```
+Access resource: sitemanager://devices/{device_id}
+```
 
-The server uses a dual-authentication approach:
+## API Requirements
 
-1. **Primary**: Integration API with `X-API-Key` header (modern, recommended)
-2. **Fallback**: Legacy cookie-based session authentication (for WLAN management and older features)
+### Site Manager API Access
+This server requires a valid UniFi Site Manager API key with read access to:
+- Hosts endpoint (`/v1/hosts`)
+- Sites endpoint (`/v1/sites`)  
+- Devices endpoint (`/v1/devices`)
 
-The server automatically falls back to legacy authentication when the Integration API doesn't support a feature (like WLAN configuration).
+### Permissions
+The API key needs permissions to access your UniFi infrastructure. The server will only work with data accessible to your UniFi account.
+
+## Limitations
+
+This server is optimized for basic Site Manager functionality. The following features are **not currently supported**:
+
+- **ISP Metrics** - Requires specific UniFi subscription/plan
+- **Local Network Control** - Requires local controller API access
+- **UniFi Protect** - Requires Protect system and additional permissions
+- **Advanced Analytics** - May require premium Site Manager features
+- **Real-time Events** - Limited to polling-based data
 
 ## Troubleshooting
 
-**Check connectivity:**
-```bash
-# Use the health check resource
-curl -X POST http://localhost:5173/health://unifi
+### Common Issues
 
-# Or check capabilities
-curl -X POST http://localhost:5173/unifi://capabilities
+**Authentication Errors (401)**
+- Verify your Site Manager API key is correct
+- Check that the key hasn't expired
+- Ensure your UniFi account has appropriate permissions
+
+**Empty Results**
+- Confirm your UniFi devices are properly connected to Site Manager
+- Check that your account has access to the relevant sites/hosts
+- Verify devices are online and reporting to the cloud
+
+**Connection Timeouts**
+- Check internet connectivity
+- Increase timeout value in secrets.env
+- Verify Site Manager service status
+
+### Debug Information
+```bash
+# Test endpoint connectivity
+uv run test_working_features.py
+
+# Get detailed site/host information
+uv run get_site_host_ids.py
 ```
 
-**Common issues:**
-- Ensure your API key has sufficient permissions
-- Verify `UNIFI_GATEWAY_HOST` can reach your UniFi controller
-- For WLAN management, legacy credentials (`UNIFI_USERNAME`/`UNIFI_PASSWORD`) are required
-- Set `UNIFI_VERIFY_TLS=false` if using self-signed certificates
+## Development
 
-## API Coverage
+### Project Structure
+```
+unifi-mcp-server/
+├── main.py              # Main MCP server
+├── secrets.env          # Configuration (not in git)
+├── test_working_features.py  # Endpoint testing
+├── get_site_host_ids.py # ID discovery utility
+└── README.md           # This file
+```
 
-| API Component | Read Support | Write Support | Notes |
-|---------------|--------------|---------------|-------|
-| **Network Integration** | ✅ Sites, Devices, Clients | ✅ Limited actions | No WLAN config support |
-| **Legacy Network** | ✅ WLAN configurations | ✅ WLAN enable/disable | Requires username/password |
+### Adding Features
+The server is designed to be extended as additional Site Manager endpoints become available. To add new functionality:
 
-**Integration API Gaps:** WLAN/SSID configuration, network settings, firewall rules
-**Solution:** Automatic fallback to Legacy API for unsupported features
+1. Add new resources in the Site Manager section
+2. Create corresponding tools if needed
+3. Add prompts for guided workflows
+4. Test endpoint availability first
 
-## 📌 Roadmap
+## Security
 
-The UniFi MCP Server is under active development. Future phases may include:
+- Store API keys in `secrets.env` (not committed to git)
+- Use HTTPS for all API communications
+- API keys should be treated as sensitive credentials
+- Consider rotating API keys periodically
 
-- UniFi Access integration (doors, readers, events)
-- UniFi Protect integration (cameras, events, streams)  
-- Site Manager cloud API integration
-- Additional network configuration tools
-- Enhanced search and filtering capabilities
+## License
 
-Check out the [roadmap.md](./roadmap.md) for the full development plan.
+[Add your license information here]
+
+## Contributing
+
+[Add contributing guidelines here]
+
+## Support
+
+For UniFi-specific issues:
+- [UniFi Community Forums](https://community.ui.com/)
+- [Ubiquiti Support](https://help.ui.com/)
+
+For MCP-related questions:
+- [MCP Documentation](https://modelcontextprotocol.io/)
+
+## Changelog
+
+### Version 1.0
+- Initial release with Site Manager support
+- Infrastructure monitoring capabilities
+- Device search and filtering
+- Host and site management
