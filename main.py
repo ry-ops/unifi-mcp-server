@@ -1,14 +1,17 @@
 # main.py
-# UniFi MCP Server – Integration + Legacy + Access + Protect (+ Site Manager stubs)
+# UniFi MCP Server — Integration + Legacy + Access + Protect (+ Site Manager stubs)
 # - Rich resources for reads, curated tools for safe actions, prompt playbooks
 # - Dual-mode auth (API key first; fall back to legacy cookie where needed)
 # - Includes health alias (health://unifi) and debug_registry tool
 # - Safer URL building to avoid line-wrap identifier breaks
 # - Enhanced status management and list hosts functionality
+# - SECURITY: SSRF protection with URL validation
 
 from typing import Any, Dict, List, Optional
 from datetime import datetime, timedelta
 from dataclasses import dataclass
+from urllib.parse import urlparse
+import ipaddress
 import os, json, requests, urllib3
 from pathlib import Path
 from mcp.server.fastmcp import FastMCP
@@ -20,7 +23,7 @@ def load_env_file(env_file: str = "secrets.env"):
     """Load environment variables from a .env file"""
     env_path = Path(env_file)
     if env_path.exists():
-        print(f"📁 Loading environment from: {env_path.absolute()}")
+        print(f"📄 Loading environment from: {env_path.absolute()}")
         with open(env_path, 'r') as f:
             for line_num, line in enumerate(f, 1):
                 line = line.strip()
@@ -64,7 +67,7 @@ VERIFY_TLS      = os.getenv("UNIFI_VERIFY_TLS", "false").lower() in ("1", "true"
 LEGACY_USER     = os.getenv("UNIFI_USERNAME", "USERNAME")
 LEGACY_PASS     = os.getenv("UNIFI_PASSWORD", "PASSWORD")
 
-# Site Manager (cloud) – generic bearer pass-through (optional)
+# Site Manager (cloud) — generic bearer pass-through (optional)
 SM_BASE         = os.getenv("UNIFI_SITEMGR_BASE", "").rstrip("/")
 SM_TOKEN        = os.getenv("UNIFI_SITEMGR_TOKEN", "")
 
@@ -78,10 +81,70 @@ REQUEST_TIMEOUT_S    = int(os.getenv("UNIFI_TIMEOUT_S", "15"))
 
 mcp = FastMCP("unifi")
 
-# ========= HTTP helpers =========
+# ========= Security: URL Validation (SSRF Protection) =========
 class UniFiHTTPError(RuntimeError):
     pass
 
+# Allowed hosts for SSRF protection
+ALLOWED_HOSTS = {
+    UNIFI_HOST,
+    "api.ui.com",  # For cloud API
+}
+
+# Add any additional allowed hosts from environment
+if SM_BASE:
+    sm_host = urlparse(SM_BASE).hostname
+    if sm_host:
+        ALLOWED_HOSTS.add(sm_host)
+
+def validate_url(url: str, purpose: str = "request") -> str:
+    """
+    Validate URL to prevent SSRF attacks.
+    Only allows requests to configured UniFi hosts.
+    """
+    try:
+        parsed = urlparse(url)
+        
+        # Must have scheme and netloc
+        if not parsed.scheme or not parsed.netloc:
+            raise UniFiHTTPError(f"Invalid URL for {purpose}: missing scheme or host")
+        
+        # Only allow https (or http for local development)
+        if parsed.scheme not in ("https", "http"):
+            raise UniFiHTTPError(f"Invalid URL scheme for {purpose}: {parsed.scheme}")
+        
+        # Extract hostname (remove port if present)
+        hostname = parsed.hostname
+        if not hostname:
+            raise UniFiHTTPError(f"Invalid URL for {purpose}: cannot extract hostname")
+        
+        # Check if hostname is in allowed list
+        if hostname not in ALLOWED_HOSTS:
+            raise UniFiHTTPError(
+                f"URL host not allowed for {purpose}: {hostname}. "
+                f"Allowed hosts: {', '.join(ALLOWED_HOSTS)}"
+            )
+        
+        # Additional check: prevent requests to private IP ranges if using IP
+        try:
+            ip = ipaddress.ip_address(hostname)
+            # Allow only if it's the configured UNIFI_HOST
+            if hostname != UNIFI_HOST:
+                raise UniFiHTTPError(
+                    f"Direct IP access not allowed for {purpose}: {hostname}"
+                )
+        except ValueError:
+            # Not an IP address, which is fine
+            pass
+        
+        return url
+        
+    except Exception as e:
+        if isinstance(e, UniFiHTTPError):
+            raise
+        raise UniFiHTTPError(f"URL validation failed for {purpose}: {str(e)}")
+
+# ========= HTTP helpers (with SSRF protection) =========
 def _raise_for(r: requests.Response) -> Dict[str, Any]:
     try:
         r.raise_for_status()
@@ -94,10 +157,12 @@ def _h_key() -> Dict[str, str]:
     return {"X-API-Key": UNIFI_API_KEY, "Content-Type": "application/json"}
 
 def _get(url: str, headers: Dict[str, str], params=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
-    return _raise_for(requests.get(url, headers=headers, params=params, verify=VERIFY_TLS, timeout=timeout))
+    validated_url = validate_url(url, "GET request")
+    return _raise_for(requests.get(validated_url, headers=headers, params=params, verify=VERIFY_TLS, timeout=timeout))
 
 def _post(url: str, headers: Dict[str, str], body=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
-    return _raise_for(requests.post(url, headers=headers, json=body, verify=VERIFY_TLS, timeout=timeout))
+    validated_url = validate_url(url, "POST request")
+    return _raise_for(requests.post(validated_url, headers=headers, json=body, verify=VERIFY_TLS, timeout=timeout))
 
 # Legacy session (cookie auth)
 LEGACY = requests.Session()
@@ -105,8 +170,12 @@ LEGACY = requests.Session()
 def legacy_login():
     if not (LEGACY_USER and LEGACY_PASS):
         raise UniFiHTTPError("Legacy login requires UNIFI_USERNAME and UNIFI_PASSWORD.")
+    
+    login_url = f"https://{UNIFI_HOST}:{UNIFI_PORT}/api/auth/login"
+    validated_url = validate_url(login_url, "legacy login")
+    
     r = LEGACY.post(
-        f"https://{UNIFI_HOST}:{UNIFI_PORT}/api/auth/login",
+        validated_url,
         json={"username": LEGACY_USER, "password": LEGACY_PASS},
         verify=VERIFY_TLS,
         timeout=REQUEST_TIMEOUT_S,
@@ -116,45 +185,61 @@ def legacy_login():
 def legacy_get(path: str, params=None) -> Dict[str, Any]:
     if not LEGACY.cookies:
         legacy_login()
-    r = LEGACY.get(f"{LEGACY_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+    
+    url = f"{LEGACY_BASE}{path}"
+    validated_url = validate_url(url, "legacy GET")
+    
+    r = LEGACY.get(validated_url, params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 def legacy_post(path: str, body=None) -> Dict[str, Any]:
     if not LEGACY.cookies:
         legacy_login()
-    r = LEGACY.post(f"{LEGACY_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+    
+    url = f"{LEGACY_BASE}{path}"
+    validated_url = validate_url(url, "legacy POST")
+    
+    r = LEGACY.post(validated_url, json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
-# ========= UniFi Protect helpers =========
+# ========= UniFi Protect helpers (with SSRF protection) =========
 def protect_get(path: str, params=None) -> Dict[str, Any]:
     """
     Try API key first; if unauthorized, fall back to legacy cookie session.
     """
+    url = f"{PROTECT_BASE}{path}"
+    validated_url = validate_url(url, "Protect GET")
+    
     try:
-        r = requests.get(f"{PROTECT_BASE}{path}", headers=_h_key(), params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+        r = requests.get(validated_url, headers=_h_key(), params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
         if r.status_code == 200:
             return _raise_for(r)
         if r.status_code not in (401, 403):
             return _raise_for(r)
     except Exception:
         pass  # fall back
+    
     if not LEGACY.cookies:
         legacy_login()
-    r = LEGACY.get(f"{PROTECT_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+    r = LEGACY.get(validated_url, params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 def protect_post(path: str, body=None) -> Dict[str, Any]:
+    url = f"{PROTECT_BASE}{path}"
+    validated_url = validate_url(url, "Protect POST")
+    
     try:
-        r = requests.post(f"{PROTECT_BASE}{path}", headers=_h_key(), json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+        r = requests.post(validated_url, headers=_h_key(), json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
         if r.status_code in (200, 204):
             return _raise_for(r)
         if r.status_code not in (401, 403):
             return _raise_for(r)
     except Exception:
         pass
+    
     if not LEGACY.cookies:
         legacy_login()
-    r = LEGACY.post(f"{PROTECT_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+    r = LEGACY.post(validated_url, json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 # ========= Utilities =========
@@ -229,15 +314,17 @@ def list_hosts_api_ui_com_format():
     except Exception as e:
         results["http_client_method"] = {"error": str(e)}
     
-    # Method 2: Using requests (your second example)
+    # Method 2: Using requests (your second example) - with validation
     try:
         url = "https://api.ui.com/v1/hosts"
+        validated_url = validate_url(url, "cloud API hosts list")
+        
         payload = {}
         headers = {
             'Accept': 'application/json',
             'X-API-Key': SM_TOKEN  # Use your SM_TOKEN as the X-API-Key
         }
-        response = requests.request("GET", url, headers=headers, data=payload, 
+        response = requests.request("GET", validated_url, headers=headers, data=payload, 
                                   verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
         
         results["requests_method"] = {
@@ -615,7 +702,8 @@ async def capabilities() -> Dict[str, Any]:
 
     def try_get(label: str, url: str, headers: Optional[Dict[str, str]] = None):
         try:
-            r = requests.get(url, headers=headers, verify=VERIFY_TLS, timeout=6)
+            validated_url = validate_url(url, f"capability probe: {label}")
+            r = requests.get(validated_url, headers=headers, verify=VERIFY_TLS, timeout=6)
             out[label] = {"url": url, "status": r.status_code}
         except Exception as e:
             out[label] = {"url": url, "error": str(e)}
@@ -639,7 +727,9 @@ async def capabilities() -> Dict[str, Any]:
     # Legacy quick check
     try:
         legacy_login()
-        r = LEGACY.get("/".join([LEGACY_BASE, "s", test_site, "stat", "sta"]), verify=VERIFY_TLS, timeout=6)
+        legacy_url = "/".join([LEGACY_BASE, "s", test_site, "stat", "sta"])
+        validated_url = validate_url(legacy_url, "legacy capability probe")
+        r = LEGACY.get(validated_url, verify=VERIFY_TLS, timeout=6)
         out["legacy.stat_sta"] = {"url": r.request.url, "status": r.status_code}
     except Exception as e:
         out["legacy.stat_sta"] = {"error": str(e)}
@@ -647,11 +737,13 @@ async def capabilities() -> Dict[str, Any]:
     # Protect
     def try_get_protect(label: str, path: str):
         try:
-            r = requests.get(f"{PROTECT_BASE}{path}", headers=_h_key(), verify=VERIFY_TLS, timeout=6)
+            protect_url = f"{PROTECT_BASE}{path}"
+            validated_url = validate_url(protect_url, f"protect probe: {label}")
+            r = requests.get(validated_url, headers=_h_key(), verify=VERIFY_TLS, timeout=6)
             if r.status_code in (401, 403) and LEGACY_USER and LEGACY_PASS:
                 legacy_login()
-                r = LEGACY.get(f"{PROTECT_BASE}{path}", verify=VERIFY_TLS, timeout=6)
-            out[f"protect.{label}"] = {"url": f"{PROTECT_BASE}{path}", "status": r.status_code}
+                r = LEGACY.get(validated_url, verify=VERIFY_TLS, timeout=6)
+            out[f"protect.{label}"] = {"url": protect_url, "status": r.status_code}
         except Exception as e:
             out[f"protect.{label}"] = {"url": f"{PROTECT_BASE}{path}", "error": str(e)}
 
@@ -867,11 +959,13 @@ def working_list_hosts_example():
     # Method 1: Try cloud API (your working method)
     try:
         url = "https://api.ui.com/v1/hosts"
+        validated_url = validate_url(url, "cloud hosts list")
+        
         headers = {
             'Accept': 'application/json',
             'X-API-Key': SM_TOKEN
         }
-        response = requests.get(url, headers=headers, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+        response = requests.get(validated_url, headers=headers, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
         
         if response.status_code == 200:
             example_result["method_used"] = "cloud_api"
@@ -949,7 +1043,9 @@ def debug_api_connectivity():
     
     # Test 1: Cloud API connectivity
     try:
-        response = requests.get("https://api.ui.com/v1/hosts", 
+        url = "https://api.ui.com/v1/hosts"
+        validated_url = validate_url(url, "cloud API debug")
+        response = requests.get(validated_url, 
                               headers={"Accept": "application/json", "X-API-Key": SM_TOKEN},
                               timeout=10, verify=VERIFY_TLS)
         debug_info["tests"]["cloud_api"] = {
@@ -963,8 +1059,9 @@ def debug_api_connectivity():
     
     # Test 2: Local controller connectivity
     try:
-        response = requests.get(f"{NET_INTEGRATION_BASE}/sites",
-                              headers=_h_key(), timeout=10, verify=VERIFY_TLS)
+        controller_url = f"{NET_INTEGRATION_BASE}/sites"
+        validated_url = validate_url(controller_url, "local controller debug")
+        response = requests.get(validated_url, headers=_h_key(), timeout=10, verify=VERIFY_TLS)
         debug_info["tests"]["local_controller"] = {
             "status": "success" if response.status_code == 200 else "failed",
             "status_code": response.status_code,
@@ -976,8 +1073,9 @@ def debug_api_connectivity():
     
     # Test 3: Check if controller is reachable
     try:
-        response = requests.get(f"https://{UNIFI_HOST}:{UNIFI_PORT}/",
-                              timeout=5, verify=VERIFY_TLS)
+        base_url = f"https://{UNIFI_HOST}:{UNIFI_PORT}/"
+        validated_url = validate_url(base_url, "controller reachability")
+        response = requests.get(validated_url, timeout=5, verify=VERIFY_TLS)
         debug_info["tests"]["controller_reachable"] = {
             "status": "reachable",
             "status_code": response.status_code
@@ -994,7 +1092,8 @@ def debug_api_connectivity():
         "cloud_token_configured": bool(SM_TOKEN),
         "verify_tls": VERIFY_TLS,
         "timeout": REQUEST_TIMEOUT_S,
-        "discovered_sites": get_correct_site_ids()
+        "discovered_sites": get_correct_site_ids(),
+        "allowed_hosts": list(ALLOWED_HOSTS)
     }
     
     # Generate recommendations
@@ -1010,7 +1109,7 @@ def debug_api_connectivity():
     return debug_info
 
 # ========= Action tools =========
-# Integration API – safe set
+# Integration API — safe set
 @mcp.tool()
 def block_client(site_id: str, mac: str) -> Dict[str, Any]:
     return _post("/".join([NET_INTEGRATION_BASE, "sites", site_id, "clients", "block"]), _h_key(), {"mac": mac})
@@ -1034,12 +1133,12 @@ def wlan_set_enabled_legacy(site_id: str, wlan_id: str, enabled: bool) -> Dict[s
     body = {"_id": wlan_id, "enabled": bool(enabled)}
     return legacy_post(f"/s/{site_id}/rest/wlanconf/{wlan_id}", body)
 
-# Access – sample action (varies by build)
+# Access — sample action (varies by build)
 @mcp.tool()
 def access_unlock_door(door_id: str, seconds: int = 5) -> Dict[str, Any]:
     return _post("/".join([ACCESS_BASE, "doors", door_id, "unlock"]), _h_key(), {"duration": seconds})
 
-# Protect – safe starters
+# Protect — safe starters
 @mcp.tool()
 def protect_camera_reboot(camera_id: str) -> Dict[str, Any]:
     return protect_post(f"/cameras/{camera_id}/reboot")
@@ -1175,7 +1274,9 @@ def list_hosts_cloud(page_size: int = 100) -> Dict[str, Any]:
         params = {"limit": page_size}
         
         url = f"{SM_BASE}/v1/hosts"
-        resp = requests.get(url, headers=headers, params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+        validated_url = validate_url(url, "cloud hosts list")
+        
+        resp = requests.get(validated_url, headers=headers, params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
         
         if resp.status_code == 200:
             data = resp.json()
@@ -1419,15 +1520,17 @@ def how_to_debug_api_issues():
 
 # ========= Entrypoint =========
 if __name__ == "__main__":
-    print("🚀 UniFi MCP – Integration + Legacy + Access + Protect (+ Site Manager stubs)")
+    print("🚀 UniFi MCP — Integration + Legacy + Access + Protect (+ Site Manager stubs)")
     print(f"→ Controller: https://{UNIFI_HOST}:{UNIFI_PORT}  TLS verify={VERIFY_TLS}")
+    print(f"🔒 SSRF Protection: Allowed hosts = {', '.join(ALLOWED_HOSTS)}")
+    
     if not UNIFI_API_KEY:
         print("⚠️ UNIFI_API_KEY not set — Integration/Access/Protect key-based calls may fail.")
     
     # Show discovered sites on startup
     sites = get_correct_site_ids()
     if sites:
-        print(f"📍 Discovered sites: {', '.join(sites)}")
+        print(f"🏢 Discovered sites: {', '.join(sites)}")
     else:
         print("⚠️ No sites discovered - check API credentials")
     
