@@ -1,5 +1,11 @@
 <img src="https://github.com/ry-ops/unifi-mcp-server/blob/main/unifi-mcp-server.png" width="100%">
 
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
+[![MCP](https://img.shields.io/badge/MCP-1.0-purple.svg)](https://modelcontextprotocol.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 # UniFi MCP Server - Comprehensive Infrastructure Management
 
 A Model Context Protocol (MCP) server for comprehensive UniFi infrastructure monitoring and management. This server enables natural language interactions with your UniFi network using AI agents like Claude by integrating with both local UniFi controllers and the cloud-based Site Manager API.
