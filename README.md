@@ -3,12 +3,15 @@
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple.svg)](https://modelcontextprotocol.io/)
+[![A2A](https://img.shields.io/badge/A2A-enabled-orange.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 # UniFi MCP Server - Comprehensive Infrastructure Management
 
 A Model Context Protocol (MCP) server for comprehensive UniFi infrastructure monitoring and management. This server enables natural language interactions with your UniFi network using AI agents like Claude by integrating with both local UniFi controllers and the cloud-based Site Manager API.
+
+**✨ Features Agent-to-Agent (A2A) Protocol** for intelligent, multi-step network operations with built-in safety checks and guided workflows.
 
 ## Features
 
@@ -35,6 +38,26 @@ A Model Context Protocol (MCP) server for comprehensive UniFi infrastructure mon
 - Intelligent device discovery and management
 - Automated troubleshooting and diagnostics
 - Smart status reporting and alerting
+
+### 🔗 **Agent-to-Agent (A2A) Protocol**
+Built-in A2A protocol enables AI agents to understand and execute complex UniFi operations through structured prompt playbooks:
+
+**Available A2A Prompts:**
+- **`how_to_check_unifi_health`** - Check controller health and connectivity
+- **`how_to_check_system_status`** - Get comprehensive system health overview
+- **`how_to_monitor_devices`** - Monitor device health and identify issues
+- **`how_to_check_network_activity`** - Check client activity and bandwidth usage
+- **`how_to_find_device`** - Search devices and flash LEDs for identification
+- **`how_to_block_client`** - Safely block/unblock network clients
+- **`how_to_toggle_wlan`** - Enable/disable wireless networks
+- **`how_to_list_hosts`** - List all hosts across local and cloud APIs
+- **`how_to_debug_api_issues`** - Debug API connectivity problems
+
+These prompts guide AI agents through multi-step workflows, ensuring safe and correct execution of network operations. Each prompt includes:
+- Clear step-by-step instructions
+- Required tool calls and resource queries
+- Safety checks and user confirmations
+- Fallback strategies for error handling
 
 ## Prerequisites
 
