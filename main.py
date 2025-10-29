@@ -503,15 +503,15 @@ class UniFiStatusManager:
         # Check clients status
         try:
             all_clients = paginate_integration(f"/sites/{site_id}/clients")
-            active_clients = paginate_integration(f"/sites/{site_id}/clients/active")
+            # The /clients endpoint returns currently connected clients
             status["services"]["clients"] = {
                 "status": "healthy",
                 "total": len(all_clients),
-                "active": len(active_clients),
+                "active": len(all_clients),
                 "last_check": datetime.now().isoformat()
             }
             status["summary"]["total_clients"] = len(all_clients)
-            status["summary"]["active_clients"] = len(active_clients)
+            status["summary"]["active_clients"] = len(all_clients)
         except Exception as e:
             status["services"]["clients"] = {
                 "status": "error",
@@ -629,9 +629,10 @@ class UniFiStatusManager:
         if site_id is None:
             sites = get_correct_site_ids()
             site_id = sites[0] if sites else "default"
-            
+
         try:
-            active_clients = paginate_integration(f"/sites/{site_id}/clients/active")
+            # The /clients endpoint returns currently connected clients
+            active_clients = paginate_integration(f"/sites/{site_id}/clients")
             
             summary = {
                 "active_count": len(active_clients),
@@ -770,7 +771,8 @@ async def clients(site_id: str) -> List[Dict[str, Any]]:
 
 @mcp.resource("sites://{site_id}/clients/active")
 async def clients_active(site_id: str) -> List[Dict[str, Any]]:
-    return paginate_integration(f"/sites/{site_id}/clients/active")
+    # The /clients endpoint returns currently connected (active) clients
+    return paginate_integration(f"/sites/{site_id}/clients")
 
 # WLANs with graceful fallback (Integration -> Legacy) and safe URL joins
 @mcp.resource("sites://{site_id}/wlans")
@@ -897,7 +899,8 @@ def get_quick_status() -> Dict[str, Any]:
         
         # Quick counts
         devices = paginate_integration(f"/sites/{site_id}/devices")
-        active_clients = paginate_integration(f"/sites/{site_id}/clients/active")
+        # The /clients endpoint returns currently connected (active) clients
+        active_clients = paginate_integration(f"/sites/{site_id}/clients")
         
         online_devices = len([d for d in devices if d.get("state") == 1])
         
@@ -1191,7 +1194,8 @@ def list_active_clients(site_id: str = None) -> Dict[str, Any]:
         site_id = sites[0] if sites else "default"
         
     try:
-        clients = paginate_integration(f"/sites/{site_id}/clients/active")
+        # The /clients endpoint returns currently connected (active) clients
+        clients = paginate_integration(f"/sites/{site_id}/clients")
         return {
             "success": True,
             "site_id": site_id,
