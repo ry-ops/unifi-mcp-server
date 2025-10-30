@@ -483,7 +483,10 @@ class UniFiStatusManager:
         # Check devices status
         try:
             devices = paginate_integration(f"/sites/{site_id}/devices")
-            online_devices = [d for d in devices if d.get("state") == 1]
+            # Handle both Integration API (string) and Legacy API (int) state formats
+            online_devices = [d for d in devices if
+                            (isinstance(d.get("state"), int) and d.get("state") == 1) or
+                            (isinstance(d.get("state"), str) and d.get("state").upper() == "ONLINE")]
             status["services"]["devices"] = {
                 "status": "healthy",
                 "total": len(devices),
@@ -593,19 +596,29 @@ class UniFiStatusManager:
             
             uptimes = []
             for device in devices:
-                # Count by state
+                # Count by state - handle both Integration API (string) and Legacy API (int)
                 state = device.get("state", "unknown")
-                state_name = {1: "online", 0: "offline", -1: "error"}.get(state, "unknown")
+
+                # Normalize state to lowercase string for consistent handling
+                if isinstance(state, str):
+                    state_name = state.lower()
+                elif isinstance(state, int):
+                    state_name = {1: "online", 0: "offline", -1: "error"}.get(state, "unknown")
+                else:
+                    state_name = "unknown"
+
                 summary["by_state"][state_name] = summary["by_state"].get(state_name, 0) + 1
-                
+
                 # Count by type
-                dev_type = device.get("type", "unknown")
+                dev_type = device.get("type", device.get("model", "unknown"))
                 summary["by_type"][dev_type] = summary["by_type"].get(dev_type, 0) + 1
-                
-                # Check for issues
-                if state == 0:  # offline
+
+                # Check for issues - handle both string and int
+                is_offline = (isinstance(state, int) and state == 0) or \
+                            (isinstance(state, str) and state.upper() == "OFFLINE")
+                if is_offline:
                     summary["issues"].append(f"{device.get('name', 'Unknown')} is offline")
-                
+
                 # Collect uptime
                 uptime = device.get("uptime")
                 if uptime:
@@ -901,8 +914,11 @@ def get_quick_status() -> Dict[str, Any]:
         devices = paginate_integration(f"/sites/{site_id}/devices")
         # The /clients endpoint returns currently connected (active) clients
         active_clients = paginate_integration(f"/sites/{site_id}/clients")
-        
-        online_devices = len([d for d in devices if d.get("state") == 1])
+
+        # Count online devices - handle both Integration API (string) and Legacy API (int)
+        online_devices = len([d for d in devices if
+                             (isinstance(d.get("state"), int) and d.get("state") == 1) or
+                             (isinstance(d.get("state"), str) and d.get("state").upper() == "ONLINE")])
         
         return {
             "status": "healthy",
