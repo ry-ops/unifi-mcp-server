@@ -1,0 +1,19 @@
+# Bandit security linter configuration
+# https://bandit.readthedocs.io/en/latest/config.html
+
+exclude_dirs:
+  - /tests
+  - /.venv
+  - /__pycache__
+
+# Skip specific test IDs (with justification)
+# B101: assert_used - OK in tests
+# B105: hardcoded_password_string - We use env vars, false positives on variable names
+# B108: hardcoded_temp_file - Not applicable to this project
+# B404: import_subprocess - Not used
+# B603: subprocess_without_shell_equals_true - Not used
+skips:
+  - B101
+  - B108
+  - B404
+  - B603
