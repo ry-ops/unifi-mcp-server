@@ -1,7 +1,7 @@
 [project]
-name = "mcp-server-unifi"
+name = "unifi-mcp-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "Comprehensive Infrastructure Management"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
