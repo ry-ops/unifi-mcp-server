@@ -198,10 +198,15 @@ Prompts guide AI assistants through common workflows:
 | `UNIFI_API_KEY` | Yes* | - | Integration API key from controller |
 | `UNIFI_GATEWAY_HOST` | Yes | - | Controller IP address or hostname |
 | `UNIFI_GATEWAY_PORT` | No | 443 | Controller HTTPS port |
-| `UNIFI_VERIFY_TLS` | No | false | Verify TLS certificates |
+| `UNIFI_VERIFY_TLS` | No | **true** | Verify TLS certificates (CHANGED in Week 2) |
 | `UNIFI_USERNAME` | No** | - | Legacy username for cookie auth |
 | `UNIFI_PASSWORD` | No** | - | Legacy password for cookie auth |
 | `UNIFI_TIMEOUT_S` | No | 15 | HTTP request timeout in seconds |
+| `UNIFI_RATE_LIMIT_PER_MINUTE` | No | 60 | Max API calls per minute per endpoint |
+| `UNIFI_RATE_LIMIT_PER_HOUR` | No | 1000 | Max API calls per hour per endpoint |
+| `UNIFI_LOG_LEVEL` | No | INFO | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `UNIFI_LOG_FILE` | No | unifi_mcp_audit.log | Audit log file location |
+| `UNIFI_LOG_TO_FILE` | No | true | Enable file logging |
 | `UNIFI_SITEMGR_BASE` | No | - | Site Manager cloud API base URL |
 | `UNIFI_SITEMGR_TOKEN` | No | - | Site Manager API token |
 
@@ -210,10 +215,51 @@ Prompts guide AI assistants through common workflows:
 
 ### TLS Certificate Verification
 
-By default, TLS verification is disabled (`UNIFI_VERIFY_TLS=false`) to support self-signed certificates common in UniFi deployments. For production environments with valid certificates, set:
+**IMPORTANT SECURITY CHANGE:** As of Week 2 security improvements, TLS verification is **ENABLED BY DEFAULT** (`UNIFI_VERIFY_TLS=true`).
+
+#### Why TLS Verification Matters
+
+TLS verification protects against man-in-the-middle (MITM) attacks by ensuring you're communicating with the actual UniFi controller and not an attacker. Disabling TLS verification makes your credentials and data vulnerable to interception.
+
+#### When to Disable TLS Verification
+
+Only disable TLS verification if:
+1. You're using self-signed certificates in a trusted network
+2. You understand the security risks
+3. You cannot add certificates to your system trust store
+
+To disable TLS verification:
 
 ```bash
-UNIFI_VERIFY_TLS=true
+UNIFI_VERIFY_TLS=false
+```
+
+**WARNING:** When disabled, you'll see security warnings in the logs. This is intentional.
+
+#### Proper Certificate Management (Recommended)
+
+Instead of disabling verification, properly manage certificates:
+
+**Option 1: Add Self-Signed Certificate to Trust Store**
+
+```bash
+# macOS
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/cert.pem
+
+# Linux
+sudo cp /path/to/cert.pem /usr/local/share/ca-certificates/unifi.crt
+sudo update-ca-certificates
+```
+
+**Option 2: Use Valid Certificates**
+
+Use Let's Encrypt or another CA to get valid certificates for your UniFi controller.
+
+**Option 3: Point Verification at Custom CA Bundle**
+
+```bash
+# Set custom CA bundle (future enhancement)
+export REQUESTS_CA_BUNDLE=/path/to/ca-bundle.crt
 ```
 
 ## Architecture
@@ -241,6 +287,152 @@ All URLs are built using safe joining to prevent line-wrap identifier breaks:
 ```python
 url = "/".join([base, "path", "component"])
 ```
+
+## Security Features (Week 2 Improvements)
+
+This server implements comprehensive security measures to protect your UniFi infrastructure:
+
+### 1. Rate Limiting
+
+Prevents API abuse and denial-of-service attacks against your UniFi controller.
+
+**Configuration:**
+```bash
+# In secrets.env
+UNIFI_RATE_LIMIT_PER_MINUTE=60    # Max 60 requests/minute per endpoint (default)
+UNIFI_RATE_LIMIT_PER_HOUR=1000    # Max 1000 requests/hour per endpoint (default)
+```
+
+**Features:**
+- Per-endpoint rate limiting (prevents single endpoint abuse)
+- Sliding time window (not fixed buckets)
+- Thread-safe concurrent request handling
+- Detailed error messages with retry timing
+- Rate limit statistics via `get_rate_limit_stats()` tool
+
+**When rate limits are exceeded:**
+```
+Rate limit exceeded: 60 calls/minute. Retry in 45.2s
+```
+
+### 2. Comprehensive Audit Logging
+
+All API requests, responses, and security events are logged with sensitive data automatically sanitized.
+
+**Configuration:**
+```bash
+# In secrets.env
+UNIFI_LOG_LEVEL=INFO                    # DEBUG, INFO, WARNING, ERROR, CRITICAL
+UNIFI_LOG_FILE=unifi_mcp_audit.log     # Log file location
+UNIFI_LOG_TO_FILE=true                  # Write logs to file (default: true)
+```
+
+**What is logged:**
+- All API requests with sanitized parameters
+- All API responses with success/failure status
+- Rate limit violations with details
+- Authentication attempts
+- TLS verification status
+- Input validation failures
+- HTTP errors with sanitized details
+
+**What is NOT logged:**
+- Passwords, API keys, tokens (automatically redacted as `[REDACTED]`)
+- Session cookies
+- Authorization headers (values redacted)
+- Sensitive URL parameters
+
+**Log Format:**
+```json
+{
+  "timestamp": "2024-10-31T12:34:56.789Z",
+  "action": "api_request",
+  "success": true,
+  "details": {
+    "method": "POST",
+    "endpoint": "/sites/default/clients/block",
+    "body": {"mac": "aa:bb:cc:dd:ee:ff"}
+  }
+}
+```
+
+### 3. Input Validation and Sanitization
+
+All tool inputs are validated before use to prevent injection attacks and malformed requests.
+
+**Validation Functions:**
+- `validate_site_id()` - Alphanumeric + hyphens/underscores, 1-64 chars
+- `validate_mac_address()` - Standard MAC formats with normalization
+- `validate_device_id()` - 6-64 character device IDs
+- `validate_duration()` - Integer seconds with min/max bounds
+- `validate_boolean()` - Type-safe boolean coercion
+
+**Protection Against:**
+- SQL injection attempts
+- Path traversal attacks (`../../../etc/passwd`)
+- Command injection (`;`, `|`, `` ` ``)
+- XSS attempts (`<script>`, `javascript:`)
+- Invalid data types
+- Oversized inputs
+
+**Example:**
+```python
+# Automatically validated in all tools
+block_client("site'; DROP TABLE--", "invalid-mac")
+# Returns: {"success": False, "error": "Validation failed: site_id contains invalid characters"}
+```
+
+### 4. Request/Response Sanitization
+
+Error messages and logs are automatically sanitized to prevent information disclosure.
+
+**Features:**
+- Automatic redaction of sensitive patterns in errors
+- Truncation of oversized error messages
+- Recursive sanitization of nested data structures
+- Protection against log injection
+- Depth limits to prevent deep recursion attacks
+
+**Example Sanitization:**
+```
+Before: Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+After:  Authorization: Bearer [REDACTED]
+
+Before: POST /api?api_key=sk_live_abc123&password=secret
+After:  POST /api?api_key=[REDACTED]&password=[REDACTED]
+```
+
+### 5. TLS Verification (Enabled by Default)
+
+See [TLS Certificate Verification](#tls-certificate-verification) section above.
+
+### 6. Security Testing
+
+Comprehensive pytest test suite with 71+ security-focused tests:
+
+```bash
+# Run security tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=main --cov-report=html
+
+# Run specific security test categories
+pytest tests/test_validation.py -v        # Input validation tests
+pytest tests/test_sanitization.py -v      # Sanitization tests
+pytest tests/test_rate_limiting.py -v     # Rate limiting tests
+```
+
+**Test Coverage:**
+- Input validation edge cases
+- SQL injection attempts
+- Path traversal attempts
+- XSS attempts
+- Command injection attempts
+- Rate limiting behavior
+- Concurrent access patterns
+- Sanitization effectiveness
+- Error handling
 
 ## Security Best Practices
 
@@ -393,28 +585,38 @@ mypy main.py
 
 ## Known Limitations
 
-1. **No automated tests**: Testing framework not yet implemented
-2. **Single-file architecture**: May need refactoring for large-scale features
-3. **Limited Protect support**: Basic camera operations only
-4. **Site Manager stub**: Cloud API not fully implemented
-5. **No CI/CD**: Manual deployment required
+1. **Single-file architecture**: May need refactoring for large-scale features
+2. **Limited Protect support**: Basic camera operations only
+3. **Site Manager stub**: Cloud API not fully implemented
+4. **No CI/CD**: Manual deployment required
+5. **No integration tests**: Tests use mocked data, not real UniFi controller
 
 ## Roadmap
 
 ### Week 1 (Critical Fixes) - COMPLETED
-- [x] Fix filename typo (secreds.ev ’ secrets.env)
+- [x] Fix filename typo (secreds.ev â†’ secrets.env)
 - [x] Update .gitignore for credential files
 - [x] Create comprehensive README
-- [ ] Add input validation for tool parameters
+- [x] Add input validation for tool parameters
 
-### Week 2-4 (Security & Quality)
-- [ ] Add comprehensive input validation and sanitization
-- [ ] Implement rate limiting for API calls
-- [ ] Add logging and audit trail
-- [ ] Security vulnerability scanning
-- [ ] Implement pytest test suite
+### Week 2 (Security Improvements) - COMPLETED
+- [x] Add comprehensive input validation and sanitization
+- [x] Implement rate limiting for API calls (60/min, 1000/hour configurable)
+- [x] Add comprehensive audit logging with sanitization
+- [x] Enable TLS verification by default with clear override docs
+- [x] Implement pytest test suite with 71+ security tests
+- [x] Add request/response sanitization
+- [x] Protect against SQL injection, XSS, path traversal, command injection
+- [x] Add rate limit statistics tool
+- [x] Document all security features
+
+### Week 3-4 (Quality & Enhancements)
+- [ ] Security vulnerability scanning with automated tools
 - [ ] Add error handling improvements
 - [ ] Create example configurations
+- [ ] Add integration tests with mock UniFi controller
+- [ ] Performance optimization for high-volume deployments
+- [ ] Add metrics and monitoring capabilities
 
 ### Future Enhancements
 - [ ] Support for UniFi Talk (VoIP)
