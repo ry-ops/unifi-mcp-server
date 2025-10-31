@@ -173,8 +173,11 @@ Tools perform safe write operations:
 - `protect_toggle_privacy(camera_id, enabled)` - Toggle privacy mode
 
 #### Utility Tools
-- `unifi_health()` - Check controller connectivity
+- `unifi_health()` - Check controller connectivity and validate credentials
 - `debug_registry()` - List all registered resources/tools/prompts
+- `get_rate_limit_stats(endpoint="global")` - Get rate limiting statistics
+- `get_session_info()` - Get legacy session status and expiration (Week 3)
+- `invalidate_session()` - Force session invalidation for testing (Week 3)
 
 ### Available Prompts
 
@@ -207,6 +210,7 @@ Prompts guide AI assistants through common workflows:
 | `UNIFI_LOG_LEVEL` | No | INFO | Logging level (DEBUG, INFO, WARNING, ERROR) |
 | `UNIFI_LOG_FILE` | No | unifi_mcp_audit.log | Audit log file location |
 | `UNIFI_LOG_TO_FILE` | No | true | Enable file logging |
+| `UNIFI_SESSION_TIMEOUT_S` | No | 3600 | Legacy session timeout in seconds (Week 3) |
 | `UNIFI_SITEMGR_BASE` | No | - | Site Manager cloud API base URL |
 | `UNIFI_SITEMGR_TOKEN` | No | - | Site Manager API token |
 
@@ -406,9 +410,77 @@ After:  POST /api?api_key=[REDACTED]&password=[REDACTED]
 
 See [TLS Certificate Verification](#tls-certificate-verification) section above.
 
-### 6. Security Testing
+### 6. Session Management (Week 3 Enhancement)
 
-Comprehensive pytest test suite with 71+ security-focused tests:
+Legacy cookie-based authentication includes automatic session management:
+
+**Features:**
+- Automatic session timeout (configurable via `UNIFI_SESSION_TIMEOUT_S`)
+- Automatic session refresh at 80% of timeout
+- Thread-safe session operations
+- Session age tracking and invalidation
+- Manual session invalidation for credential rotation testing
+
+**Configuration:**
+```bash
+# In secrets.env
+UNIFI_SESSION_TIMEOUT_S=3600  # 1 hour (default)
+```
+
+**Monitoring session health:**
+```python
+# Get current session status
+get_session_info()
+
+# Returns:
+{
+  "success": true,
+  "session": {
+    "active": true,
+    "created_at": "2025-10-31T14:00:00",
+    "age_seconds": 1800,
+    "timeout_seconds": 3600,
+    "remaining_seconds": 1800,
+    "expires_at": "2025-10-31T15:00:00",
+    "should_refresh": false
+  },
+  "session_timeout_configured": 3600
+}
+
+# Force session invalidation (useful for credential rotation)
+invalidate_session()
+```
+
+### 7. Security Vulnerability Scanning (Week 3)
+
+Automated security scanning with Bandit and Safety:
+
+```bash
+# Run Bandit (Python code security linter)
+bandit -c .bandit -r main.py
+
+# Run Safety (dependency vulnerability scanner)
+safety check -r requirements.txt
+
+# Install and run pre-commit hooks (includes Bandit)
+pre-commit install
+pre-commit run --all-files
+```
+
+**What's scanned:**
+- SQL injection vulnerabilities
+- Shell injection risks
+- Hard-coded secrets
+- Insecure cryptography
+- Known vulnerabilities in dependencies (CVE database)
+- Try/except/pass patterns
+- Assert statement usage
+
+See `SECURITY.md` for complete security documentation.
+
+### 8. Security Testing
+
+Comprehensive pytest test suite with 85+ security-focused tests:
 
 ```bash
 # Run security tests
@@ -418,9 +490,11 @@ pytest tests/ -v
 pytest tests/ --cov=main --cov-report=html
 
 # Run specific security test categories
-pytest tests/test_validation.py -v        # Input validation tests
-pytest tests/test_sanitization.py -v      # Sanitization tests
-pytest tests/test_rate_limiting.py -v     # Rate limiting tests
+pytest tests/test_validation.py -v            # Input validation tests
+pytest tests/test_sanitization.py -v          # Sanitization tests
+pytest tests/test_rate_limiting.py -v         # Rate limiting tests
+pytest tests/test_integration_auth.py -v      # Authentication flow tests (Week 3)
+pytest tests/test_integration_errors.py -v    # Error handling tests (Week 3)
 ```
 
 **Test Coverage:**
@@ -441,8 +515,27 @@ pytest tests/test_rate_limiting.py -v     # Rate limiting tests
 1. **Never commit secrets**: The `secrets.env` file is git-ignored
 2. **Use API keys**: Preferred over username/password for better security
 3. **Restrict API key permissions**: Create keys with minimal required permissions
-4. **Rotate credentials regularly**: Update API keys periodically
-5. **Use environment isolation**: Keep production and development credentials separate
+4. **Rotate credentials regularly**: Update API keys every 90 days (see `SECURITY.md`)
+5. **Test before rotating**: Use `test_credentials.py` to validate new credentials
+6. **Use environment isolation**: Keep production and development credentials separate
+7. **Monitor sessions**: Check session health with `get_session_info()`
+
+### Credential Rotation (Week 3 Feature)
+
+Before rotating credentials in production:
+
+```bash
+# Test new API key
+python test_credentials.py --api-key NEW_API_KEY
+
+# Test new legacy credentials
+python test_credentials.py --username admin --password newpass
+
+# Test all configured credentials
+python test_credentials.py --all
+```
+
+See `SECURITY.md` for complete credential rotation workflow and zero-downtime procedures.
 
 ### Network Security
 
@@ -588,8 +681,8 @@ mypy main.py
 1. **Single-file architecture**: May need refactoring for large-scale features
 2. **Limited Protect support**: Basic camera operations only
 3. **Site Manager stub**: Cloud API not fully implemented
-4. **No CI/CD**: Manual deployment required
-5. **No integration tests**: Tests use mocked data, not real UniFi controller
+4. **No CI/CD**: Manual deployment required (Week 4 roadmap)
+5. **Safety 3.x requires auth**: Dependency scanning needs authentication or use deprecated command
 
 ## Roadmap
 
@@ -610,13 +703,27 @@ mypy main.py
 - [x] Add rate limit statistics tool
 - [x] Document all security features
 
-### Week 3-4 (Quality & Enhancements)
-- [ ] Security vulnerability scanning with automated tools
-- [ ] Add error handling improvements
-- [ ] Create example configurations
-- [ ] Add integration tests with mock UniFi controller
+### Week 3 (Testing & Hardening) - COMPLETED
+- [x] Add security vulnerability scanning (Bandit, Safety)
+- [x] Configure pre-commit hooks for automated security checks
+- [x] Implement session timeout and refresh for legacy auth
+- [x] Add automatic session refresh before expiration (80% threshold)
+- [x] Validate all environment variables at startup
+- [x] Add environment variable format validation (host, port, timeouts)
+- [x] Create integration tests with mock UniFi controller
+- [x] Test authentication flows (API key and legacy)
+- [x] Test error handling for various HTTP status codes
+- [x] Comprehensive secrets rotation workflow documentation
+- [x] Create credential testing utility script
+- [x] Add health check with credential validation
+- [x] Document security scanning procedures
+
+### Week 4 (Production Readiness)
 - [ ] Performance optimization for high-volume deployments
 - [ ] Add metrics and monitoring capabilities
+- [ ] CI/CD pipeline setup
+- [ ] Docker containerization
+- [ ] Kubernetes deployment manifests
 
 ### Future Enhancements
 - [ ] Support for UniFi Talk (VoIP)
