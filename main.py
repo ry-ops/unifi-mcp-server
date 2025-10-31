@@ -6,9 +6,11 @@
 # - Safer URL building to avoid line-wrap identifier breaks
 
 from typing import Any, Dict, List, Optional
-import os, json, requests, urllib3
+import os, json, requests, urllib3, time, threading, logging
 from pathlib import Path
 from mcp.server.fastmcp import FastMCP
+from collections import defaultdict
+from datetime import datetime
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -51,11 +53,176 @@ def load_env_file(env_file: str = "secrets.env"):
 # Load environment variables first
 load_env_file()
 
+# ========= Logging Configuration =========
+LOG_LEVEL = os.getenv("UNIFI_LOG_LEVEL", "INFO").upper()
+LOG_FILE = os.getenv("UNIFI_LOG_FILE", "unifi_mcp_audit.log")
+LOG_TO_FILE = os.getenv("UNIFI_LOG_TO_FILE", "true").lower() in ("1", "true", "yes")
+
+# Configure logging
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+    ] if not LOG_TO_FILE else [
+        logging.StreamHandler(),
+        logging.FileHandler(LOG_FILE)
+    ]
+)
+
+logger = logging.getLogger("unifi-mcp")
+
+# Sensitive fields to redact from logs
+SENSITIVE_FIELDS = {
+    "password", "api_key", "token", "secret", "apiKey", "apikey",
+    "authorization", "x-api-key", "csrf-token", "session", "cookie"
+}
+
+def sanitize_for_logging(data: Any, depth: int = 0) -> Any:
+    """
+    Recursively sanitize sensitive data from logs.
+    Redacts passwords, API keys, tokens, and other sensitive fields.
+    """
+    if depth > 10:  # Prevent deep recursion
+        return "[MAX_DEPTH_REACHED]"
+
+    if isinstance(data, dict):
+        sanitized = {}
+        for key, value in data.items():
+            key_lower = str(key).lower()
+            if any(sensitive in key_lower for sensitive in SENSITIVE_FIELDS):
+                sanitized[key] = "[REDACTED]"
+            else:
+                sanitized[key] = sanitize_for_logging(value, depth + 1)
+        return sanitized
+    elif isinstance(data, list):
+        return [sanitize_for_logging(item, depth + 1) for item in data]
+    elif isinstance(data, str) and len(data) > 1000:
+        return f"{data[:100]}...[TRUNCATED {len(data)} chars]"
+    else:
+        return data
+
+def audit_log(action: str, details: Dict[str, Any], success: bool = True, error: Optional[str] = None):
+    """
+    Log auditable actions with sanitized details.
+    """
+    log_entry = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "action": action,
+        "success": success,
+        "details": sanitize_for_logging(details)
+    }
+    if error:
+        log_entry["error"] = str(error)
+
+    if success:
+        logger.info(f"AUDIT: {json.dumps(log_entry)}")
+    else:
+        logger.warning(f"AUDIT: {json.dumps(log_entry)}")
+
+# ========= Rate Limiting =========
+class RateLimiter:
+    """
+    Token bucket rate limiter for API calls.
+    Prevents API abuse and DoS attacks against UniFi controller.
+    """
+    def __init__(self, calls_per_minute: int, calls_per_hour: int):
+        self.calls_per_minute = calls_per_minute
+        self.calls_per_hour = calls_per_hour
+        self.minute_calls = defaultdict(list)
+        self.hour_calls = defaultdict(list)
+        self.lock = threading.Lock()
+
+    def _cleanup_old_calls(self, endpoint: str):
+        """Remove calls older than the time window."""
+        now = time.time()
+        # Keep only calls from the last minute
+        self.minute_calls[endpoint] = [
+            ts for ts in self.minute_calls[endpoint]
+            if now - ts < 60
+        ]
+        # Keep only calls from the last hour
+        self.hour_calls[endpoint] = [
+            ts for ts in self.hour_calls[endpoint]
+            if now - ts < 3600
+        ]
+
+    def check_rate_limit(self, endpoint: str) -> tuple[bool, Optional[str]]:
+        """
+        Check if the request is within rate limits.
+        Returns: (allowed: bool, error_message: Optional[str])
+        """
+        with self.lock:
+            self._cleanup_old_calls(endpoint)
+
+            minute_count = len(self.minute_calls[endpoint])
+            hour_count = len(self.hour_calls[endpoint])
+
+            if minute_count >= self.calls_per_minute:
+                if self.minute_calls[endpoint]:  # Check if list is not empty
+                    wait_time = 60 - (time.time() - self.minute_calls[endpoint][0])
+                else:
+                    wait_time = 60
+                return False, f"Rate limit exceeded: {self.calls_per_minute} calls/minute. Retry in {wait_time:.1f}s"
+
+            if hour_count >= self.calls_per_hour:
+                if self.hour_calls[endpoint]:  # Check if list is not empty
+                    wait_time = 3600 - (time.time() - self.hour_calls[endpoint][0])
+                else:
+                    wait_time = 3600
+                return False, f"Rate limit exceeded: {self.calls_per_hour} calls/hour. Retry in {wait_time:.1f}s"
+
+            # Record this call
+            now = time.time()
+            self.minute_calls[endpoint].append(now)
+            self.hour_calls[endpoint].append(now)
+
+            return True, None
+
+    def get_stats(self, endpoint: str) -> Dict[str, Any]:
+        """Get current rate limit statistics for an endpoint."""
+        with self.lock:
+            self._cleanup_old_calls(endpoint)
+            return {
+                "endpoint": endpoint,
+                "calls_last_minute": len(self.minute_calls[endpoint]),
+                "calls_last_hour": len(self.hour_calls[endpoint]),
+                "limit_per_minute": self.calls_per_minute,
+                "limit_per_hour": self.calls_per_hour,
+                "minute_remaining": self.calls_per_minute - len(self.minute_calls[endpoint]),
+                "hour_remaining": self.calls_per_hour - len(self.hour_calls[endpoint])
+            }
+
+# Initialize rate limiter with configurable limits
+RATE_LIMIT_PER_MINUTE = int(os.getenv("UNIFI_RATE_LIMIT_PER_MINUTE", "60"))
+RATE_LIMIT_PER_HOUR = int(os.getenv("UNIFI_RATE_LIMIT_PER_HOUR", "1000"))
+rate_limiter = RateLimiter(RATE_LIMIT_PER_MINUTE, RATE_LIMIT_PER_HOUR)
+
+# Rate limit error exception
+class RateLimitError(RuntimeError):
+    pass
+
 # ========= Configuration =========
 UNIFI_API_KEY   = os.getenv("UNIFI_API_KEY", "API")
 UNIFI_HOST      = os.getenv("UNIFI_GATEWAY_HOST", "HOST")
 UNIFI_PORT      = os.getenv("UNIFI_GATEWAY_PORT", "443")
-VERIFY_TLS      = os.getenv("UNIFI_VERIFY_TLS", "false").lower() in ("1", "true", "yes")
+
+# TLS Verification - NOW ENABLED BY DEFAULT for security
+# Set UNIFI_VERIFY_TLS=false explicitly to disable (not recommended for production)
+VERIFY_TLS = os.getenv("UNIFI_VERIFY_TLS", "true").lower() in ("1", "true", "yes")
+
+if not VERIFY_TLS:
+    logger.warning(
+        "⚠️  TLS CERTIFICATE VERIFICATION IS DISABLED! ⚠️\n"
+        "   This makes your connection vulnerable to man-in-the-middle attacks.\n"
+        "   Only use UNIFI_VERIFY_TLS=false in trusted networks with self-signed certificates.\n"
+        "   For production, use valid certificates or add self-signed cert to system trust store."
+    )
+    audit_log("tls_verification_disabled", {
+        "host": UNIFI_HOST,
+        "port": UNIFI_PORT,
+        "warning": "TLS verification disabled - security risk"
+    }, success=True)
 
 # Legacy credentials (optional; enable for config endpoints not in Integration API)
 LEGACY_USER     = os.getenv("UNIFI_USERNAME", "USERNAME")
@@ -79,22 +246,134 @@ mcp = FastMCP("unifi")
 class UniFiHTTPError(RuntimeError):
     pass
 
+def sanitize_error_message(error_msg: str, response: requests.Response) -> str:
+    """
+    Sanitize error messages to prevent information disclosure.
+    Removes sensitive data like API keys, tokens, passwords from error output.
+    """
+    sanitized = error_msg
+
+    # Redact common sensitive patterns
+    import re
+    patterns = [
+        # API keys and tokens in URLs or headers
+        (r'(api[_-]?key|apikey)[=:]\s*[^\s&]+', r'\1=[REDACTED]'),
+        (r'(password|passwd|pwd)[=:]\s*[^\s&]+', r'\1=[REDACTED]'),
+
+        # Authorization headers - capture everything after the header name
+        (r'(Authorization:\s+Bearer\s+)[^\s,;]+', r'\1[REDACTED]'),
+        (r'(Authorization:\s+Basic\s+)[^\s,;]+', r'\1[REDACTED]'),
+        (r'(Authorization:\s+)[^\s,;]+', r'\1[REDACTED]'),
+
+        # X-API-Key header
+        (r'(X-API-Key:\s+)[^\s,;]+', r'\1[REDACTED]'),
+
+        # Token parameters
+        (r'(token|auth)[=:]\s*[^\s&,;]+', r'\1=[REDACTED]'),
+    ]
+
+    for pattern, replacement in patterns:
+        sanitized = re.sub(pattern, replacement, sanitized, flags=re.IGNORECASE)
+
+    # Limit body size to prevent massive error dumps
+    if len(sanitized) > 500:
+        sanitized = sanitized[:500] + "...[TRUNCATED]"
+
+    return sanitized
+
 def _raise_for(r: requests.Response) -> Dict[str, Any]:
     try:
         r.raise_for_status()
         return r.json() if r.text.strip() else {}
     except requests.exceptions.HTTPError as e:
         body = (r.text or "")[:800]
-        raise UniFiHTTPError(f"{r.request.method} {r.url} -> {r.status_code} {r.reason}; body: {body}") from e
+        error_msg = f"{r.request.method} {r.url} -> {r.status_code} {r.reason}; body: {body}"
+        sanitized_error = sanitize_error_message(error_msg, r)
+
+        # Audit log the error
+        audit_log("http_error", {
+            "method": r.request.method,
+            "url": str(r.url),
+            "status_code": r.status_code,
+            "reason": r.reason
+        }, success=False, error=sanitized_error)
+
+        raise UniFiHTTPError(sanitized_error) from e
 
 def _h_key() -> Dict[str, str]:
     return {"X-API-Key": UNIFI_API_KEY, "Content-Type": "application/json"}
 
 def _get(url: str, headers: Dict[str, str], params=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
-    return _raise_for(requests.get(url, headers=headers, params=params, verify=VERIFY_TLS, timeout=timeout))
+    # Extract endpoint for rate limiting (use path without query params)
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    endpoint = parsed.path
+
+    # Check rate limit
+    allowed, error_msg = rate_limiter.check_rate_limit(endpoint)
+    if not allowed:
+        audit_log("rate_limit_exceeded", {
+            "endpoint": endpoint,
+            "method": "GET",
+            "error": error_msg
+        }, success=False, error=error_msg)
+        raise RateLimitError(error_msg)
+
+    # Audit log the request
+    audit_log("api_request", {
+        "method": "GET",
+        "endpoint": endpoint,
+        "params": sanitize_for_logging(params) if params else None
+    }, success=True)
+
+    try:
+        result = _raise_for(requests.get(url, headers=headers, params=params, verify=VERIFY_TLS, timeout=timeout))
+        # Audit log success
+        audit_log("api_response", {
+            "method": "GET",
+            "endpoint": endpoint,
+            "status": "success"
+        }, success=True)
+        return result
+    except Exception as e:
+        # Error already logged in _raise_for
+        raise
 
 def _post(url: str, headers: Dict[str, str], body=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
-    return _raise_for(requests.post(url, headers=headers, json=body, verify=VERIFY_TLS, timeout=timeout))
+    # Extract endpoint for rate limiting
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    endpoint = parsed.path
+
+    # Check rate limit
+    allowed, error_msg = rate_limiter.check_rate_limit(endpoint)
+    if not allowed:
+        audit_log("rate_limit_exceeded", {
+            "endpoint": endpoint,
+            "method": "POST",
+            "error": error_msg
+        }, success=False, error=error_msg)
+        raise RateLimitError(error_msg)
+
+    # Audit log the request (with sanitized body)
+    audit_log("api_request", {
+        "method": "POST",
+        "endpoint": endpoint,
+        "body": sanitize_for_logging(body) if body else None
+    }, success=True)
+
+    try:
+        result = _raise_for(requests.post(url, headers=headers, json=body, verify=VERIFY_TLS, timeout=timeout))
+        # Audit log success
+        audit_log("api_response", {
+            "method": "POST",
+            "endpoint": endpoint,
+            "status": "success"
+        }, success=True)
+        return result
+    except Exception as e:
+        # Error already logged in _raise_for
+        raise
 
 # Legacy session (cookie auth)
 LEGACY = requests.Session()
@@ -217,10 +496,10 @@ def validate_site_id(site_id: str) -> str:
     Validate site ID format.
     Site IDs must be alphanumeric with hyphens/underscores, 1-64 chars.
     """
-    if not site_id:
-        raise ValidationError("site_id cannot be empty")
     if not isinstance(site_id, str):
         raise ValidationError(f"site_id must be string, got {type(site_id).__name__}")
+    if not site_id:
+        raise ValidationError("site_id cannot be empty")
     if len(site_id) > 64:
         raise ValidationError(f"site_id too long: {len(site_id)} chars (max 64)")
     if not all(c.isalnum() or c in ('-', '_') for c in site_id):
@@ -256,7 +535,7 @@ def validate_device_id(device_id: str) -> str:
         raise ValidationError("device_id cannot be empty")
     if not isinstance(device_id, str):
         raise ValidationError(f"device_id must be string, got {type(device_id).__name__}")
-    if len(device_id) < 8 or len(device_id) > 64:
+    if len(device_id) < 6 or len(device_id) > 64:
         raise ValidationError(f"device_id length invalid: {len(device_id)} chars")
     if not all(c.isalnum() or c in ('-', '_') for c in device_id):
         raise ValidationError(f"device_id contains invalid characters: {device_id}")
@@ -440,6 +719,29 @@ def debug_registry() -> Dict[str, Any]:
         "tools":     sorted([tool_name(t) for t in tools]),
         "prompts":   sorted([prompt_name(p) for p in prompts]),
     }
+
+@mcp.tool()
+def get_rate_limit_stats(endpoint: str = "global") -> Dict[str, Any]:
+    """
+    Get current rate limit statistics for a specific endpoint or global stats.
+    Useful for monitoring API usage and avoiding rate limit errors.
+    """
+    try:
+        if endpoint == "global":
+            # Return summary of all endpoints
+            all_endpoints = set(rate_limiter.minute_calls.keys()) | set(rate_limiter.hour_calls.keys())
+            return {
+                "rate_limits": {
+                    "per_minute": RATE_LIMIT_PER_MINUTE,
+                    "per_hour": RATE_LIMIT_PER_HOUR
+                },
+                "tracked_endpoints": len(all_endpoints),
+                "endpoints": {ep: rate_limiter.get_stats(ep) for ep in sorted(all_endpoints)}
+            }
+        else:
+            return rate_limiter.get_stats(endpoint)
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 # ========= Network Integration: resources =========
 @mcp.resource("sites://")
