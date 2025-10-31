@@ -1,0 +1,72 @@
+# Git and version control
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv
+venv/
+ENV/
+env/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Secrets and credentials (NEVER include in image)
+secrets.env
+.env
+*.pem
+*.key
+*.crt
+credentials.json
+
+# Logs
+*.log
+logs/
+
+# Documentation (not needed in runtime image)
+README.md
+CLAUDE.md
+SECURITY.md
+CHANGELOG.md
+*.md
+
+# Test files
+tests/
+test_*.py
+*_test.py
+.bandit
+.pre-commit-config.yaml
+
+# Development tools
+benchmark_performance.py
+add_type_hints.py
+test_credentials.py
+
+# Lock files (handled by builder stage)
+uv.lock
+
+# Docker files (no recursion)
+Dockerfile
+docker-compose.yml
+.dockerignore

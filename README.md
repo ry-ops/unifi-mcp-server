@@ -1,414 +1,767 @@
-<img src="https://github.com/ry-ops/unifi-mcp-server/blob/main/unifi-mcp-server.png" width="100%">
+# UniFi MCP Server
 
-[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
-[![MCP](https://img.shields.io/badge/MCP-1.0-purple.svg)](https://modelcontextprotocol.io/)
-[![A2A](https://img.shields.io/badge/A2A-enabled-orange.svg)](https://modelcontextprotocol.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/ry-ops/unifi-mcp-server?utm_source=oss&utm_medium=github&utm_campaign=ry-ops%2Funifi-mcp-server&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+A Model Context Protocol (MCP) server that integrates UniFi network equipment with AI assistants, exposing UniFi Network, Access, and Protect APIs through a standardized interface.
 
-# UniFi MCP Server - Comprehensive Infrastructure Management
+## Overview
 
-A Model Context Protocol (MCP) server for comprehensive UniFi infrastructure monitoring and management. This server enables natural language interactions with your UniFi network using AI agents like Claude by integrating with both local UniFi controllers and the cloud-based Site Manager API.
+This MCP server enables AI assistants to interact with UniFi controllers, providing:
 
-**✨ Features Agent-to-Agent (A2A) Protocol** for intelligent, multi-step network operations with built-in safety checks and guided workflows.
+- **Resources** (read-only): Sites, devices, clients, networks, cameras, access control
+- **Tools** (safe write operations): Block/kick clients, locate devices, unlock doors, reboot cameras
+- **Prompts** (AI guidance): Step-by-step workflows for common tasks
+
+### Supported UniFi Products
+
+- UniFi Network (switches, access points, gateways)
+- UniFi Access (door locks, readers)
+- UniFi Protect (cameras, NVR)
 
 ## Features
 
-### 🌐 **Dual API Support**
-- **Local Controller Integration** - Direct access to your UniFi controller via Integration API
-- **Cloud Site Manager** - Monitor infrastructure via UniFi Site Manager API
-- **Smart Fallback** - Automatically discovers correct site IDs and switches between APIs
-
-### 📊 **Comprehensive Monitoring**
-- Real-time device health and status monitoring
-- Client activity tracking and bandwidth analysis
-- Network performance insights and uptime statistics
-- Comprehensive system health overview with issue detection
-
-### 🔧 **Full UniFi Ecosystem Support**
-- **Network Controller** - Complete network management
-- **UniFi Protect** - Camera and security system integration
-- **UniFi Access** - Door and access control management
-- **UniFi Talk** - VoIP system monitoring
-- **Additional Apps** - Connect, Innerspace, and more
-
-### 🤖 **AI-Powered Management**
-- Natural language queries for complex network operations
-- Intelligent device discovery and management
-- Automated troubleshooting and diagnostics
-- Smart status reporting and alerting
-
-### 🔗 **Agent-to-Agent (A2A) Protocol**
-Built-in A2A protocol enables AI agents to understand and execute complex UniFi operations through structured prompt playbooks:
-
-**Available A2A Prompts:**
-- **`how_to_check_unifi_health`** - Check controller health and connectivity
-- **`how_to_check_system_status`** - Get comprehensive system health overview
-- **`how_to_monitor_devices`** - Monitor device health and identify issues
-- **`how_to_check_network_activity`** - Check client activity and bandwidth usage
-- **`how_to_find_device`** - Search devices and flash LEDs for identification
-- **`how_to_block_client`** - Safely block/unblock network clients
-- **`how_to_toggle_wlan`** - Enable/disable wireless networks
-- **`how_to_list_hosts`** - List all hosts across local and cloud APIs
-- **`how_to_debug_api_issues`** - Debug API connectivity problems
-
-These prompts guide AI agents through multi-step workflows, ensuring safe and correct execution of network operations. Each prompt includes:
-- Clear step-by-step instructions
-- Required tool calls and resource queries
-- Safety checks and user confirmations
-- Fallback strategies for error handling
+- Dual authentication (API key + legacy cookie fallback)
+- Automatic pagination for large datasets
+- Health check endpoints for monitoring
+- Safe operation design (confirmation required for destructive actions)
+- TLS verification configurable for self-signed certificates
 
 ## Prerequisites
 
-- Python 3.8 or higher
-- `uv` package manager
-- UniFi controller (Dream Machine, Cloud Key, etc.) OR UniFi Site Manager account
-- API access configured (local API key and/or Site Manager API key)
+- Python 3.12 or higher
+- UniFi Controller/Gateway (Cloud Key, Dream Machine, or self-hosted)
+- UniFi API key (recommended) or username/password (legacy)
+- Network access to UniFi controller
 
-## Setup
+## Installation
 
-### 1. **API Key Configuration**
-
-#### **For Local Controller Access:**
-- Access your UniFi controller web interface
-- Go to Settings > Admins > Add Admin (or create API key in newer versions)
-- Note your controller IP address and port (typically 443)
-
-#### **For Cloud Site Manager Access:**
-- Go to [UniFi Site Manager](https://unifi.ui.com)
-- Navigate to API section from the left navigation bar
-- Click "Create API Key"
-- Copy the generated key (it will only be displayed once)
-
-### 2. **Installation**
+### 1. Clone or download this repository
 
 ```bash
-git clone https://github.com/ry-ops/unifi-mcp-server.git
-cd unifi-mcp-server
-uv venv
-source .venv/bin/activate  # On Unix/macOS
-# or
-.venv\Scripts\activate  # On Windows
-uv sync
+git clone <repository-url>
+cd mcp-server-unifi
 ```
 
-### 3. **Configuration**
+### 2. Install uv package manager (if not already installed)
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### 3. Create virtual environment and install dependencies
+
+```bash
+uv venv
+uv pip install -e .
+```
+
+### 4. Configure credentials
 
 Create a `secrets.env` file in the project root:
 
-```env
-# Local Controller Configuration
-UNIFI_API_KEY=your_local_controller_api_key_here
-UNIFI_GATEWAY_HOST=10.88.140.144
+```bash
+# UniFi Controller Settings
+UNIFI_API_KEY=your_actual_api_key_here
+UNIFI_GATEWAY_HOST=192.168.1.1
 UNIFI_GATEWAY_PORT=443
 UNIFI_VERIFY_TLS=false
 
-# Legacy API (optional, for WLANs and advanced config)
-UNIFI_USERNAME=your_unifi_username
-UNIFI_PASSWORD=your_unifi_password
+# Legacy credentials (optional, for endpoints not in Integration API)
+UNIFI_USERNAME=admin
+UNIFI_PASSWORD=your_password
 
-# Cloud Site Manager Configuration
+# Site Manager Settings (optional, for cloud API)
 UNIFI_SITEMGR_BASE=https://api.ui.com
-UNIFI_SITEMGR_TOKEN=your_site_manager_api_key_here
+UNIFI_SITEMGR_TOKEN=your_site_manager_api_key
+UNIFI_SITEMGR_PREFIX=/v1
 
-# Optional Settings
+# Request timeout (optional, default 15 seconds)
 UNIFI_TIMEOUT_S=15
 ```
 
-## Running the Server
+**Important:** Never commit `secrets.env` to version control. This file is excluded in `.gitignore`.
 
-### **Development Mode**
+## Getting Your UniFi API Key
+
+### Method 1: UniFi OS Console (Recommended)
+
+1. Log into your UniFi controller web interface
+2. Navigate to **Settings** > **System** > **API**
+3. Click **Create New API Key**
+4. Give it a name (e.g., "MCP Server")
+5. Copy the generated key immediately (it won't be shown again)
+
+### Method 2: Legacy Username/Password
+
+If your controller doesn't support API keys, you can use username/password authentication:
+
+1. Use your existing UniFi admin username and password
+2. Set `UNIFI_USERNAME` and `UNIFI_PASSWORD` in `secrets.env`
+3. The server will automatically use cookie-based authentication
+
+**Note:** API key authentication is more secure and recommended for production use.
+
+## Usage
+
+### Running the Server
+
 ```bash
-uv run mcp dev main.py
-```
-The MCP Inspector will be available at http://localhost:5173 for testing and debugging.
-
-### **Production Mode**
-```bash
-uv run main.py
+python main.py
 ```
 
-## Testing Your Setup
+The server runs on stdio transport, suitable for integration with MCP clients.
 
-Verify your configuration with these commands:
+### Testing Connection
 
-```bash
-# Test all API connectivity
-uv run python -c "
-from main import debug_api_connectivity, working_list_hosts_example, get_system_status
-print('=== API Connectivity Test ===')
-print(debug_api_connectivity())
-print('\n=== Working Host List Example ===')
-print(working_list_hosts_example())
-print('\n=== System Status ===')
-print(get_system_status())
-"
+Use the health check to verify connectivity:
+
+```python
+# Resource endpoints:
+# - unifi://health
+# - health://unifi
+# - status://unifi
+
+# Or use the tool:
+unifi_health()
 ```
 
-## AI Agent Integration
+### Available Resources
 
-### **Claude Desktop Setup**
+Resources are read-only data endpoints:
 
-Add to your `claude_desktop_config.json`:
+```
+sites://                              # List all sites
+sites://{site_id}/devices             # List devices
+sites://{site_id}/clients             # List all clients
+sites://{site_id}/clients/active      # List active clients only
+sites://{site_id}/wlans               # List wireless networks
+sites://{site_id}/search/devices/{query}   # Search devices
+sites://{site_id}/search/clients/{query}   # Search clients
 
-```json
-{
-    "mcpServers": {
-        "unifi": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "/path/to/unifi-mcp-server",
-                "run",
-                "main.py"
-            ]
-        }
-    }
-}
+access://doors                        # List access control doors
+access://readers                      # List access control readers
+access://users                        # List access control users
+access://events                       # List access control events
+
+protect://nvr                         # Get NVR status
+protect://cameras                     # List all cameras
+protect://camera/{camera_id}          # Get specific camera
+protect://events                      # List motion/smart detection events
+protect://events/range/{start}/{end}  # Get events in time range
+protect://streams/{camera_id}         # Get camera stream URLs
+
+unifi://capabilities                  # Test all API endpoints
 ```
 
-### **Environment Variable Alternative**
-```json
-{
-    "mcpServers": {
-        "unifi": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "/path/to/unifi-mcp-server",
-                "run",
-                "main.py"
-            ],
-            "env": {
-                "UNIFI_API_KEY": "your_local_api_key",
-                "UNIFI_SITEMGR_TOKEN": "your_cloud_api_key"
-            }
-        }
-    }
-}
-```
+### Available Tools
 
-## Available Resources
+Tools perform safe write operations:
 
-### **System Status**
-- `status://system` - Comprehensive system health overview
-- `status://devices` - Device health and uptime monitoring
-- `status://clients` - Client activity and bandwidth analysis
-- `health://unifi` - Quick controller health check
+#### Network Tools
+- `block_client(site_id, mac)` - Block a client from the network
+- `unblock_client(site_id, mac)` - Unblock a previously blocked client
+- `kick_client(site_id, mac)` - Force disconnect a client
+- `locate_device(site_id, device_id, seconds=30)` - Flash device LEDs
 
-### **Network Infrastructure**
-- `sites://{site_id}/devices` - List all network devices
-- `sites://{site_id}/clients` - List all network clients
-- `sites://{site_id}/clients/active` - Currently connected clients only
-- `sites://{site_id}/wlans` - Wireless network configuration
+#### Legacy Network Tools
+- `wlan_set_enabled_legacy(site_id, wlan_id, enabled)` - Toggle wireless network
 
-### **Search and Discovery**
-- `sites://{site_id}/search/clients/{query}` - Search clients by name/MAC/IP
-- `sites://{site_id}/search/devices/{query}` - Search devices by name/model/MAC
+#### Access Control Tools
+- `access_unlock_door(door_id, seconds=5)` - Momentarily unlock a door
 
-### **Cloud Resources**
-- `sitemanager://hosts` - List all UniFi OS consoles
-- `sitemanager://sites` - List all network sites
-- `sitemanager://devices` - List all devices across infrastructure
-
-### **Capabilities**
-- `unifi://capabilities` - System capability assessment
-
-## Available Tools
-
-### **System Monitoring**
-- `get_system_status()` - Complete system health overview
-- `get_device_health()` - Device uptime and status analysis
-- `get_client_activity()` - Network usage and bandwidth monitoring
-- `get_quick_status()` - Fast health check
-
-### **Host and Device Management**
-- `working_list_hosts_example()` - Comprehensive host listing (cloud + local)
-- `list_hosts_api_format()` - Cloud API host listing
-- `list_hosts_fixed()` - Local API with auto-discovered site IDs
-- `find_device_by_mac(mac)` - Locate device by MAC address
-- `find_host_everywhere(identifier)` - Search across all sources
-
-### **Network Operations**
-- `block_client(site_id, mac)` - Block a network client
-- `unblock_client(site_id, mac)` - Unblock a network client
-- `kick_client(site_id, mac)` - Disconnect a client
-- `locate_device(site_id, device_id)` - Flash device LEDs for identification
-
-### **UniFi Protect**
-- `protect_camera_reboot(camera_id)` - Reboot security camera
-- `protect_camera_led(camera_id, enabled)` - Control camera LED
+#### Protect Tools
+- `protect_camera_reboot(camera_id)` - Reboot a camera
+- `protect_camera_led(camera_id, enabled)` - Toggle camera LED
 - `protect_toggle_privacy(camera_id, enabled)` - Toggle privacy mode
 
-### **UniFi Access**
-- `access_unlock_door(door_id, seconds)` - Unlock access-controlled door
+#### Utility Tools
+- `unifi_health()` - Check controller connectivity and validate credentials
+- `debug_registry()` - List all registered resources/tools/prompts
+- `get_rate_limit_stats(endpoint="global")` - Get rate limiting statistics
+- `get_session_info()` - Get legacy session status and expiration (Week 3)
+- `invalidate_session()` - Force session invalidation for testing (Week 3)
 
-### **Troubleshooting**
-- `debug_api_connectivity()` - Comprehensive API testing
-- `discover_sites()` - Find valid site IDs
-- `debug_registry()` - Show all registered resources and tools
-- `unifi_health()` - Basic controller connectivity test
+### Available Prompts
 
-## Example Usage
+Prompts guide AI assistants through common workflows:
 
-Once integrated with Claude Desktop, you can ask natural language questions like:
+- `how_to_check_unifi_health` - Verify controller connectivity
+- `how_to_find_device` - Search and locate a network device
+- `how_to_block_client` - Find and block a problematic client
+- `how_to_toggle_wlan` - Enable/disable a wireless network
+- `how_to_manage_access` - Control door access
+- `how_to_find_camera` - Find camera streams
+- `how_to_review_motion` - Review motion detection events
+- `how_to_reboot_camera` - Safely reboot a camera
 
-### **Network Overview**
-- *"Tell me about my UniFi network"*
-- *"Give me a comprehensive overview of my infrastructure"*
-- *"What's the current health status of my network?"*
+## Configuration
 
-### **Device Management**
-- *"Show me all offline devices"*
-- *"Find devices with 'bedroom' in the name"*
-- *"What's the uptime of my access points?"*
-- *"Flash the LEDs on the living room access point"*
+### Environment Variables
 
-### **Client Monitoring**
-- *"Who's using the most bandwidth right now?"*
-- *"Show me all wireless clients"*
-- *"Block the device with MAC address XX:XX:XX:XX:XX:XX"*
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `UNIFI_API_KEY` | Yes* | - | Integration API key from controller |
+| `UNIFI_GATEWAY_HOST` | Yes | - | Controller IP address or hostname |
+| `UNIFI_GATEWAY_PORT` | No | 443 | Controller HTTPS port |
+| `UNIFI_VERIFY_TLS` | No | **true** | Verify TLS certificates (CHANGED in Week 2) |
+| `UNIFI_USERNAME` | No** | - | Legacy username for cookie auth |
+| `UNIFI_PASSWORD` | No** | - | Legacy password for cookie auth |
+| `UNIFI_TIMEOUT_S` | No | 15 | HTTP request timeout in seconds |
+| `UNIFI_RATE_LIMIT_PER_MINUTE` | No | 60 | Max API calls per minute per endpoint |
+| `UNIFI_RATE_LIMIT_PER_HOUR` | No | 1000 | Max API calls per hour per endpoint |
+| `UNIFI_LOG_LEVEL` | No | INFO | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `UNIFI_LOG_FILE` | No | unifi_mcp_audit.log | Audit log file location |
+| `UNIFI_LOG_TO_FILE` | No | true | Enable file logging |
+| `UNIFI_SESSION_TIMEOUT_S` | No | 3600 | Legacy session timeout in seconds (Week 3) |
+| `UNIFI_SITEMGR_BASE` | No | - | Site Manager cloud API base URL |
+| `UNIFI_SITEMGR_TOKEN` | No | - | Site Manager API token |
 
-### **Security and Access**
-- *"Unlock the front door for 10 seconds"*
-- *"Reboot the camera in the hallway"*
-- *"Turn on privacy mode for all cameras"*
+\* Either `UNIFI_API_KEY` or `UNIFI_USERNAME`/`UNIFI_PASSWORD` required
+\*\* Required if API key not available or for legacy endpoints
 
-### **Troubleshooting**
-- *"Why can't I see my devices?"*
-- *"Test all my API connections"*
-- *"What sites are available on my controller?"*
+### TLS Certificate Verification
+
+**IMPORTANT SECURITY CHANGE:** As of Week 2 security improvements, TLS verification is **ENABLED BY DEFAULT** (`UNIFI_VERIFY_TLS=true`).
+
+#### Why TLS Verification Matters
+
+TLS verification protects against man-in-the-middle (MITM) attacks by ensuring you're communicating with the actual UniFi controller and not an attacker. Disabling TLS verification makes your credentials and data vulnerable to interception.
+
+#### When to Disable TLS Verification
+
+Only disable TLS verification if:
+1. You're using self-signed certificates in a trusted network
+2. You understand the security risks
+3. You cannot add certificates to your system trust store
+
+To disable TLS verification:
+
+```bash
+UNIFI_VERIFY_TLS=false
+```
+
+**WARNING:** When disabled, you'll see security warnings in the logs. This is intentional.
+
+#### Proper Certificate Management (Recommended)
+
+Instead of disabling verification, properly manage certificates:
+
+**Option 1: Add Self-Signed Certificate to Trust Store**
+
+```bash
+# macOS
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/cert.pem
+
+# Linux
+sudo cp /path/to/cert.pem /usr/local/share/ca-certificates/unifi.crt
+sudo update-ca-certificates
+```
+
+**Option 2: Use Valid Certificates**
+
+Use Let's Encrypt or another CA to get valid certificates for your UniFi controller.
+
+**Option 3: Point Verification at Custom CA Bundle**
+
+```bash
+# Set custom CA bundle (future enhancement)
+export REQUESTS_CA_BUNDLE=/path/to/ca-bundle.crt
+```
 
 ## Architecture
 
-### **Multi-API Design**
-The server intelligently manages multiple UniFi APIs:
+### Authentication Strategy
 
-1. **Integration API** (Local) - Primary for real-time network operations
-2. **Legacy API** (Local) - Fallback for WLAN management and older features  
-3. **Site Manager API** (Cloud) - Infrastructure overview and remote monitoring
-4. **Protect API** - Camera and security system integration
-5. **Access API** - Door and access control management
+The server uses a dual-mode authentication approach:
 
-### **Smart Fallback Logic**
-- Automatically discovers correct site IDs (no more "default" errors)
-- Falls back between cloud and local APIs based on availability
-- Handles authentication failures gracefully
-- Provides detailed error messages for troubleshooting
+1. **Primary: API Key** - Modern Integration API endpoints
+2. **Fallback: Cookie Auth** - Legacy endpoints and older controllers
 
-### **Caching and Performance**
-- 5-minute caching for status data to reduce API load
-- Pagination support for large device lists
-- Efficient bulk operations for comprehensive reporting
+The server automatically tries API key first, then falls back to cookie authentication if needed.
 
-## Troubleshooting
+### API Coverage
 
-### **Common Issues**
+- **Integration API** (`/proxy/network/integrations/v1/...`) - Primary interface for sites, devices, clients
+- **Legacy API** (`/proxy/network/api/s/{site}/...`) - Fallback for WLANs, firewall rules
+- **Access API** (`/proxy/access/api/v1/...`) - Door locks and access control
+- **Protect API** (`/proxy/protect/api/...`) - Cameras and NVR
 
-#### **Site ID Errors**
+### URL Building
+
+All URLs are built using safe joining to prevent line-wrap identifier breaks:
+
+```python
+url = "/".join([base, "path", "component"])
 ```
-Error: 'default' is not a valid 'siteId' value
-```
-**Solution:** Run `discover_sites()` tool to find correct site IDs. The server now handles this automatically.
 
-#### **Authentication Issues**
-```
-Error: 401 Unauthorized or 2FA Required
-```
-**Solutions:**
-- Verify API keys are correct and not expired
-- For local controller: Check if 2FA is enabled (may require app-specific passwords)
-- For cloud: Regenerate Site Manager API key
+## Security Features (Week 2 Improvements)
 
-#### **Connection Issues**
-```
-Error: Connection timeout or unreachable
-```
-**Solutions:**
-- Verify controller IP address and port in `secrets.env`
-- Check firewall rules and network connectivity
-- Test with `debug_api_connectivity()` tool
+This server implements comprehensive security measures to protect your UniFi infrastructure:
 
-### **Debug Commands**
+### 1. Rate Limiting
+
+Prevents API abuse and denial-of-service attacks against your UniFi controller.
+
+**Configuration:**
+```bash
+# In secrets.env
+UNIFI_RATE_LIMIT_PER_MINUTE=60    # Max 60 requests/minute per endpoint (default)
+UNIFI_RATE_LIMIT_PER_HOUR=1000    # Max 1000 requests/hour per endpoint (default)
+```
+
+**Features:**
+- Per-endpoint rate limiting (prevents single endpoint abuse)
+- Sliding time window (not fixed buckets)
+- Thread-safe concurrent request handling
+- Detailed error messages with retry timing
+- Rate limit statistics via `get_rate_limit_stats()` tool
+
+**When rate limits are exceeded:**
+```
+Rate limit exceeded: 60 calls/minute. Retry in 45.2s
+```
+
+### 2. Comprehensive Audit Logging
+
+All API requests, responses, and security events are logged with sensitive data automatically sanitized.
+
+**Configuration:**
+```bash
+# In secrets.env
+UNIFI_LOG_LEVEL=INFO                    # DEBUG, INFO, WARNING, ERROR, CRITICAL
+UNIFI_LOG_FILE=unifi_mcp_audit.log     # Log file location
+UNIFI_LOG_TO_FILE=true                  # Write logs to file (default: true)
+```
+
+**What is logged:**
+- All API requests with sanitized parameters
+- All API responses with success/failure status
+- Rate limit violations with details
+- Authentication attempts
+- TLS verification status
+- Input validation failures
+- HTTP errors with sanitized details
+
+**What is NOT logged:**
+- Passwords, API keys, tokens (automatically redacted as `[REDACTED]`)
+- Session cookies
+- Authorization headers (values redacted)
+- Sensitive URL parameters
+
+**Log Format:**
+```json
+{
+  "timestamp": "2024-10-31T12:34:56.789Z",
+  "action": "api_request",
+  "success": true,
+  "details": {
+    "method": "POST",
+    "endpoint": "/sites/default/clients/block",
+    "body": {"mac": "aa:bb:cc:dd:ee:ff"}
+  }
+}
+```
+
+### 3. Input Validation and Sanitization
+
+All tool inputs are validated before use to prevent injection attacks and malformed requests.
+
+**Validation Functions:**
+- `validate_site_id()` - Alphanumeric + hyphens/underscores, 1-64 chars
+- `validate_mac_address()` - Standard MAC formats with normalization
+- `validate_device_id()` - 6-64 character device IDs
+- `validate_duration()` - Integer seconds with min/max bounds
+- `validate_boolean()` - Type-safe boolean coercion
+
+**Protection Against:**
+- SQL injection attempts
+- Path traversal attacks (`../../../etc/passwd`)
+- Command injection (`;`, `|`, `` ` ``)
+- XSS attempts (`<script>`, `javascript:`)
+- Invalid data types
+- Oversized inputs
+
+**Example:**
+```python
+# Automatically validated in all tools
+block_client("site'; DROP TABLE--", "invalid-mac")
+# Returns: {"success": False, "error": "Validation failed: site_id contains invalid characters"}
+```
+
+### 4. Request/Response Sanitization
+
+Error messages and logs are automatically sanitized to prevent information disclosure.
+
+**Features:**
+- Automatic redaction of sensitive patterns in errors
+- Truncation of oversized error messages
+- Recursive sanitization of nested data structures
+- Protection against log injection
+- Depth limits to prevent deep recursion attacks
+
+**Example Sanitization:**
+```
+Before: Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+After:  Authorization: Bearer [REDACTED]
+
+Before: POST /api?api_key=sk_live_abc123&password=secret
+After:  POST /api?api_key=[REDACTED]&password=[REDACTED]
+```
+
+### 5. TLS Verification (Enabled by Default)
+
+See [TLS Certificate Verification](#tls-certificate-verification) section above.
+
+### 6. Session Management (Week 3 Enhancement)
+
+Legacy cookie-based authentication includes automatic session management:
+
+**Features:**
+- Automatic session timeout (configurable via `UNIFI_SESSION_TIMEOUT_S`)
+- Automatic session refresh at 80% of timeout
+- Thread-safe session operations
+- Session age tracking and invalidation
+- Manual session invalidation for credential rotation testing
+
+**Configuration:**
+```bash
+# In secrets.env
+UNIFI_SESSION_TIMEOUT_S=3600  # 1 hour (default)
+```
+
+**Monitoring session health:**
+```python
+# Get current session status
+get_session_info()
+
+# Returns:
+{
+  "success": true,
+  "session": {
+    "active": true,
+    "created_at": "2025-10-31T14:00:00",
+    "age_seconds": 1800,
+    "timeout_seconds": 3600,
+    "remaining_seconds": 1800,
+    "expires_at": "2025-10-31T15:00:00",
+    "should_refresh": false
+  },
+  "session_timeout_configured": 3600
+}
+
+# Force session invalidation (useful for credential rotation)
+invalidate_session()
+```
+
+### 7. Security Vulnerability Scanning (Week 3)
+
+Automated security scanning with Bandit and Safety:
 
 ```bash
-# Comprehensive API testing
-python -c "from main import debug_api_connectivity; print(debug_api_connectivity())"
+# Run Bandit (Python code security linter)
+bandit -c .bandit -r main.py
 
-# Discover site IDs
-python -c "from main import discover_sites; print(discover_sites())"
+# Run Safety (dependency vulnerability scanner)
+safety check -r requirements.txt
 
-# Test working host listing
-python -c "from main import working_list_hosts_example; print(working_list_hosts_example())"
-
-# System health check
-python -c "from main import get_system_status; print(get_system_status())"
+# Install and run pre-commit hooks (includes Bandit)
+pre-commit install
+pre-commit run --all-files
 ```
+
+**What's scanned:**
+- SQL injection vulnerabilities
+- Shell injection risks
+- Hard-coded secrets
+- Insecure cryptography
+- Known vulnerabilities in dependencies (CVE database)
+- Try/except/pass patterns
+- Assert statement usage
+
+See `SECURITY.md` for complete security documentation.
+
+### 8. Security Testing
+
+Comprehensive pytest test suite with 85+ security-focused tests:
+
+```bash
+# Run security tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=main --cov-report=html
+
+# Run specific security test categories
+pytest tests/test_validation.py -v            # Input validation tests
+pytest tests/test_sanitization.py -v          # Sanitization tests
+pytest tests/test_rate_limiting.py -v         # Rate limiting tests
+pytest tests/test_integration_auth.py -v      # Authentication flow tests (Week 3)
+pytest tests/test_integration_errors.py -v    # Error handling tests (Week 3)
+```
+
+**Test Coverage:**
+- Input validation edge cases
+- SQL injection attempts
+- Path traversal attempts
+- XSS attempts
+- Command injection attempts
+- Rate limiting behavior
+- Concurrent access patterns
+- Sanitization effectiveness
+- Error handling
 
 ## Security Best Practices
 
-- **Store credentials securely** - Use `secrets.env` (excluded from version control)
-- **Use HTTPS** - All API communications are encrypted
-- **Rotate API keys regularly** - Especially for production environments
-- **Principle of least privilege** - Create dedicated API users with minimal required permissions
-- **Monitor access logs** - Review API usage in UniFi controller logs
+### Credential Management
 
-## Supported UniFi Hardware
+1. **Never commit secrets**: The `secrets.env` file is git-ignored
+2. **Use API keys**: Preferred over username/password for better security
+3. **Restrict API key permissions**: Create keys with minimal required permissions
+4. **Rotate credentials regularly**: Update API keys every 90 days (see `SECURITY.md`)
+5. **Test before rotating**: Use `test_credentials.py` to validate new credentials
+6. **Use environment isolation**: Keep production and development credentials separate
+7. **Monitor sessions**: Check session health with `get_session_info()`
 
-### **Controllers**
-- UniFi Dream Machine (UDM)
-- UniFi Dream Machine Pro (UDM-Pro)
-- UniFi Dream Machine SE (UDM-SE)
-- UniFi Cloud Key Gen2/Gen2 Plus
-- UniFi Network Application (self-hosted)
+### Credential Rotation (Week 3 Feature)
 
-### **Applications**
-- **Network** - All UniFi networking equipment
-- **Protect** - Security cameras and NVRs
-- **Access** - Door controllers and readers
-- **Talk** - VoIP phones and controllers
-- **Connect** - SD-WAN and remote connectivity
+Before rotating credentials in production:
 
-## Limitations
+```bash
+# Test new API key
+python test_credentials.py --api-key NEW_API_KEY
 
-### **Current Limitations**
-- **2FA Handling** - Legacy API requires manual 2FA bypass or app passwords
-- **Bulk Operations** - Some operations limited by UniFi API rate limits
-- **Real-time Events** - No WebSocket support (polling-based monitoring)
+# Test new legacy credentials
+python test_credentials.py --username admin --password newpass
 
-### **Planned Features**
-- WebSocket support for real-time events
-- Enhanced Protect integration (video streams, motion detection)
-- Advanced analytics and reporting
-- Automated network optimization suggestions
+# Test all configured credentials
+python test_credentials.py --all
+```
+
+See `SECURITY.md` for complete credential rotation workflow and zero-downtime procedures.
+
+### Network Security
+
+1. **Use TLS verification**: Enable `UNIFI_VERIFY_TLS=true` with valid certificates
+2. **Restrict network access**: Run server on trusted networks only
+3. **Firewall rules**: Limit controller access to authorized IPs
+4. **VPN recommended**: Access controllers through VPN when possible
+
+### Operational Security
+
+1. **Confirm destructive actions**: Tools require explicit confirmation
+2. **Monitor audit logs**: Review UniFi controller logs regularly
+3. **Limit tool usage**: Only enable tools your workflow requires
+4. **Test in staging**: Verify operations in non-production environment first
+
+## Troubleshooting
+
+### Connection Issues
+
+**Problem:** Server can't connect to controller
+
+```bash
+# Check controller is reachable
+ping <UNIFI_GATEWAY_HOST>
+
+# Check port is open
+nc -zv <UNIFI_GATEWAY_HOST> 443
+
+# Verify API key/credentials
+# Run health check: unifi_health()
+```
+
+**Problem:** TLS certificate errors
+
+```bash
+# Temporarily disable verification for self-signed certs
+UNIFI_VERIFY_TLS=false
+```
+
+### Authentication Issues
+
+**Problem:** 401 Unauthorized errors
+
+- Verify API key is correct and active
+- Check API key hasn't expired
+- Ensure API key has required permissions
+- Try legacy username/password as fallback
+
+**Problem:** 403 Forbidden errors
+
+- API key may lack permissions for specific endpoint
+- Check UniFi controller user role and permissions
+- Some endpoints require admin-level access
+
+### Resource Not Found
+
+**Problem:** Resource shows as unavailable
+
+```bash
+# Check what's registered
+debug_registry()
+
+# Test API endpoint availability
+# Access: unifi://capabilities
+```
+
+### Legacy API Fallback
+
+**Problem:** WLANs or other features not working
+
+- Ensure `UNIFI_USERNAME` and `UNIFI_PASSWORD` are set
+- Legacy credentials required for endpoints not in Integration API
+- Check controller version supports required endpoints
+
+## Development
+
+### Project Structure
+
+```
+mcp-server-unifi/
+   main.py              # Main server implementation
+   secrets.env          # Credentials (not in git)
+   pyproject.toml       # Python dependencies
+   uv.lock              # Locked dependency versions
+   .gitignore           # Git exclusions
+   .python-version      # Python version specification
+   README.md            # This file
+   CLAUDE.md            # Development guidance for AI assistants
+```
+
+### Adding New Features
+
+#### Adding a Resource
+
+```python
+@mcp.resource("custom://resource/{param}")
+async def my_resource(param: str) -> Dict[str, Any]:
+    # Fetch data from UniFi API
+    return data
+```
+
+#### Adding a Tool
+
+```python
+@mcp.tool()
+def my_tool(param: str) -> Dict[str, Any]:
+    """Clear description of what this tool does."""
+    # Validate inputs
+    # Perform operation
+    # Return structured response
+    return {"success": True, "message": "Operation completed"}
+```
+
+#### Adding a Prompt
+
+```python
+@mcp.prompt("how_to_do_something")
+def my_prompt():
+    return {
+        "description": "Brief description",
+        "messages": [{
+            "role": "system",
+            "content": "Step-by-step workflow instructions"
+        }]
+    }
+```
+
+### Code Quality
+
+```bash
+# Format code
+black main.py
+
+# Lint
+ruff check main.py
+
+# Type check
+mypy main.py
+```
+
+## Known Limitations
+
+1. **Single-file architecture**: May need refactoring for large-scale features
+2. **Limited Protect support**: Basic camera operations only
+3. **Site Manager stub**: Cloud API not fully implemented
+4. **No CI/CD**: Manual deployment required (Week 4 roadmap)
+5. **Safety 3.x requires auth**: Dependency scanning needs authentication or use deprecated command
+
+## Roadmap
+
+### Week 1 (Critical Fixes) - COMPLETED
+- [x] Fix filename typo (secreds.ev → secrets.env)
+- [x] Update .gitignore for credential files
+- [x] Create comprehensive README
+- [x] Add input validation for tool parameters
+
+### Week 2 (Security Improvements) - COMPLETED
+- [x] Add comprehensive input validation and sanitization
+- [x] Implement rate limiting for API calls (60/min, 1000/hour configurable)
+- [x] Add comprehensive audit logging with sanitization
+- [x] Enable TLS verification by default with clear override docs
+- [x] Implement pytest test suite with 71+ security tests
+- [x] Add request/response sanitization
+- [x] Protect against SQL injection, XSS, path traversal, command injection
+- [x] Add rate limit statistics tool
+- [x] Document all security features
+
+### Week 3 (Testing & Hardening) - COMPLETED
+- [x] Add security vulnerability scanning (Bandit, Safety)
+- [x] Configure pre-commit hooks for automated security checks
+- [x] Implement session timeout and refresh for legacy auth
+- [x] Add automatic session refresh before expiration (80% threshold)
+- [x] Validate all environment variables at startup
+- [x] Add environment variable format validation (host, port, timeouts)
+- [x] Create integration tests with mock UniFi controller
+- [x] Test authentication flows (API key and legacy)
+- [x] Test error handling for various HTTP status codes
+- [x] Comprehensive secrets rotation workflow documentation
+- [x] Create credential testing utility script
+- [x] Add health check with credential validation
+- [x] Document security scanning procedures
+
+### Week 4 (Production Readiness)
+- [ ] Performance optimization for high-volume deployments
+- [ ] Add metrics and monitoring capabilities
+- [ ] CI/CD pipeline setup
+- [ ] Docker containerization
+- [ ] Kubernetes deployment manifests
+
+### Future Enhancements
+- [ ] Support for UniFi Talk (VoIP)
+- [ ] Advanced Protect features (video clips, timelapse)
+- [ ] Firewall rule management
+- [ ] Network topology mapping
+- [ ] Real-time event streaming
+- [ ] Multi-controller support
+- [ ] Web dashboard for monitoring
 
 ## Contributing
 
-### **Development Setup**
-1. Fork the repository
-2. Create a feature branch
-3. Test with multiple UniFi configurations
-4. Update documentation for new features
-5. Submit pull request
+Contributions welcome! Please:
 
-### **Testing Guidelines**
-- Test with both local and cloud APIs
-- Verify functionality across different UniFi hardware
-- Include error handling and edge cases
-- Update example usage for new features
+1. Follow existing code style
+2. Add tests for new features
+3. Update documentation
+4. Never commit secrets or credentials
+5. Test against real UniFi hardware if possible
 
 ## License
 
-MIT License - see LICENSE file for details.
+[Specify your license here]
 
 ## Support
 
-- **Issues:** GitHub Issues for bug reports and feature requests
-- **Documentation:** Check the troubleshooting section first
-- **Community:** UniFi community forums for general UniFi questions
+For issues, questions, or contributions:
+
+- Open an issue on GitHub
+- Check UniFi documentation: https://help.ui.com
+- Review MCP specification: https://modelcontextprotocol.io
+
+## Acknowledgments
+
+- Built with [FastMCP](https://github.com/jlowin/fastmcp)
+- UniFi API documentation and community
+- Model Context Protocol specification
 
 ---
 
-**Note:** This server provides comprehensive UniFi infrastructure management through AI-powered natural language interactions. It's designed for both home labs and enterprise environments with robust error handling and multi-API support.
+**Security Notice:** This server provides direct access to your UniFi network infrastructure. Use appropriate security measures and only run in trusted environments.

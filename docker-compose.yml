@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  unifi-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: unifi-mcp-server:latest
+    container_name: unifi-mcp
+    restart: unless-stopped
+
+    # Environment variables - override with .env file or secrets
+    environment:
+      # UniFi Controller Settings (REQUIRED)
+      UNIFI_API_KEY: ${UNIFI_API_KEY:-}
+      UNIFI_GATEWAY_HOST: ${UNIFI_GATEWAY_HOST:-}
+      UNIFI_GATEWAY_PORT: ${UNIFI_GATEWAY_PORT:-443}
+      UNIFI_VERIFY_TLS: ${UNIFI_VERIFY_TLS:-true}
+
+      # Legacy Credentials (OPTIONAL)
+      UNIFI_USERNAME: ${UNIFI_USERNAME:-}
+      UNIFI_PASSWORD: ${UNIFI_PASSWORD:-}
+
+      # Site Manager (OPTIONAL)
+      UNIFI_SITEMGR_BASE: ${UNIFI_SITEMGR_BASE:-}
+      UNIFI_SITEMGR_TOKEN: ${UNIFI_SITEMGR_TOKEN:-}
+
+      # Timeouts and Limits
+      UNIFI_TIMEOUT_S: ${UNIFI_TIMEOUT_S:-15}
+      UNIFI_RATE_LIMIT_PER_MINUTE: ${UNIFI_RATE_LIMIT_PER_MINUTE:-60}
+      UNIFI_RATE_LIMIT_PER_HOUR: ${UNIFI_RATE_LIMIT_PER_HOUR:-1000}
+      UNIFI_SESSION_TIMEOUT_S: ${UNIFI_SESSION_TIMEOUT_S:-3600}
+
+      # Logging
+      UNIFI_LOG_LEVEL: ${UNIFI_LOG_LEVEL:-INFO}
+      UNIFI_LOG_FILE: /app/logs/unifi_mcp_audit.log
+      UNIFI_LOG_TO_FILE: ${UNIFI_LOG_TO_FILE:-true}
+
+    # Volumes for persistent data
+    volumes:
+      # Mount secrets file (recommended over environment variables)
+      - ./secrets.env:/app/secrets.env:ro
+      # Persistent logs
+      - ./logs:/app/logs
+      # Optional: Custom CA certificates
+      # - ./certs:/app/certs:ro
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.mypy_cache
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import main; result = main._health_check(); exit(0 if result.get('ok') else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Optional: Networks for isolation
+networks:
+  default:
+    driver: bridge

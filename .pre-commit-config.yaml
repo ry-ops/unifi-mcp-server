@@ -1,0 +1,61 @@
+# Pre-commit hooks configuration
+# Install with: pre-commit install
+# Run manually: pre-commit run --all-files
+# https://pre-commit.com/
+
+repos:
+  # General code quality checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: detect-private-key
+        exclude: ^secrets\.env\.example$
+
+  # Python security scanning with Bandit
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        args: ['-c', '.bandit', '-r', '.']
+        exclude: ^tests/
+
+  # Dependency vulnerability scanning with Safety
+  # Note: Safety 3.x requires authentication which is not compatible with pre-commit hooks
+  # Run manually with: safety check -r requirements.txt (deprecated) or safety scan (requires auth)
+  # Alternative: Use pip-audit (no auth required): pip-audit --desc
+  # Commented out - run manually in CI/CD or development workflow
+  # - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+  #   rev: v1.3.3
+  #   hooks:
+  #     - id: python-safety-dependencies-check
+  #       files: pyproject.toml
+
+  # Python code formatting (optional, commented out)
+  # Uncomment if you want automatic code formatting
+  # - repo: https://github.com/psf/black
+  #   rev: 23.12.1
+  #   hooks:
+  #     - id: black
+  #       language_version: python3.12
+
+# Global settings
+default_language_version:
+  python: python3.12
+
+# Exclude patterns
+exclude: |
+  (?x)^(
+      \.venv/.*|
+      __pycache__/.*|
+      \.pytest_cache/.*|
+      \.git/.*|
+      uv\.lock
+  )$
