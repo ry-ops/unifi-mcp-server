@@ -53,6 +53,148 @@ def load_env_file(env_file: str = "secrets.env"):
 # Load environment variables first
 load_env_file()
 
+# ========= Environment Variable Validation =========
+class ConfigurationError(Exception):
+    """Raised when environment configuration is invalid."""
+    pass
+
+def validate_environment_config():
+    """
+    Validate all environment variables at startup.
+    Returns dict of validated config or raises ConfigurationError.
+    """
+    errors = []
+    warnings = []
+
+    # Validate UNIFI_HOST
+    host = os.getenv("UNIFI_GATEWAY_HOST", "")
+    if not host or host == "HOST":
+        errors.append("UNIFI_GATEWAY_HOST is required and must be set to your UniFi controller IP or hostname")
+    else:
+        # Basic hostname/IP validation
+        import re
+        # Allow IPv4, IPv6, or hostname
+        ipv4_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+        ipv6_pattern = r'^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
+        hostname_pattern = r'^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$'
+
+        if not (re.match(ipv4_pattern, host) or re.match(ipv6_pattern, host) or re.match(hostname_pattern, host)):
+            errors.append(f"UNIFI_GATEWAY_HOST has invalid format: {host}")
+        elif re.match(ipv4_pattern, host):
+            # Validate IPv4 octets are 0-255
+            octets = [int(x) for x in host.split('.')]
+            if not all(0 <= octet <= 255 for octet in octets):
+                errors.append(f"UNIFI_GATEWAY_HOST has invalid IPv4 address: {host}")
+
+    # Validate UNIFI_PORT
+    port_str = os.getenv("UNIFI_GATEWAY_PORT", "443")
+    try:
+        port = int(port_str)
+        if port < 1 or port > 65535:
+            errors.append(f"UNIFI_GATEWAY_PORT must be between 1 and 65535, got: {port}")
+    except ValueError:
+        errors.append(f"UNIFI_GATEWAY_PORT must be a valid integer, got: {port_str}")
+
+    # Validate UNIFI_API_KEY
+    api_key = os.getenv("UNIFI_API_KEY", "")
+    if not api_key or api_key == "API":
+        warnings.append("UNIFI_API_KEY not set - Integration API calls will fail. Set this for API key authentication.")
+    elif len(api_key) < 10:
+        warnings.append(f"UNIFI_API_KEY seems too short ({len(api_key)} chars) - may be invalid")
+
+    # Validate timeout
+    timeout_str = os.getenv("UNIFI_TIMEOUT_S", "15")
+    try:
+        timeout = int(timeout_str)
+        if timeout < 1:
+            errors.append(f"UNIFI_TIMEOUT_S must be positive, got: {timeout}")
+        elif timeout > 300:
+            warnings.append(f"UNIFI_TIMEOUT_S is very high ({timeout}s) - may cause long waits")
+    except ValueError:
+        errors.append(f"UNIFI_TIMEOUT_S must be a valid integer, got: {timeout_str}")
+
+    # Validate rate limits
+    rate_minute_str = os.getenv("UNIFI_RATE_LIMIT_PER_MINUTE", "60")
+    try:
+        rate_minute = int(rate_minute_str)
+        if rate_minute < 1:
+            errors.append(f"UNIFI_RATE_LIMIT_PER_MINUTE must be positive, got: {rate_minute}")
+        elif rate_minute > 1000:
+            warnings.append(f"UNIFI_RATE_LIMIT_PER_MINUTE is very high ({rate_minute}) - may stress controller")
+    except ValueError:
+        errors.append(f"UNIFI_RATE_LIMIT_PER_MINUTE must be a valid integer, got: {rate_minute_str}")
+
+    rate_hour_str = os.getenv("UNIFI_RATE_LIMIT_PER_HOUR", "1000")
+    try:
+        rate_hour = int(rate_hour_str)
+        if rate_hour < 1:
+            errors.append(f"UNIFI_RATE_LIMIT_PER_HOUR must be positive, got: {rate_hour}")
+        elif rate_hour > 100000:
+            warnings.append(f"UNIFI_RATE_LIMIT_PER_HOUR is very high ({rate_hour}) - may stress controller")
+    except ValueError:
+        errors.append(f"UNIFI_RATE_LIMIT_PER_HOUR must be a valid integer, got: {rate_hour_str}")
+
+    # Validate TLS setting
+    verify_tls_str = os.getenv("UNIFI_VERIFY_TLS", "true").lower()
+    if verify_tls_str not in ("1", "true", "yes", "0", "false", "no"):
+        warnings.append(f"UNIFI_VERIFY_TLS has unexpected value: {verify_tls_str} (using default: true)")
+
+    # Validate log level
+    log_level = os.getenv("UNIFI_LOG_LEVEL", "INFO").upper()
+    valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    if log_level not in valid_levels:
+        warnings.append(f"UNIFI_LOG_LEVEL has invalid value: {log_level} (using INFO). Valid: {', '.join(valid_levels)}")
+
+    # Validate legacy credentials (if provided)
+    legacy_user = os.getenv("UNIFI_USERNAME", "")
+    legacy_pass = os.getenv("UNIFI_PASSWORD", "")
+    if (legacy_user and not legacy_pass) or (legacy_pass and not legacy_user):
+        warnings.append("Legacy auth partially configured - both UNIFI_USERNAME and UNIFI_PASSWORD required for legacy API")
+    if legacy_user == "USERNAME" or legacy_pass == "PASSWORD":
+        warnings.append("Legacy credentials appear to be placeholder values - update with real credentials")
+
+    # Validate session timeout (new parameter for Week 3)
+    session_timeout_str = os.getenv("UNIFI_SESSION_TIMEOUT_S", "3600")
+    try:
+        session_timeout = int(session_timeout_str)
+        if session_timeout < 60:
+            errors.append(f"UNIFI_SESSION_TIMEOUT_S must be >= 60 seconds, got: {session_timeout}")
+        elif session_timeout > 86400:
+            warnings.append(f"UNIFI_SESSION_TIMEOUT_S is very high ({session_timeout}s = {session_timeout/3600:.1f}h)")
+    except ValueError:
+        errors.append(f"UNIFI_SESSION_TIMEOUT_S must be a valid integer, got: {session_timeout_str}")
+
+    # Report errors and warnings
+    if errors:
+        error_msg = "Environment configuration errors:\n" + "\n".join(f"  - {e}" for e in errors)
+        raise ConfigurationError(error_msg)
+
+    if warnings:
+        print("⚠️  Environment configuration warnings:")
+        for w in warnings:
+            print(f"  - {w}")
+
+    print("✅ Environment configuration validated successfully")
+    return {
+        "host": host,
+        "port": int(port_str),
+        "timeout": int(timeout_str),
+        "rate_limit_per_minute": int(rate_minute_str),
+        "rate_limit_per_hour": int(rate_hour_str),
+        "verify_tls": verify_tls_str in ("1", "true", "yes"),
+        "log_level": log_level,
+        "session_timeout": int(session_timeout_str)
+    }
+
+# Validate configuration at startup
+try:
+    validated_config = validate_environment_config()
+except ConfigurationError as e:
+    print(f"❌ Configuration validation failed:\n{e}")
+    print("\nPlease fix the errors in your secrets.env file and try again.")
+    import sys
+    sys.exit(1)
+
 # ========= Logging Configuration =========
 LOG_LEVEL = os.getenv("UNIFI_LOG_LEVEL", "INFO").upper()
 LOG_FILE = os.getenv("UNIFI_LOG_FILE", "unifi_mcp_audit.log")
@@ -375,30 +517,172 @@ def _post(url: str, headers: Dict[str, str], body=None, timeout=REQUEST_TIMEOUT_
         # Error already logged in _raise_for
         raise
 
-# Legacy session (cookie auth)
-LEGACY = requests.Session()
+# ========= Legacy Session Management with Timeout/Refresh =========
+class LegacySessionManager:
+    """
+    Manages legacy cookie-based authentication with session timeout and refresh.
+    Tracks session age and automatically refreshes before expiration.
+    """
+    def __init__(self, session_timeout_s: int = 3600):
+        self.session = requests.Session()
+        self.session_timeout_s = session_timeout_s
+        self.session_created_at: Optional[float] = None
+        self.session_last_used: Optional[float] = None
+        self.lock = threading.Lock()
+
+    def is_session_valid(self) -> bool:
+        """Check if current session is valid (not expired)."""
+        if not self.session.cookies:
+            return False
+        if self.session_created_at is None:
+            return False
+
+        now = time.time()
+        age = now - self.session_created_at
+
+        # Check if session has exceeded timeout
+        if age >= self.session_timeout_s:
+            logger.info(f"Legacy session expired (age: {age:.0f}s, timeout: {self.session_timeout_s}s)")
+            return False
+
+        return True
+
+    def should_refresh(self) -> bool:
+        """Check if session should be refreshed (approaching expiration)."""
+        if not self.session_created_at:
+            return False
+
+        now = time.time()
+        age = now - self.session_created_at
+        # Refresh when 80% of timeout has elapsed
+        refresh_threshold = self.session_timeout_s * 0.8
+
+        return age >= refresh_threshold
+
+    def login(self, force: bool = False):
+        """
+        Perform legacy cookie authentication.
+        Args:
+            force: Force re-authentication even if session appears valid
+        """
+        with self.lock:
+            # Skip if session is still valid and not forcing
+            if not force and self.is_session_valid():
+                logger.debug("Legacy session still valid, skipping login")
+                return
+
+            if not (LEGACY_USER and LEGACY_PASS):
+                raise UniFiHTTPError("Legacy login requires UNIFI_USERNAME and UNIFI_PASSWORD.")
+
+            logger.info("Performing legacy cookie authentication")
+            audit_log("legacy_login_attempt", {
+                "host": UNIFI_HOST,
+                "user": LEGACY_USER,
+                "force": force
+            }, success=True)
+
+            try:
+                r = self.session.post(
+                    f"https://{UNIFI_HOST}:{UNIFI_PORT}/api/auth/login",
+                    json={"username": LEGACY_USER, "password": LEGACY_PASS},
+                    verify=VERIFY_TLS,
+                    timeout=REQUEST_TIMEOUT_S,
+                )
+                _raise_for(r)
+
+                # Update session timestamps
+                now = time.time()
+                self.session_created_at = now
+                self.session_last_used = now
+
+                logger.info(f"Legacy authentication successful (timeout: {self.session_timeout_s}s)")
+                audit_log("legacy_login_success", {
+                    "host": UNIFI_HOST,
+                    "session_timeout": self.session_timeout_s,
+                    "expires_at": datetime.fromtimestamp(now + self.session_timeout_s).isoformat()
+                }, success=True)
+
+            except Exception as e:
+                logger.error(f"Legacy authentication failed: {e}")
+                audit_log("legacy_login_failed", {
+                    "host": UNIFI_HOST,
+                    "error": str(e)
+                }, success=False, error=str(e))
+                raise
+
+    def refresh_if_needed(self):
+        """Refresh session if approaching expiration."""
+        if self.should_refresh():
+            logger.info("Legacy session approaching expiration, refreshing...")
+            self.login(force=True)
+
+    def invalidate(self):
+        """Invalidate the current session."""
+        with self.lock:
+            self.session.cookies.clear()
+            self.session_created_at = None
+            self.session_last_used = None
+            logger.info("Legacy session invalidated")
+            audit_log("legacy_session_invalidated", {}, success=True)
+
+    def get_session_info(self) -> Dict[str, Any]:
+        """Get information about the current session."""
+        if not self.session_created_at:
+            return {
+                "active": False,
+                "message": "No active session"
+            }
+
+        now = time.time()
+        age = now - self.session_created_at
+        remaining = self.session_timeout_s - age
+
+        return {
+            "active": self.is_session_valid(),
+            "created_at": datetime.fromtimestamp(self.session_created_at).isoformat(),
+            "age_seconds": int(age),
+            "timeout_seconds": self.session_timeout_s,
+            "remaining_seconds": int(remaining) if remaining > 0 else 0,
+            "expires_at": datetime.fromtimestamp(self.session_created_at + self.session_timeout_s).isoformat(),
+            "should_refresh": self.should_refresh()
+        }
+
+# Initialize legacy session manager with configured timeout
+SESSION_TIMEOUT_S = int(os.getenv("UNIFI_SESSION_TIMEOUT_S", "3600"))
+LEGACY = LegacySessionManager(session_timeout_s=SESSION_TIMEOUT_S)
 
 def legacy_login():
-    if not (LEGACY_USER and LEGACY_PASS):
-        raise UniFiHTTPError("Legacy login requires UNIFI_USERNAME and UNIFI_PASSWORD.")
-    r = LEGACY.post(
-        f"https://{UNIFI_HOST}:{UNIFI_PORT}/api/auth/login",
-        json={"username": LEGACY_USER, "password": LEGACY_PASS},
-        verify=VERIFY_TLS,
-        timeout=REQUEST_TIMEOUT_S,
-    )
-    _raise_for(r)
+    """Legacy login wrapper for backward compatibility."""
+    LEGACY.login()
 
 def legacy_get(path: str, params=None) -> Dict[str, Any]:
-    if not LEGACY.cookies:
-        legacy_login()
-    r = LEGACY.get(f"{LEGACY_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+    """
+    Perform GET request with legacy cookie auth.
+    Automatically refreshes session if needed.
+    """
+    # Check if session needs refresh before making request
+    LEGACY.refresh_if_needed()
+
+    # Ensure we have a valid session
+    if not LEGACY.is_session_valid():
+        LEGACY.login()
+
+    r = LEGACY.session.get(f"{LEGACY_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 def legacy_post(path: str, body=None) -> Dict[str, Any]:
-    if not LEGACY.cookies:
-        legacy_login()
-    r = LEGACY.post(f"{LEGACY_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+    """
+    Perform POST request with legacy cookie auth.
+    Automatically refreshes session if needed.
+    """
+    # Check if session needs refresh before making request
+    LEGACY.refresh_if_needed()
+
+    # Ensure we have a valid session
+    if not LEGACY.is_session_valid():
+        LEGACY.login()
+
+    r = LEGACY.session.post(f"{LEGACY_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 # ========= UniFi Protect helpers =========
@@ -412,11 +696,15 @@ def protect_get(path: str, params=None) -> Dict[str, Any]:
             return _raise_for(r)
         if r.status_code not in (401, 403):
             return _raise_for(r)
-    except Exception:
+    except Exception:  # nosec B110 - Intentional fallback to legacy auth
         pass  # fall back
-    if not LEGACY.cookies:
-        legacy_login()
-    r = LEGACY.get(f"{PROTECT_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+
+    # Fallback to legacy session with auto-refresh
+    LEGACY.refresh_if_needed()
+    if not LEGACY.is_session_valid():
+        LEGACY.login()
+
+    r = LEGACY.session.get(f"{PROTECT_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 def protect_post(path: str, body=None) -> Dict[str, Any]:
@@ -426,11 +714,15 @@ def protect_post(path: str, body=None) -> Dict[str, Any]:
             return _raise_for(r)
         if r.status_code not in (401, 403):
             return _raise_for(r)
-    except Exception:
+    except Exception:  # nosec B110 - Intentional fallback to legacy auth
         pass
-    if not LEGACY.cookies:
-        legacy_login()
-    r = LEGACY.post(f"{PROTECT_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
+
+    # Fallback to legacy session with auto-refresh
+    LEGACY.refresh_if_needed()
+    if not LEGACY.is_session_valid():
+        LEGACY.login()
+
+    r = LEGACY.session.post(f"{PROTECT_BASE}{path}", json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
 # ========= UniFi Health (triple-registered) =========
@@ -439,17 +731,56 @@ def _health_check() -> Dict[str, Any]:
     """
     Minimal controller sanity check against Integration API.
     Returns ok: True with sites count, or ok: False with error.
+    Also validates credentials and session status.
     """
+    result = {
+        "base": NET_INTEGRATION_BASE,
+        "verify_tls": VERIFY_TLS,
+        "credentials": {}
+    }
+
+    # Check Integration API (API key authentication)
     try:
         resp = _get("/".join([NET_INTEGRATION_BASE, "sites"]), _h_key())
-        return {
-            "ok": True,
-            "integration_sites_count": resp.get("count"),
-            "base": NET_INTEGRATION_BASE,
-            "verify_tls": VERIFY_TLS,
+        result["ok"] = True
+        result["integration_sites_count"] = resp.get("count")
+        result["credentials"]["api_key"] = {
+            "configured": bool(UNIFI_API_KEY and UNIFI_API_KEY != "API"),
+            "valid": True
         }
     except Exception as e:
-        return {"ok": False, "error": str(e), "base": NET_INTEGRATION_BASE, "verify_tls": VERIFY_TLS}
+        result["ok"] = False
+        result["error"] = str(e)
+        result["credentials"]["api_key"] = {
+            "configured": bool(UNIFI_API_KEY and UNIFI_API_KEY != "API"),
+            "valid": False,
+            "error": str(e)
+        }
+
+    # Check legacy credentials if configured
+    if LEGACY_USER and LEGACY_PASS and LEGACY_USER != "USERNAME":
+        try:
+            # Try legacy authentication
+            LEGACY.login(force=True)
+            session_info = LEGACY.get_session_info()
+            result["credentials"]["legacy"] = {
+                "configured": True,
+                "valid": session_info.get("active", False),
+                "session": session_info
+            }
+        except Exception as e:
+            result["credentials"]["legacy"] = {
+                "configured": True,
+                "valid": False,
+                "error": str(e)
+            }
+    else:
+        result["credentials"]["legacy"] = {
+            "configured": False,
+            "valid": None
+        }
+
+    return result
 
 # 1) Original scheme you tried
 @mcp.resource("unifi://health")
@@ -658,8 +989,8 @@ async def capabilities() -> Dict[str, Any]:
 
     # Legacy quick check
     try:
-        legacy_login()
-        r = LEGACY.get("/".join([LEGACY_BASE, "s", "default", "stat", "sta"]), verify=VERIFY_TLS, timeout=6)
+        LEGACY.login()
+        r = LEGACY.session.get("/".join([LEGACY_BASE, "s", "default", "stat", "sta"]), verify=VERIFY_TLS, timeout=6)
         out["legacy.stat_sta"] = {"url": r.request.url, "status": r.status_code}
     except Exception as e:
         out["legacy.stat_sta"] = {"error": str(e)}
@@ -669,8 +1000,8 @@ async def capabilities() -> Dict[str, Any]:
         try:
             r = requests.get(f"{PROTECT_BASE}{path}", headers=_h_key(), verify=VERIFY_TLS, timeout=6)
             if r.status_code in (401, 403) and LEGACY_USER and LEGACY_PASS:
-                legacy_login()
-                r = LEGACY.get(f"{PROTECT_BASE}{path}", verify=VERIFY_TLS, timeout=6)
+                LEGACY.login()
+                r = LEGACY.session.get(f"{PROTECT_BASE}{path}", verify=VERIFY_TLS, timeout=6)
             out[f"protect.{label}"] = {"url": f"{PROTECT_BASE}{path}", "status": r.status_code}
         except Exception as e:
             out[f"protect.{label}"] = {"url": f"{PROTECT_BASE}{path}", "error": str(e)}
@@ -740,6 +1071,39 @@ def get_rate_limit_stats(endpoint: str = "global") -> Dict[str, Any]:
             }
         else:
             return rate_limiter.get_stats(endpoint)
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@mcp.tool()
+def get_session_info() -> Dict[str, Any]:
+    """
+    Get information about the current legacy authentication session.
+    Shows session age, expiration time, and whether session needs refresh.
+    Useful for monitoring session health and debugging authentication issues.
+    """
+    try:
+        info = LEGACY.get_session_info()
+        return {
+            "success": True,
+            "session": info,
+            "session_timeout_configured": SESSION_TIMEOUT_S
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@mcp.tool()
+def invalidate_session() -> Dict[str, Any]:
+    """
+    Manually invalidate the current legacy authentication session.
+    Forces re-authentication on next API call requiring legacy auth.
+    Useful for testing credential rotation or clearing stale sessions.
+    """
+    try:
+        LEGACY.invalidate()
+        return {
+            "success": True,
+            "message": "Legacy session invalidated successfully. Next request will re-authenticate."
+        }
     except Exception as e:
         return {"success": False, "error": str(e)}
 
