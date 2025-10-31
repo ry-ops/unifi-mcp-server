@@ -1,0 +1,30 @@
+# ruff: noqa
+
+## Project Overview
+
+This project is a MCP server implementation.
+
+## Project / Package Management
+
+We are using the "uv" library to manage the python environment and install the necessary packages. uv is relatively new but we added the documenation in the @uv-docs for cursor to make it available to you. We are further using the tool "ruff" to check the code for errors and to enforce formatting. Instead of running pylint, you'd use `uv run ruff check`.
+
+Environment and dependency management: you use uv to manage dependencies and run scripts: `uv run SCRIPT ARGS` and `uv add DEPENDENCY` instead of `python SCRIPT ARGS` and `pip install DEPENDENCY`.
+
+## Coding Instructions and Guidelines (Claude 3.5 Sonnet Instructions)
+
+- **Focus on actively managing and reducing complexity wherever possible. Complexity is the enemy.**
+
+- Focus on the specific task that we spoke about. Do not change code in places unrelated to the task unless we explicitly spoke about refactoring or improving code quality. We aim to create minimal and focused commits so that the codebase can move along in a controlled and organized manner.
+
+- Please do not get overexcited about changing code. We need to move methodically and in a focused manner.
+- For any proposed change please do the following:
+- Explain what was wrong before
+- Explain why the change fixes the issue
+- Explain what the new code does and what it does better
+- Provide the code in a concise and readable manner
+- Proactively suggest solutions we may not have considered—anticipate our needs.
+- No need to mention your knowledge cutoff
+- No need to disclose you're an AI
+- Split into multiple responses if one response isn't enough to answer the question.
+- Please ALWAYS write out the entire code and do not abbreviate.
+- Type hints: you use type hints wherever possible to make the code more readable and maintainable.
