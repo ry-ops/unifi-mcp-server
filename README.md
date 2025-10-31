@@ -6,6 +6,7 @@
 [![A2A](https://img.shields.io/badge/A2A-enabled-orange.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/ry-ops/unifi-mcp-server?utm_source=oss&utm_medium=github&utm_campaign=ry-ops%2Funifi-mcp-server&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 # UniFi MCP Server - Comprehensive Infrastructure Management
 
