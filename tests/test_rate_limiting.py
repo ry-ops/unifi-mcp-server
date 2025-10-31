@@ -8,6 +8,7 @@ import time
 import sys
 import os
 from threading import Thread
+from collections import deque
 
 # Add parent directory to path to import main module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -80,7 +81,7 @@ class TestRateLimiter:
 
         # Simulate time passing by manually manipulating timestamps
         # (In real scenario, would wait 60 seconds)
-        limiter.minute_calls["/test"] = [time.time() - 61, time.time() - 61]
+        limiter.minute_calls["/test"] = deque([time.time() - 61, time.time() - 61])
 
         # Should be allowed again after cleanup
         allowed, _ = limiter.check_rate_limit("/test")

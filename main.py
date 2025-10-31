@@ -9,13 +9,13 @@ from typing import Any, Dict, List, Optional
 import os, json, requests, urllib3, time, threading, logging
 from pathlib import Path
 from mcp.server.fastmcp import FastMCP
-from collections import defaultdict
+from collections import defaultdict, deque
 from datetime import datetime
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ========= Load Environment Variables from secrets.env =========
-def load_env_file(env_file: str = "secrets.env"):
+def load_env_file(env_file: str = "secrets.env") -> None:
     """Load environment variables from a .env file"""
     env_path = Path(env_file)
     if env_path.exists():
@@ -58,7 +58,7 @@ class ConfigurationError(Exception):
     """Raised when environment configuration is invalid."""
     pass
 
-def validate_environment_config():
+def validate_environment_config() -> Dict[str, Any]:
     """
     Validate all environment variables at startup.
     Returns dict of validated config or raises ConfigurationError.
@@ -244,7 +244,7 @@ def sanitize_for_logging(data: Any, depth: int = 0) -> Any:
     else:
         return data
 
-def audit_log(action: str, details: Dict[str, Any], success: bool = True, error: Optional[str] = None):
+def audit_log(action: str, details: Dict[str, Any], success: bool = True, error: Optional[str] = None) -> None:
     """
     Log auditable actions with sanitized details.
     """
@@ -271,23 +271,23 @@ class RateLimiter:
     def __init__(self, calls_per_minute: int, calls_per_hour: int):
         self.calls_per_minute = calls_per_minute
         self.calls_per_hour = calls_per_hour
-        self.minute_calls = defaultdict(list)
-        self.hour_calls = defaultdict(list)
+        # Use deque for O(1) append and popleft operations
+        self.minute_calls: Dict[str, deque] = defaultdict(lambda: deque())
+        self.hour_calls: Dict[str, deque] = defaultdict(lambda: deque())
         self.lock = threading.Lock()
 
-    def _cleanup_old_calls(self, endpoint: str):
-        """Remove calls older than the time window."""
+    def _cleanup_old_calls(self, endpoint: str) -> None:
+        """Remove calls older than the time window - optimized with deque."""
         now = time.time()
-        # Keep only calls from the last minute
-        self.minute_calls[endpoint] = [
-            ts for ts in self.minute_calls[endpoint]
-            if now - ts < 60
-        ]
-        # Keep only calls from the last hour
-        self.hour_calls[endpoint] = [
-            ts for ts in self.hour_calls[endpoint]
-            if now - ts < 3600
-        ]
+
+        # Efficiently remove old calls from the left of deque (oldest first)
+        minute_queue = self.minute_calls[endpoint]
+        while minute_queue and now - minute_queue[0] >= 60:
+            minute_queue.popleft()
+
+        hour_queue = self.hour_calls[endpoint]
+        while hour_queue and now - hour_queue[0] >= 3600:
+            hour_queue.popleft()
 
     def check_rate_limit(self, endpoint: str) -> tuple[bool, Optional[str]]:
         """
@@ -445,7 +445,7 @@ def _raise_for(r: requests.Response) -> Dict[str, Any]:
 def _h_key() -> Dict[str, str]:
     return {"X-API-Key": UNIFI_API_KEY, "Content-Type": "application/json"}
 
-def _get(url: str, headers: Dict[str, str], params=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
+def _get(url: str, headers: Dict[str, str], params: Optional[Dict[str, Any]] = None, timeout: int = REQUEST_TIMEOUT_S) -> Dict[str, Any]:
     # Extract endpoint for rate limiting (use path without query params)
     from urllib.parse import urlparse
     parsed = urlparse(url)
@@ -481,7 +481,7 @@ def _get(url: str, headers: Dict[str, str], params=None, timeout=REQUEST_TIMEOUT
         # Error already logged in _raise_for
         raise
 
-def _post(url: str, headers: Dict[str, str], body=None, timeout=REQUEST_TIMEOUT_S) -> Dict[str, Any]:
+def _post(url: str, headers: Dict[str, str], body: Optional[Dict[str, Any]] = None, timeout: int = REQUEST_TIMEOUT_S) -> Dict[str, Any]:
     # Extract endpoint for rate limiting
     from urllib.parse import urlparse
     parsed = urlparse(url)
@@ -559,7 +559,7 @@ class LegacySessionManager:
 
         return age >= refresh_threshold
 
-    def login(self, force: bool = False):
+    def login(self, force: bool = False) -> None:
         """
         Perform legacy cookie authentication.
         Args:
@@ -610,13 +610,13 @@ class LegacySessionManager:
                 }, success=False, error=str(e))
                 raise
 
-    def refresh_if_needed(self):
+    def refresh_if_needed(self) -> None:
         """Refresh session if approaching expiration."""
         if self.should_refresh():
             logger.info("Legacy session approaching expiration, refreshing...")
             self.login(force=True)
 
-    def invalidate(self):
+    def invalidate(self) -> None:
         """Invalidate the current session."""
         with self.lock:
             self.session.cookies.clear()
@@ -651,11 +651,11 @@ class LegacySessionManager:
 SESSION_TIMEOUT_S = int(os.getenv("UNIFI_SESSION_TIMEOUT_S", "3600"))
 LEGACY = LegacySessionManager(session_timeout_s=SESSION_TIMEOUT_S)
 
-def legacy_login():
+def legacy_login() -> None:
     """Legacy login wrapper for backward compatibility."""
     LEGACY.login()
 
-def legacy_get(path: str, params=None) -> Dict[str, Any]:
+def legacy_get(path: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
     Perform GET request with legacy cookie auth.
     Automatically refreshes session if needed.
@@ -670,7 +670,7 @@ def legacy_get(path: str, params=None) -> Dict[str, Any]:
     r = LEGACY.session.get(f"{LEGACY_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
-def legacy_post(path: str, body=None) -> Dict[str, Any]:
+def legacy_post(path: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
     Perform POST request with legacy cookie auth.
     Automatically refreshes session if needed.
@@ -686,7 +686,7 @@ def legacy_post(path: str, body=None) -> Dict[str, Any]:
     return _raise_for(r)
 
 # ========= UniFi Protect helpers =========
-def protect_get(path: str, params=None) -> Dict[str, Any]:
+def protect_get(path: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
     Try API key first; if unauthorized, fall back to legacy cookie session.
     """
@@ -707,7 +707,7 @@ def protect_get(path: str, params=None) -> Dict[str, Any]:
     r = LEGACY.session.get(f"{PROTECT_BASE}{path}", params=params, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
     return _raise_for(r)
 
-def protect_post(path: str, body=None) -> Dict[str, Any]:
+def protect_post(path: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     try:
         r = requests.post(f"{PROTECT_BASE}{path}", headers=_h_key(), json=body, verify=VERIFY_TLS, timeout=REQUEST_TIMEOUT_S)
         if r.status_code in (200, 204):
@@ -733,7 +733,7 @@ def _health_check() -> Dict[str, Any]:
     Returns ok: True with sites count, or ok: False with error.
     Also validates credentials and session status.
     """
-    result = {
+    result: Dict[str, Any] = {
         "base": NET_INTEGRATION_BASE,
         "verify_tls": VERIFY_TLS,
         "credentials": {}
@@ -805,7 +805,7 @@ def unifi_health() -> Dict[str, Any]:
 
 # Prompt so agents know how to call it
 @mcp.prompt("how_to_check_unifi_health")
-def how_to_check_unifi_health():
+def how_to_check_unifi_health() -> Dict[str, Any]:
     return {
         "description": "Check UniFi controller health via Integration API.",
         "messages": [{
@@ -921,7 +921,7 @@ def validate_duration(seconds: int, min_val: int = 1, max_val: int = 300) -> int
     """
     if not isinstance(seconds, int):
         try:
-            seconds = int(seconds)
+            seconds = int(seconds)  # type: ignore[arg-type]
         except (ValueError, TypeError):
             raise ValidationError(f"Duration must be integer, got {type(seconds).__name__}")
 
@@ -932,9 +932,10 @@ def validate_duration(seconds: int, min_val: int = 1, max_val: int = 300) -> int
 
     return seconds
 
-def validate_boolean(value: bool, param_name: str = "value") -> bool:
+def validate_boolean(value: Any, param_name: str = "value") -> bool:
     """
     Validate boolean parameters with type coercion.
+    Accepts bool, str, or int and coerces to bool.
     """
     if isinstance(value, bool):
         return value
@@ -1126,19 +1127,21 @@ async def clients_active(site_id: str) -> List[Dict[str, Any]]:
 
 # WLANs with graceful fallback (Integration -> Legacy) and safe URL joins
 @mcp.resource("sites://{site_id}/wlans")
-async def wlans(site_id: str):
+async def wlans(site_id: str) -> List[Dict[str, Any]] | Dict[str, Any]:
     # 1) Integration attempt (often 404/not exposed)
     try:
         url = "/".join([NET_INTEGRATION_BASE, "sites", site_id, "wlans"])
         res = _get(url, _h_key())
-        return res.get("data", [])
+        data: List[Dict[str, Any]] = res.get("data", [])
+        return data
     except UniFiHTTPError as e:
         if "404" not in str(e):
             raise
     # 2) Legacy fallback
     if LEGACY_USER and LEGACY_PASS:
         lr = legacy_get(f"/s/{site_id}/rest/wlanconf")
-        return lr.get("data", lr)
+        data_or_error: List[Dict[str, Any]] | Dict[str, Any] = lr.get("data", lr)
+        return data_or_error
     # 3) Explain
     return {
         "ok": False,
@@ -1152,14 +1155,14 @@ async def wlans(site_id: str):
 
 # Search helpers
 @mcp.resource("sites://{site_id}/search/clients/{query}")
-async def search_clients(site_id: str, query: str):
+async def search_clients(site_id: str, query: str) -> List[Dict[str, Any]]:
     cs = await clients(site_id)
     q = query.lower()
     def hit(c): return any(q in str(c.get(k, "")).lower() for k in ("hostname", "name", "mac", "ip", "user"))
     return [c for c in cs if hit(c)]
 
 @mcp.resource("sites://{site_id}/search/devices/{query}")
-async def search_devices(site_id: str, query: str):
+async def search_devices(site_id: str, query: str) -> List[Dict[str, Any]]:
     ds = await devices(site_id)
     q = query.lower()
     def hit(d): return any(q in str(d.get(k, "")).lower() for k in ("name", "model", "mac", "ip", "ip_address"))
@@ -1169,22 +1172,26 @@ async def search_devices(site_id: str, query: str):
 @mcp.resource("access://doors")
 async def access_doors() -> List[Dict[str, Any]]:
     res = _get("/".join([ACCESS_BASE, "doors"]), _h_key())
-    return res.get("data", res)
+    data: List[Dict[str, Any]] = res.get("data", res)
+    return data
 
 @mcp.resource("access://readers")
 async def access_readers() -> List[Dict[str, Any]]:
     res = _get("/".join([ACCESS_BASE, "readers"]), _h_key())
-    return res.get("data", res)
+    data: List[Dict[str, Any]] = res.get("data", res)
+    return data
 
 @mcp.resource("access://users")
 async def access_users() -> List[Dict[str, Any]]:
     res = _get("/".join([ACCESS_BASE, "users"]), _h_key())
-    return res.get("data", res)
+    data: List[Dict[str, Any]] = res.get("data", res)
+    return data
 
 @mcp.resource("access://events")
 async def access_events() -> List[Dict[str, Any]]:
     res = _get("/".join([ACCESS_BASE, "events"]), _h_key())
-    return res.get("data", res)
+    data: List[Dict[str, Any]] = res.get("data", res)
+    return data
 
 # ========= UniFi Protect: resources =========
 @mcp.resource("protect://nvr")
@@ -1195,8 +1202,10 @@ async def protect_nvr() -> Dict[str, Any]:
 async def protect_cameras() -> List[Dict[str, Any]]:
     res = protect_get("/cameras")
     if isinstance(res, dict) and "cameras" in res:
-        return res["cameras"]
-    return res
+        cameras: List[Dict[str, Any]] = res["cameras"]
+        return cameras
+    # Fallback: return empty list if structure unexpected
+    return []
 
 @mcp.resource("protect://camera/{camera_id}")
 async def protect_camera(camera_id: str) -> Dict[str, Any]:
@@ -1206,15 +1215,19 @@ async def protect_camera(camera_id: str) -> Dict[str, Any]:
 async def protect_events() -> List[Dict[str, Any]]:
     res = protect_get("/events")
     if isinstance(res, dict) and "events" in res:
-        return res["events"]
-    return res
+        events: List[Dict[str, Any]] = res["events"]
+        return events
+    # Fallback: return empty list if structure unexpected
+    return []
 
 @mcp.resource("protect://events/range/{start_ts}/{end_ts}")
 async def protect_events_range(start_ts: str, end_ts: str) -> List[Dict[str, Any]]:
     res = protect_get("/events", params={"start": start_ts, "end": end_ts})
     if isinstance(res, dict) and "events" in res:
-        return res["events"]
-    return res
+        events: List[Dict[str, Any]] = res["events"]
+        return events
+    # Fallback: return empty list if structure unexpected
+    return []
 
 @mcp.resource("protect://streams/{camera_id}")
 async def protect_streams(camera_id: str) -> Dict[str, Any]:
@@ -1327,7 +1340,7 @@ def protect_toggle_privacy(camera_id: str, enabled: bool) -> Dict[str, Any]:
 
 # ========= Prompt playbooks =========
 @mcp.prompt("how_to_find_device")
-def how_to_find_device():
+def how_to_find_device() -> Dict[str, Any]:
     return {
         "description": "Find a network device and flash its LEDs.",
         "messages": [{"role": "system",
@@ -1335,7 +1348,7 @@ def how_to_find_device():
     }
 
 @mcp.prompt("how_to_block_client")
-def how_to_block_client():
+def how_to_block_client() -> Dict[str, Any]:
     return {
         "description": "Find & block a client safely.",
         "messages": [{"role": "system",
@@ -1343,7 +1356,7 @@ def how_to_block_client():
     }
 
 @mcp.prompt("how_to_toggle_wlan")
-def how_to_toggle_wlan():
+def how_to_toggle_wlan() -> Dict[str, Any]:
     return {
         "description": "Toggle a WLAN using Integration if available, else Legacy.",
         "messages": [{"role": "system",
@@ -1351,7 +1364,7 @@ def how_to_toggle_wlan():
     }
 
 @mcp.prompt("how_to_manage_access")
-def how_to_manage_access():
+def how_to_manage_access() -> Dict[str, Any]:
     return {
         "description": "Check doors/readers and perform a momentary unlock.",
         "messages": [{"role": "system",
@@ -1359,7 +1372,7 @@ def how_to_manage_access():
     }
 
 @mcp.prompt("how_to_find_camera")
-def how_to_find_camera():
+def how_to_find_camera() -> Dict[str, Any]:
     return {
         "description": "Find a Protect camera and show its streams.",
         "messages": [{"role": "system",
@@ -1367,7 +1380,7 @@ def how_to_find_camera():
     }
 
 @mcp.prompt("how_to_review_motion")
-def how_to_review_motion():
+def how_to_review_motion() -> Dict[str, Any]:
     return {
         "description": "Review recent motion/smart events in Protect.",
         "messages": [{"role": "system",
@@ -1375,7 +1388,7 @@ def how_to_review_motion():
     }
 
 @mcp.prompt("how_to_reboot_camera")
-def how_to_reboot_camera():
+def how_to_reboot_camera() -> Dict[str, Any]:
     return {
         "description": "Safely reboot a Protect camera after confirmation.",
         "messages": [{"role": "system",
