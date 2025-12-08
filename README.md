@@ -41,9 +41,28 @@ A Model Context Protocol (MCP) server for comprehensive UniFi infrastructure mon
 - Smart status reporting and alerting
 
 ### 🔗 **Agent-to-Agent (A2A) Protocol**
-Built-in A2A protocol enables AI agents to understand and execute complex UniFi operations through structured prompt playbooks:
+Built-in A2A protocol enables AI agents to understand and execute complex UniFi operations through structured prompt playbooks and a comprehensive Agent Card:
 
-**Available A2A Prompts:**
+**Agent Card**: [`agent-card.json`](agent-card.json) - Full A2A protocol specification including:
+- 9 specialized skills (system health, device management, client monitoring, etc.)
+- 30+ MCP tools mapped to agent capabilities
+- 15+ resource URIs for data access
+- Safety requirements and confirmation workflows
+- Multi-API authentication support (local + cloud)
+- Integration examples and usage patterns
+
+**Available A2A Skills:**
+1. **System Health Monitoring** - Controller health checks, comprehensive status, diagnostics
+2. **Device Management** - Monitor network devices, locate with LED flash, track uptime
+3. **Client Monitoring** - Track bandwidth, connection status, device activity
+4. **Client Blocking** - Safely block/unblock/disconnect clients with confirmation
+5. **WLAN Management** - Enable/disable wireless networks with automatic API fallback
+6. **Protect Camera Management** - Control cameras, LEDs, privacy mode, reboots
+7. **Access Door Control** - Unlock doors with timed duration
+8. **Multi-Site Host Discovery** - List hosts across local and cloud with auto-discovery
+9. **API Troubleshooting** - Debug connectivity, discover sites, validate config
+
+**A2A Prompt Playbooks:**
 - **`how_to_check_unifi_health`** - Check controller health and connectivity
 - **`how_to_check_system_status`** - Get comprehensive system health overview
 - **`how_to_monitor_devices`** - Monitor device health and identify issues
@@ -59,6 +78,13 @@ These prompts guide AI agents through multi-step workflows, ensuring safe and co
 - Required tool calls and resource queries
 - Safety checks and user confirmations
 - Fallback strategies for error handling
+
+For agent-to-agent communication, agents can:
+1. Read the `agent-card.json` to discover capabilities
+2. Use prompt playbooks to understand workflows
+3. Execute tools with proper safety confirmations
+4. Access resources via standardized URIs
+5. Handle multi-API fallback automatically
 
 ## Prerequisites
 
@@ -354,6 +380,261 @@ python -c "from main import get_system_status; print(get_system_status())"
 - **Rotate API keys regularly** - Especially for production environments
 - **Principle of least privilege** - Create dedicated API users with minimal required permissions
 - **Monitor access logs** - Review API usage in UniFi controller logs
+
+## Agent-to-Agent (A2A) Protocol Integration
+
+### Overview
+
+This server fully implements the A2A protocol through a standardized Agent Card (`agent-card.json`) that enables AI agents to discover capabilities, understand workflows, and execute complex UniFi operations safely.
+
+### Agent Card Location
+
+The Agent Card is located at the repository root: [`agent-card.json`](agent-card.json)
+
+### Discovering Agent Capabilities
+
+AI agents can read the Agent Card to discover:
+
+```json
+{
+  "name": "UniFi MCP Server",
+  "version": "0.1.0",
+  "capabilities": {
+    "streaming": false,
+    "tasks": true,
+    "resources": true,
+    "tools": true,
+    "prompts": true
+  },
+  "skills": [
+    {
+      "name": "system_health_monitoring",
+      "category": "monitoring",
+      "prompts": ["how_to_check_unifi_health", "how_to_check_system_status"],
+      "tools": ["unifi_health", "get_system_status", "get_quick_status"],
+      "resources": ["health://unifi", "status://system"]
+    }
+    // ... 8 more skills
+  ]
+}
+```
+
+### A2A Skill Categories
+
+The server provides 9 specialized skills organized by category:
+
+**Monitoring Skills:**
+- `system_health_monitoring` - Controller and infrastructure health
+- `device_management` - Network device monitoring and control
+- `client_monitoring` - Client activity and bandwidth tracking
+
+**Control Skills:**
+- `client_blocking` - Network access control (block/unblock/kick)
+- `wlan_management` - Wireless network on/off control
+- `protect_camera_management` - Camera control and privacy
+- `access_door_control` - Physical access control
+
+**Diagnostic Skills:**
+- `multi_site_host_discovery` - Cross-site device discovery
+- `api_troubleshooting` - Configuration and connectivity debugging
+
+### Mapping Prompts to Skills
+
+Each A2A prompt playbook maps to specific skills and workflows:
+
+| Prompt | Skills | Tools Used | Safety Level |
+|--------|--------|-----------|--------------|
+| `how_to_check_unifi_health` | system_health_monitoring | unifi_health, debug_api_connectivity | Read-only |
+| `how_to_check_system_status` | system_health_monitoring | get_system_status, get_quick_status | Read-only |
+| `how_to_monitor_devices` | device_management | get_device_health, locate_device | Safe (LED flash) |
+| `how_to_check_network_activity` | client_monitoring | get_client_activity, list_active_clients | Read-only |
+| `how_to_find_device` | device_management | locate_device, find_device_by_mac | Safe (LED flash) |
+| `how_to_block_client` | client_blocking | block_client, unblock_client | Requires confirmation |
+| `how_to_toggle_wlan` | wlan_management | wlan_set_enabled_legacy | Requires confirmation |
+| `how_to_list_hosts` | multi_site_host_discovery | working_list_hosts_example, discover_sites | Read-only |
+| `how_to_debug_api_issues` | api_troubleshooting | debug_api_connectivity, discover_sites | Read-only |
+
+### Using A2A for Agent-to-Agent Communication
+
+**Example 1: Agent discovers and uses health monitoring**
+
+```python
+# Agent reads agent-card.json
+agent_card = read_json("agent-card.json")
+
+# Discovers system_health_monitoring skill
+skill = agent_card["skills"][0]  # system_health_monitoring
+prompt_name = skill["prompts"][0]  # how_to_check_unifi_health
+
+# Executes prompt to get workflow
+workflow = execute_prompt(prompt_name)
+# Returns: "Call 'health://unifi' resource or 'unifi_health' tool"
+
+# Executes recommended tool
+result = execute_tool("unifi_health")
+```
+
+**Example 2: Agent safely blocks a client with confirmation**
+
+```python
+# Agent reads agent-card.json
+skill = find_skill("client_blocking")
+
+# Checks safety requirements
+assert skill["safety"]["requires_confirmation"] == true
+assert skill["safety"]["reversible"] == true
+
+# Follows prompt playbook
+workflow = execute_prompt("how_to_block_client")
+# Returns: "List clients, match MAC, confirm with user, call block_client"
+
+# Agent executes workflow:
+# 1. List active clients
+clients = read_resource("sites/{site_id}/clients/active")
+
+# 2. Match client by MAC/hostname
+target = match_client(clients, user_query)
+
+# 3. Confirm with user (required by safety policy)
+confirmed = confirm_with_user(f"Block {target['hostname']}?")
+
+# 4. Execute if confirmed
+if confirmed:
+    result = execute_tool("block_client", site_id, target["mac"])
+    # 5. Offer reversal
+    inform_user("Use 'unblock_client' to reverse this action")
+```
+
+### A2A Safety Model
+
+The Agent Card specifies safety requirements for each skill:
+
+```json
+{
+  "skill": "client_blocking",
+  "safety": {
+    "requires_confirmation": true,
+    "reversible": true,
+    "description": "Always confirm client identity before blocking. Offer unblock_client as reversal option."
+  }
+}
+```
+
+**Safety Levels:**
+- **Read-only** - No confirmation required (monitoring, discovery, health checks)
+- **Safe actions** - Minor impact, no confirmation (LED flash, device locate)
+- **Reversible actions** - Requires confirmation, can be undone (block client, toggle WLAN)
+- **Irreversible actions** - Requires confirmation, auto-reverts (unlock door with timeout)
+
+### Authentication for A2A
+
+The Agent Card documents all authentication methods:
+
+```json
+{
+  "authentication": {
+    "required": true,
+    "methods": [
+      {
+        "type": "api_key",
+        "name": "local_controller",
+        "env_vars": ["UNIFI_API_KEY", "UNIFI_GATEWAY_HOST", "UNIFI_GATEWAY_PORT"]
+      },
+      {
+        "type": "api_key",
+        "name": "site_manager",
+        "env_vars": ["UNIFI_SITEMGR_TOKEN", "UNIFI_SITEMGR_BASE"]
+      },
+      {
+        "type": "credentials",
+        "name": "legacy_api",
+        "env_vars": ["UNIFI_USERNAME", "UNIFI_PASSWORD"]
+      }
+    ],
+    "fallback": "Server intelligently falls back between APIs based on availability"
+  }
+}
+```
+
+Agents can discover which authentication methods are available and required for different operations.
+
+### Resource URI Patterns
+
+The Agent Card documents standardized resource URI patterns for discovery:
+
+**System Status:**
+- `status://system` - Comprehensive system health
+- `status://devices` - Device health summary
+- `status://clients` - Client activity summary
+- `health://unifi` - Quick controller health check
+
+**Site-based Resources:**
+- `sites://{site_id}/devices` - List all devices
+- `sites://{site_id}/clients` - List all clients (historical)
+- `sites://{site_id}/clients/active` - Currently connected clients only
+- `sites://{site_id}/wlans` - Wireless network configuration
+
+**Search Resources:**
+- `sites://{site_id}/search/clients/{query}` - Search clients
+- `sites://{site_id}/search/devices/{query}` - Search devices
+
+**Cloud Resources:**
+- `sitemanager://hosts` - List all UniFi OS consoles
+- `sitemanager://sites` - List all network sites
+- `sitemanager://devices` - List devices across infrastructure
+
+### Example A2A Integration Workflows
+
+**Workflow 1: Health Check and Report**
+```
+1. Agent reads agent-card.json
+2. Identifies "system_health_monitoring" skill
+3. Executes prompt "how_to_check_system_status"
+4. Calls tool "get_system_status"
+5. Reads resources: status://system, status://devices, status://clients
+6. Generates comprehensive report
+```
+
+**Workflow 2: Find and Locate Device**
+```
+1. Agent receives request: "Find the bedroom access point"
+2. Reads agent-card.json, identifies "device_management" skill
+3. Executes prompt "how_to_find_device"
+4. Searches: sites/{site_id}/search/devices/bedroom
+5. Confirms device with user
+6. Calls tool "locate_device" to flash LEDs for 30s
+```
+
+**Workflow 3: Multi-Site Discovery**
+```
+1. Agent needs to list all infrastructure
+2. Reads agent-card.json, identifies "multi_site_host_discovery" skill
+3. Executes prompt "how_to_list_hosts"
+4. Calls tool "working_list_hosts_example" (combines local + cloud)
+5. Falls back to "discover_sites" if site IDs unknown
+6. Returns unified host list across all sites
+```
+
+### Benefits of A2A Protocol Support
+
+1. **Discoverability** - Agents can introspect capabilities without documentation
+2. **Safety** - Structured confirmation workflows prevent accidents
+3. **Consistency** - Standardized skill definitions across all agents
+4. **Composability** - Skills can be combined for complex workflows
+5. **Fallback handling** - Multi-API support with automatic fallback
+6. **Documentation** - Agent Card serves as both spec and documentation
+
+### For Agent Developers
+
+To integrate with this A2A-enabled UniFi server:
+
+1. **Read the Agent Card**: Parse `agent-card.json` to discover all capabilities
+2. **Map user intents to skills**: Match user requests to skill categories
+3. **Follow prompt playbooks**: Use prompts to understand multi-step workflows
+4. **Respect safety requirements**: Always confirm before executing operations marked `requires_confirmation: true`
+5. **Handle authentication**: Support multiple auth methods (local + cloud)
+6. **Use resource URIs**: Access data through standardized resource patterns
+7. **Provide reversibility**: Offer reversal options for reversible operations
 
 ## Supported UniFi Hardware
 

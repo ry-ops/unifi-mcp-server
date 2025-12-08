@@ -1,0 +1,214 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/agent-card.schema.json",
+  "name": "UniFi MCP Server",
+  "description": "Comprehensive UniFi infrastructure management server for network monitoring, device control, security cameras (Protect), and access control (doors). Supports both local controller and cloud Site Manager APIs with intelligent fallback.",
+  "version": "0.1.0",
+  "url": "https://github.com/ry-ops/unifi-mcp-server",
+  "protocol": {
+    "type": "mcp",
+    "version": "1.0"
+  },
+  "capabilities": {
+    "streaming": false,
+    "tasks": true,
+    "resources": true,
+    "tools": true,
+    "prompts": true
+  },
+  "skills": [
+    {
+      "name": "system_health_monitoring",
+      "description": "Check UniFi controller and system health status with comprehensive device, client, and service monitoring",
+      "category": "monitoring",
+      "prompts": ["how_to_check_unifi_health", "how_to_check_system_status"],
+      "tools": ["unifi_health", "get_system_status", "get_quick_status", "debug_api_connectivity"],
+      "resources": ["health://unifi", "status://system", "unifi://capabilities"],
+      "examples": [
+        "Check if my UniFi controller is healthy",
+        "Give me a comprehensive system status overview",
+        "What's the current health of my network infrastructure?"
+      ]
+    },
+    {
+      "name": "device_management",
+      "description": "Monitor and manage UniFi network devices including routers, switches, and access points with health tracking and LED location",
+      "category": "device_control",
+      "prompts": ["how_to_monitor_devices", "how_to_find_device"],
+      "tools": ["get_device_health", "locate_device", "find_device_by_mac", "find_host_everywhere"],
+      "resources": ["status://devices", "sites://{site_id}/devices", "sites://{site_id}/search/devices/{query}"],
+      "examples": [
+        "Show me all offline devices",
+        "Find the access point in the living room and flash its LEDs",
+        "What's the uptime of my network switches?"
+      ]
+    },
+    {
+      "name": "client_monitoring",
+      "description": "Monitor network clients with activity tracking, bandwidth analysis, and connection status",
+      "category": "monitoring",
+      "prompts": ["how_to_check_network_activity"],
+      "tools": ["get_client_activity", "list_hosts", "list_active_clients", "list_all_hosts"],
+      "resources": ["status://clients", "sites://{site_id}/clients", "sites://{site_id}/clients/active", "sites://{site_id}/search/clients/{query}"],
+      "examples": [
+        "Who's using the most bandwidth right now?",
+        "Show me all wireless clients currently connected",
+        "List all devices that have ever connected to my network"
+      ]
+    },
+    {
+      "name": "client_blocking",
+      "description": "Safely block, unblock, or disconnect network clients with confirmation workflow",
+      "category": "access_control",
+      "prompts": ["how_to_block_client"],
+      "tools": ["block_client", "unblock_client", "kick_client"],
+      "resources": ["sites://{site_id}/clients", "sites://{site_id}/search/clients/{query}"],
+      "examples": [
+        "Block the device with MAC address XX:XX:XX:XX:XX:XX",
+        "Unblock the guest laptop",
+        "Disconnect the device named 'suspicious-phone'"
+      ],
+      "safety": {
+        "requires_confirmation": true,
+        "reversible": true,
+        "description": "Always confirm client identity before blocking. Offer unblock_client as reversal option."
+      }
+    },
+    {
+      "name": "wlan_management",
+      "description": "Enable or disable wireless networks (WLANs) using Integration or Legacy API with automatic fallback",
+      "category": "network_control",
+      "prompts": ["how_to_toggle_wlan"],
+      "tools": ["wlan_set_enabled_legacy"],
+      "resources": ["sites://{site_id}/wlans"],
+      "examples": [
+        "Disable the guest Wi-Fi network",
+        "Turn on the IoT wireless network",
+        "Toggle the 5GHz network off"
+      ],
+      "safety": {
+        "requires_confirmation": true,
+        "reversible": true,
+        "description": "Confirm WLAN name before toggling. May require legacy credentials if Integration API unavailable."
+      }
+    },
+    {
+      "name": "protect_camera_management",
+      "description": "Manage UniFi Protect security cameras including reboot, LED control, and privacy mode",
+      "category": "security",
+      "prompts": [],
+      "tools": ["protect_camera_reboot", "protect_camera_led", "protect_toggle_privacy"],
+      "resources": [],
+      "examples": [
+        "Reboot the hallway camera",
+        "Turn off the LED on the front door camera",
+        "Enable privacy mode on all bedroom cameras"
+      ],
+      "safety": {
+        "requires_confirmation": true,
+        "reversible": true,
+        "description": "Confirm camera identity before operations. Privacy mode disables recording."
+      }
+    },
+    {
+      "name": "access_door_control",
+      "description": "Control UniFi Access door locks with timed unlock duration",
+      "category": "access_control",
+      "prompts": [],
+      "tools": ["access_unlock_door"],
+      "resources": [],
+      "examples": [
+        "Unlock the front door for 10 seconds",
+        "Temporarily unlock the office door",
+        "Grant access to the main entrance for 5 seconds"
+      ],
+      "safety": {
+        "requires_confirmation": true,
+        "reversible": false,
+        "description": "Confirm door identity and duration before unlocking. Action auto-reverts after specified seconds."
+      }
+    },
+    {
+      "name": "multi_site_host_discovery",
+      "description": "List and discover hosts across local controller and cloud Site Manager with automatic site ID discovery",
+      "category": "discovery",
+      "prompts": ["how_to_list_hosts"],
+      "tools": ["working_list_hosts_example", "list_hosts_api_format", "list_hosts_fixed", "list_hosts_cloud", "discover_sites"],
+      "resources": ["sitemanager://hosts", "sitemanager://sites", "sitemanager://devices"],
+      "examples": [
+        "List all UniFi consoles in my infrastructure",
+        "Show me all sites managed by my account",
+        "What devices are across all my network sites?"
+      ]
+    },
+    {
+      "name": "api_troubleshooting",
+      "description": "Debug API connectivity, discover site IDs, and troubleshoot configuration issues",
+      "category": "diagnostics",
+      "prompts": ["how_to_debug_api_issues"],
+      "tools": ["debug_api_connectivity", "discover_sites", "debug_registry"],
+      "resources": ["unifi://capabilities"],
+      "examples": [
+        "Why can't I see my devices?",
+        "Test all my API connections",
+        "Find the correct site ID for my controller",
+        "Debug my UniFi API configuration"
+      ]
+    }
+  ],
+  "authentication": {
+    "required": true,
+    "methods": [
+      {
+        "type": "api_key",
+        "name": "local_controller",
+        "description": "UniFi local controller API key (Integration API)",
+        "env_vars": ["UNIFI_API_KEY", "UNIFI_GATEWAY_HOST", "UNIFI_GATEWAY_PORT"]
+      },
+      {
+        "type": "api_key",
+        "name": "site_manager",
+        "description": "UniFi Site Manager cloud API token",
+        "env_vars": ["UNIFI_SITEMGR_TOKEN", "UNIFI_SITEMGR_BASE"]
+      },
+      {
+        "type": "credentials",
+        "name": "legacy_api",
+        "description": "Legacy API username/password (optional, for WLAN management)",
+        "env_vars": ["UNIFI_USERNAME", "UNIFI_PASSWORD"]
+      }
+    ],
+    "fallback": "Server intelligently falls back between local Integration API, Legacy API, and cloud Site Manager based on availability and feature support"
+  },
+  "requirements": {
+    "runtime": "python>=3.12",
+    "dependencies": ["httpx>=0.28.1", "mcp[cli]>=1.6.0", "requests>=2.32.3"],
+    "hardware": ["UniFi Dream Machine", "UniFi Cloud Key", "UniFi Network Application (self-hosted)"],
+    "services": ["UniFi Controller", "UniFi Protect (optional)", "UniFi Access (optional)", "UniFi Site Manager (optional)"]
+  },
+  "integration": {
+    "setup": "Add to claude_desktop_config.json with uv run command",
+    "config_example": {
+      "mcpServers": {
+        "unifi": {
+          "command": "uv",
+          "args": ["--directory", "/path/to/unifi-mcp-server", "run", "main.py"]
+        }
+      }
+    }
+  },
+  "safety": {
+    "ssrf_protection": true,
+    "url_validation": true,
+    "allowed_hosts": ["local_controller", "api.ui.com"],
+    "confirmation_required": ["block_client", "unblock_client", "wlan_set_enabled_legacy", "access_unlock_door", "protect_camera_reboot"],
+    "reversible_operations": ["block_client", "wlan_set_enabled_legacy", "protect_toggle_privacy"]
+  },
+  "metadata": {
+    "license": "MIT",
+    "repository": "https://github.com/ry-ops/unifi-mcp-server",
+    "issues": "https://github.com/ry-ops/unifi-mcp-server/issues",
+    "documentation": "https://github.com/ry-ops/unifi-mcp-server/blob/main/README.md",
+    "playbook": "https://github.com/ry-ops/unifi-mcp-server/blob/main/NETWORK_PLAYBOOK.md",
+    "troubleshooting": "https://github.com/ry-ops/unifi-mcp-server/blob/main/TROUBLESHOOTING.md"
+  }
+}
