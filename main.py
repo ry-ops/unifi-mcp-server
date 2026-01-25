@@ -767,7 +767,7 @@ async def capabilities() -> Dict[str, Any]:
 
     # Site Manager
     if SM_BASE and SM_TOKEN:
-        try_get("sitemanager.root", f"{SM_BASE}/", {"Authorization": SM_TOKEN})
+        try_get("sitemanager.root", f"{SM_BASE}/", {"X-API-Key": SM_TOKEN})
     else:
         out["sitemanager.info"] = "Set UNIFI_SITEMGR_BASE & UNIFI_SITEMGR_TOKEN to probe."
 
@@ -1287,12 +1287,11 @@ def list_hosts_cloud(page_size: int = 100) -> Dict[str, Any]:
     try:
         headers = {
             "Accept": "application/json",
-            "Authorization": SM_TOKEN,
-            "Content-Type": "application/json"
+            "X-API-Key": SM_TOKEN,
         }
-        
+
         params = {"limit": page_size}
-        
+
         url = f"{SM_BASE}/v1/hosts"
         validated_url = validate_url(url, "cloud hosts list")
         
