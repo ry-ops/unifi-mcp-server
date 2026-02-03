@@ -88,7 +88,7 @@ For agent-to-agent communication, agents can:
 
 ## Prerequisites
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - `uv` package manager
 - UniFi controller (Dream Machine, Cloud Key, etc.) OR UniFi Site Manager account
 - API access configured (local API key and/or Site Manager API key)

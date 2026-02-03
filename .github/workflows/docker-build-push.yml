@@ -60,6 +60,7 @@ jobs:
             type=sha,prefix={{branch}}-
 
       - name: Build and push Docker image
+        id: build-push
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -71,7 +72,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
 
       - name: Image digest
-        run: echo ${{ steps.meta.outputs.digest }}
+        run: echo ${{ steps.build-push.outputs.digest }}
 
       - name: Trigger K3s deployment update
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

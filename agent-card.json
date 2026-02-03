@@ -180,7 +180,7 @@
     "fallback": "Server intelligently falls back between local Integration API, Legacy API, and cloud Site Manager based on availability and feature support"
   },
   "requirements": {
-    "runtime": "python>=3.12",
+    "runtime": "python>=3.10",
     "dependencies": ["httpx>=0.28.1", "mcp[cli]>=1.6.0", "requests>=2.32.3"],
     "hardware": ["UniFi Dream Machine", "UniFi Cloud Key", "UniFi Network Application (self-hosted)"],
     "services": ["UniFi Controller", "UniFi Protect (optional)", "UniFi Access (optional)", "UniFi Site Manager (optional)"]
@@ -200,7 +200,7 @@
     "ssrf_protection": true,
     "url_validation": true,
     "allowed_hosts": ["local_controller", "api.ui.com"],
-    "confirmation_required": ["block_client", "unblock_client", "wlan_set_enabled_legacy", "access_unlock_door", "protect_camera_reboot"],
+    "confirmation_required": ["block_client", "unblock_client", "wlan_set_enabled_legacy", "access_unlock_door", "protect_camera_reboot", "protect_toggle_privacy"],
     "reversible_operations": ["block_client", "wlan_set_enabled_legacy", "protect_toggle_privacy"]
   },
   "metadata": {
