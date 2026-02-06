@@ -1,5 +1,5 @@
 # UniFi MCP Server Dockerfile
-FROM node:20-alpine
+FROM python:3.12-alpine
 
 LABEL org.opencontainers.image.title="UniFi MCP Server"
 LABEL org.opencontainers.image.description="MCP server for UniFi Network management"
@@ -10,24 +10,31 @@ RUN apk add --no-cache ca-certificates curl
 
 WORKDIR /app
 
-COPY package*.json ./
+# Install uv for fast Python package management
+RUN pip install --no-cache-dir uv
 
-RUN npm ci --only=production && npm cache clean --force
+# Copy dependency files first for better caching
+COPY pyproject.toml ./
 
+# Install dependencies
+RUN uv pip install --system -e .
+
+# Copy application code
 COPY . .
 
+# Create non-root user
 RUN addgroup -g 1001 -S unifi && \
     adduser -S -u 1001 -G unifi unifi && \
     chown -R unifi:unifi /app
 
 USER unifi
 
-ENV NODE_ENV=production
+ENV PYTHONUNBUFFERED=1
 ENV MCP_SERVER_TYPE=unifi
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))" || exit 1
+  CMD curl -f http://localhost:3000/health || exit 1
 
-CMD ["node", "index.js"]
+CMD ["python", "main.py"]
