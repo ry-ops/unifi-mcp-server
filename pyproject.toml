@@ -1,11 +1,14 @@
 [project]
 name = "unifi-mcp-server"
-version = "0.1.0"
+version = "0.1.1"
 description = "Comprehensive Infrastructure Management"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28.1",
-    "mcp[cli]>=1.6.0",
-    "requests>=2.32.3",
+    "mcp[cli]>=1.23.0",
+    "requests>=2.32.4",
+    "urllib3>=2.6.3",
+    "starlette>=0.49.1",
+    "h11>=0.16.0",
 ]

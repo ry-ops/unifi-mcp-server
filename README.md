@@ -398,7 +398,7 @@ AI agents can read the Agent Card to discover:
 ```json
 {
   "name": "UniFi MCP Server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "capabilities": {
     "streaming": false,
     "tasks": true,
