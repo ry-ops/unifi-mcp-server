@@ -15,4 +15,4 @@ dependencies = [
     "python-multipart>=0.0.26",
     "cryptography>=46.0.7",
     "Pygments>=2.20.0",
-]}}
+]
