@@ -5,7 +5,7 @@
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple.svg)](https://modelcontextprotocol.io/)
 [![A2A](https://img.shields.io/badge/A2A-enabled-orange.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ry-ops/unifi-mcp-server/issues)
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/ry-ops/unifi-mcp-server?utm_source=oss&utm_medium=github&utm_campaign=ry-ops%2Funifi-mcp-server&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 # UniFi MCP Server - Comprehensive Infrastructure Management
@@ -693,3 +693,8 @@ MIT License - see LICENSE file for details.
 ---
 
 **Note:** This server provides comprehensive UniFi infrastructure management through AI-powered natural language interactions. It's designed for both home labs and enterprise environments with robust error handling and multi-API support.
+
+<!-- org-footer -->
+---
+
+<p align="center"><sub>Part of <a href="https://github.com/ry-ops">ry-ops</a> · building the pipes between infrastructure, automation, and observability · built by <a href="https://github.com/ry-ops">ry-ops</a></sub></p>
