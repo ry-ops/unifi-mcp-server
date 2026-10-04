@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="t d">
+  <title id="t">UniFi MCP Server: ask your network anything</title>
+  <desc id="d">You ask which client is using the most bandwidth. The UniFi MCP Server queries your local controller's Integration API and legacy API, and UniFi's cloud Site Manager, then answers: the living-room TV, flagged on the network map. All names are examples.</desc>
+  <defs><linearGradient id="title" x1="0" x2="1"><stop offset="0" stop-color="#1f7cff"/><stop offset=".6" stop-color="#3ec7ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; fill: #e6ebf5; }
+    .muted { fill: #8b96ad; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    @keyframes ask { 0%,1.82% { opacity: 0; transform: translateY(8px); } 5.00%,94.55% { opacity: 1; transform: translateY(0); } 97.27%,100% { opacity: 0; } } .ask { animation: ask 11.0s infinite; }
+    @keyframes call1 { 0%,11.82% { opacity: 0; } 15.00%,94.55% { opacity: 1; } 97.27%,100% { opacity: 0; } } .call1 { animation: call1 11.0s infinite; }
+    @keyframes call2 { 0%,17.27% { opacity: 0; } 20.45%,94.55% { opacity: 1; } 97.27%,100% { opacity: 0; } } .call2 { animation: call2 11.0s infinite; }
+    @keyframes ans { 0%,58.18% { opacity: 0; transform: translateY(6px); } 61.36%,94.55% { opacity: 1; transform: translateY(0); } 97.27%,100% { opacity: 0; } } .ans { animation: ans 11.0s infinite; }
+    @keyframes hot { 0%,41.82% { opacity: 0; } 45.00%,94.55% { opacity: 1; } 97.27%,100% { opacity: 0; } } .hot { animation: hot 11.0s infinite; }
+    @keyframes l0 { 0%,18.18% { offset-distance: 0%; opacity: 0; } 19.09% { opacity: 1; } 29.09% { offset-distance: 100%; opacity: 1; } 30.00%,100% { offset-distance: 100%; opacity: 0; } } .l0 { animation: l0 11.0s infinite; }
+    @keyframes l1 { 0%,21.82% { offset-distance: 0%; opacity: 0; } 22.73% { opacity: 1; } 32.73% { offset-distance: 100%; opacity: 1; } 33.64%,100% { offset-distance: 100%; opacity: 0; } } .l1 { animation: l1 11.0s infinite; }
+    @keyframes l2 { 0%,25.45% { offset-distance: 0%; opacity: 0; } 26.36% { opacity: 1; } 36.36% { offset-distance: 100%; opacity: 1; } 37.27%,100% { offset-distance: 100%; opacity: 0; } } .l2 { animation: l2 11.0s infinite; }
+    @keyframes d0 { 0%,29.09% { fill: #2a3550; } 30.91%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d0 { animation: d0 11.0s infinite; }
+    @keyframes d1 { 0%,30.73% { fill: #2a3550; } 32.55%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d1 { animation: d1 11.0s infinite; }
+    @keyframes d2 { 0%,32.36% { fill: #2a3550; } 34.18%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d2 { animation: d2 11.0s infinite; }
+    @keyframes d3 { 0%,34.00% { fill: #2a3550; } 35.82%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d3 { animation: d3 11.0s infinite; }
+    @keyframes d4 { 0%,35.64% { fill: #2a3550; } 37.45%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d4 { animation: d4 11.0s infinite; }
+    @keyframes d5 { 0%,37.27% { fill: #2a3550; } 39.09%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d5 { animation: d5 11.0s infinite; }
+    @keyframes d6 { 0%,38.91% { fill: #2a3550; } 40.73%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d6 { animation: d6 11.0s infinite; }
+    @keyframes d7 { 0%,40.55% { fill: #2a3550; } 42.36%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d7 { animation: d7 11.0s infinite; }
+    @keyframes d8 { 0%,42.18% { fill: #2a3550; } 44.00%,95.45% { fill: #1f7cff; } 100% { fill: #2a3550; } } .d8 { animation: d8 11.0s infinite; }
+    .ping { animation: ping 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes ping { from { transform: scale(.6); opacity: .9; } to { transform: scale(2.2); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+  <rect width="960" height="420" rx="20" fill="#0f1420"/>
+  <text x="40" y="66" font-size="44" font-weight="800" style="fill:url(#title)">UniFi MCP Server</text>
+  <text x="42" y="98" font-size="17" class="muted">Ask your UniFi network anything: local controller and cloud, in one conversation.</text>
+
+  <!-- chat -->
+  <rect x="30" y="120" width="330" height="272" rx="16" fill="#161d2b" stroke="#2c3750"/>
+  <g class="ask"><rect x="74" y="136" width="270" height="34" rx="12" fill="#2a3550"/><text x="88" y="158" font-size="14">Who's hogging the bandwidth?</text></g>
+  <g class="call1"><rect x="46" y="186" width="210" height="26" rx="8" fill="#1d2536" stroke="#1f7cff"/><text x="58" y="204" font-size="12.5" class="mono" style="fill:#8fbfff">get_client_activity</text></g>
+  <g class="call2"><rect x="46" y="218" width="210" height="26" rx="8" fill="#1d2536" stroke="#1f7cff"/><text x="58" y="236" font-size="12.5" class="mono" style="fill:#8fbfff">find_host_everywhere</text></g>
+  <g class="ans"><rect x="46" y="262" width="298" height="112" rx="12" fill="#1d2536"/>
+    <text x="60" y="288" font-size="14"><tspan font-weight="700">living-room-tv</tspan> is top today:</text>
+    <text x="60" y="310" font-size="14"><tspan font-weight="700" style="fill:#3ec7ff">4.2 GB</tspan> down on <tspan font-weight="700">Upstairs AP</tspan>.</text>
+    <text x="60" y="336" font-size="12" class="muted">Want me to kick it, block it,</text>
+    <text x="60" y="354" font-size="12" class="muted">or just flash that AP's LED?</text></g>
+
+  <!-- server -->
+  <path d="M360 232 H404" stroke="#1f7cff" stroke-width="3" stroke-dasharray="3 6" stroke-linecap="round"/>
+  <rect x="404" y="192" width="66" height="80" rx="14" fill="#1d2536" stroke="#1f7cff" stroke-width="2.5"/>
+  <text x="437" y="226" text-anchor="middle" font-size="12" font-weight="800">unifi</text>
+  <text x="437" y="242" text-anchor="middle" font-size="12" font-weight="800">mcp</text>
+  <text x="437" y="260" text-anchor="middle" font-size="9.5" class="muted">26 tools</text>
+  <path d="M470 232 C 520 232, 540 152, 600 152" fill="none" stroke="#3ec7ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
+  <circle class="l0" r="6" fill="#3ec7ff" style="offset-path: path('M470 232 C 520 232, 540 152, 600 152');"/>
+  <rect x="600" y="130" width="150" height="44" rx="10" fill="#161d2b" stroke="#3ec7ff"/>
+  <text x="612" y="149" font-size="12.5" font-weight="700">Integration API</text>
+  <text x="612" y="165" font-size="9.5" class="muted mono">local controller · v1</text>
+  <path d="M470 232 L 600 232" fill="none" stroke="#7aa7ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
+  <circle class="l1" r="6" fill="#7aa7ff" style="offset-path: path('M470 232 L 600 232');"/>
+  <rect x="600" y="210" width="150" height="44" rx="10" fill="#161d2b" stroke="#7aa7ff"/>
+  <text x="612" y="229" font-size="12.5" font-weight="700">Legacy API</text>
+  <text x="612" y="245" font-size="9.5" class="muted mono">local controller</text>
+  <path d="M470 232 C 520 232, 540 312, 600 312" fill="none" stroke="#b58cff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
+  <circle class="l2" r="6" fill="#b58cff" style="offset-path: path('M470 232 C 520 232, 540 312, 600 312');"/>
+  <rect x="600" y="290" width="150" height="44" rx="10" fill="#161d2b" stroke="#b58cff"/>
+  <text x="612" y="309" font-size="12.5" font-weight="700">Site Manager</text>
+  <text x="612" y="325" font-size="9.5" class="muted mono">cloud · api.ui.com</text>
+  
+  <!-- network -->
+  <text x="770" y="112" font-size="11" font-weight="700" class="muted" letter-spacing=".1em">YOUR NETWORK</text>
+  <path d="M750 232 H760" stroke="#2c3750" stroke-width="2"/>
+  <line x1="840" y1="132" x2="800" y2="200" stroke="#2c3750" stroke-width="2"/><line x1="840" y1="132" x2="880" y2="200" stroke="#2c3750" stroke-width="2"/><line x1="800" y1="200" x2="770" y2="262" stroke="#2c3750" stroke-width="2"/><line x1="800" y1="200" x2="830" y2="262" stroke="#2c3750" stroke-width="2"/><line x1="880" y1="200" x2="890" y2="262" stroke="#2c3750" stroke-width="2"/><line x1="770" y1="262" x2="760" y2="322" stroke="#2c3750" stroke-width="2"/><line x1="830" y1="262" x2="820" y2="322" stroke="#2c3750" stroke-width="2"/><line x1="890" y1="262" x2="900" y2="322" stroke="#2c3750" stroke-width="2"/><rect class="d0" x="814" y="120" width="52" height="24" rx="6" fill="#2a3550"/><text x="840" y="136" text-anchor="middle" font-size="10" font-weight="700">gateway</text><rect class="d1" x="778" y="191" width="44" height="18" rx="4" fill="#2a3550"/><text x="800" y="204" text-anchor="middle" font-size="9" font-weight="700">switch</text><rect class="d2" x="858" y="191" width="44" height="18" rx="4" fill="#2a3550"/><text x="880" y="204" text-anchor="middle" font-size="9" font-weight="700">switch</text><circle class="d3" cx="770" cy="262" r="13" fill="#2a3550"/><text x="770" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text><circle class="d4" cx="830" cy="262" r="13" fill="#2a3550"/><text x="830" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text><circle class="d5" cx="890" cy="262" r="13" fill="#2a3550"/><text x="890" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text><circle class="d6" cx="760" cy="322" r="8" fill="#2a3550"/><circle class="d7" cx="820" cy="322" r="8" fill="#2a3550"/><circle class="d8" cx="900" cy="322" r="8" fill="#2a3550"/>
+  <g class="hot"><circle class="ping" cx="900" cy="322" r="8" fill="none" stroke="#ff5c8a" stroke-width="2"/><circle cx="900" cy="322" r="8" fill="#ff5c8a"/>
+    <text x="900" y="350" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:#ff9ab5">living-room-tv</text></g>
+</svg>
