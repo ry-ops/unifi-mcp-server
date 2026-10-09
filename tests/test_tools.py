@@ -13,8 +13,8 @@ os.environ["UNIFI_API_KEY"] = "test-key"
 os.environ["UNIFI_CONSOLE_ID"] = "CONSOLE:1"
 os.environ["UNIFI_SITE_ID"] = "11111111-1111-1111-1111-111111111111"
 
-import unifi_client as uc
-import unifi_tools
+import unifi_mcp.client as uc
+import unifi_mcp.tools as unifi_tools
 import main
 
 SPECS = {

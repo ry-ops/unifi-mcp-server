@@ -9,6 +9,7 @@
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12+-3ddc84" alt="Python 3.12+"></a>
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-FastMCP-ff8a5c" alt="MCP"></a>
   <a href="https://github.com/ry-ops/unifi-mcp-server/pkgs/container/unifi-mcp-server"><img src="https://img.shields.io/badge/docker-ghcr.io-ffb02e" alt="Docker image on ghcr.io"></a>
+  <a href="https://github.com/ry-ops/unifi-mcp-server/releases"><img src="https://img.shields.io/github/v/release/ry-ops/unifi-mcp-server?color=1f7cff" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8b96ad" alt="MIT"></a>
 </p>
 
@@ -20,6 +21,7 @@
   <a href="#setup">Setup</a> ·
   <a href="#safety">Safety</a> ·
   <a href="#updating">New API versions</a> ·
+  <a href="#layout">Layout</a> ·
   <a href="#a2a">A2A</a> ·
   <a href="#troubleshooting">Troubleshooting</a>
 </p>
@@ -39,10 +41,10 @@
 **Ask things like:**
 
 > *"Is anything on my network offline?"*
-> *"Which clients are on the IoT network right now?"*
+> *"Which clients are wired right now?"*
 > *"Power-cycle port 7 on the office switch."*
 > *"Make 10 guest Wi-Fi vouchers that last a day."*
-> *"Block traffic from the IoT zone to the LAN, then show me where the rule landed."*
+> *"Block the Hotspot zone from reaching the Internal zone, then show me where the rule landed."*
 > *"How was my ISP's latency over the last day?"*
 
 <a id="toolbox"></a>
@@ -59,7 +61,7 @@
 | **Network API** (73) | Every operation in the spec, named after it: `list_adopted_devices`, `execute_port_action`, `list_connected_clients`, `create_network`, `update_wifi_broadcast`, `create_firewall_policy`, `reorder_user_defined_acl_rules`, `generate_vouchers`, `list_wan_interfaces`, … |
 | **Site Manager** (9) | `cloud_list_hosts`, `cloud_get_host_by_id`, `cloud_list_sites`, `cloud_list_devices`, `cloud_get_isp_metrics`, `cloud_query_isp_metrics`, `cloud_list_sd_wan_configs`, `cloud_get_sd_wan_config_by_id`, `cloud_get_sd_wan_config_status` |
 
-The full list, with each tool's HTTP call and whether it changes anything, is in [commands.md](commands.md). It's generated from the specs, so it always matches the code.
+The full list, with each tool's HTTP call and whether it changes anything, is in [docs/commands.md](docs/commands.md). It's generated from the specs, so it always matches the code.
 
 **List tools** take `offset`, `limit` and a `filter` (for example `state.eq('ONLINE')` or `and(type.eq('WIRED'),name.like('pve*'))`), plus `all_pages=true` to fetch everything. **`site_id` is optional** everywhere; leave it out to use the default site.
 
@@ -73,7 +75,7 @@ The full list, with each tool's HTTP call and whether it changes anything, is in
 
 You need **Python 3.12+** with [`uv`](https://github.com/astral-sh/uv), and a UniFi console with remote management turned on and linked to your UniFi account.
 
-**1. Get an API key.** At [unifi.ui.com](https://unifi.ui.com), open **API** and create a key. Use the account that owns the console: a key from another account sees no consoles.
+**1. Get an API key.** At [unifi.ui.com](https://unifi.ui.com), go to **Settings → API Keys** and choose **Create New API Key**. Use the account that owns the console: a key from another account sees no consoles.
 
 **2. Install**
 
@@ -123,7 +125,7 @@ For Claude Desktop, add this to `claude_desktop_config.json`:
 <details>
 <summary><b>Docker</b></summary>
 
-An image is built from `main` and published to GitHub Container Registry. MCP talks over stdio, so run it interactively and pass the key in:
+An image is built from `main` (tag `latest`) and from each release tag (for example `2.0.0`) and published to GitHub Container Registry. MCP talks over stdio, so run it interactively and pass the key in:
 
 ```bash
 docker run -i --rm -e UNIFI_API_KEY=your_api_key ghcr.io/ry-ops/unifi-mcp-server:latest
@@ -136,7 +138,7 @@ docker run -i --rm -e UNIFI_API_KEY=your_api_key ghcr.io/ry-ops/unifi-mcp-server
 
 ## 🔒 Safety
 
-- **32 tools can change your network.** 9 create things (networks, Wi-Fi, firewall zones and policies, ACL and DNS rules, vouchers) or adopt devices. 23 delete, replace or restart things. The **playbooks** tell the AI to read first, fetch the schema, and confirm with you. The **tools themselves don't enforce confirmation**, so keep your MCP client's tool approval on.
+- **32 tools can change your network.** 9 create things (networks, Wi-Fi, firewall zones and policies, ACL rules, DNS policies, traffic matching lists, vouchers) or adopt devices. 23 delete, replace or restart things. The **playbooks** tell the AI to read first, fetch the schema, and confirm with you. The **tools themselves don't enforce confirmation**, so keep your MCP client's tool approval on.
 - **Every tool carries MCP hints** (`readOnlyHint`, `destructiveHint`, `idempotentHint`), so clients that respect them can auto-approve reads and stop on the rest.
 - **`UNIFI_READ_ONLY=true`** registers only the 55 tools that can't change anything.
 - **Requests only go to `api.ui.com`.** The server refuses any other host, and it encodes path values and rejects ones like `..` or `a/b`, so a crafted ID can't reach a different path behind the cloud connector.
@@ -149,16 +151,30 @@ docker run -i --rm -e UNIFI_API_KEY=your_api_key ghcr.io/ry-ops/unifi-mcp-server
 The tools are generated from the OpenAPI specs in [`specs/`](specs), copied unchanged from [developer.ui.com](https://developer.ui.com/llms.txt).
 
 1. Download the new `openapi.json` into `specs/` and point `SPECS` in [`scripts/generate_tools.py`](scripts/generate_tools.py) at it.
-2. Run `python3 scripts/generate_tools.py`. It rewrites `unifi_tools.py` and `commands.md`.
+2. Run `python3 scripts/generate_tools.py`. It rewrites `unifi_mcp/tools.py` and `docs/commands.md`.
 3. Run `uv run python -m unittest discover -s tests`. The tests fail if any operation in the spec lacks a tool or a tool sends the wrong request.
 
 CI runs the same tests and checks that the generated files match the specs.
+
+<a id="layout"></a>
+
+## 📁 Project layout
+
+| Path | What's in it |
+|---|---|
+| `main.py` | The MCP server: registers the tools, helpers, resources and playbooks |
+| `unifi_mcp/client.py` | HTTP client for `api.ui.com`: auth, console and site discovery, pagination, path checks |
+| `unifi_mcp/tools.py` | One function per API operation, **generated**; don't edit by hand |
+| `specs/` | The OpenAPI specs the tools are generated from |
+| `scripts/generate_tools.py` | Generates `unifi_mcp/tools.py` and `docs/commands.md` from `specs/` |
+| `tests/` | Offline tests, no network or key needed |
+| `docs/` | Command reference, playbook, troubleshooting, roadmap, agent card, images |
 
 <a id="a2a"></a>
 
 ## 🤝 Agent-to-agent (A2A)
 
-[`agent-card.json`](agent-card.json) describes this server to other agents: 9 skills (site health, devices, clients, networks and Wi-Fi, security policy, hotspot, switching and reference data, the cloud account, and API discovery), the tools and playbooks behind each, how to authenticate, and which tools need confirmation.
+[`docs/agent-card.json`](docs/agent-card.json) describes this server to other agents: 9 skills (site health, devices, clients, networks and Wi-Fi, security policy, hotspot, switching and reference data, the cloud account, and API discovery), the tools and playbooks behind each, how to authenticate, and which tools need confirmation.
 
 <a id="troubleshooting"></a>
 
@@ -200,15 +216,15 @@ Call `describe_operation` with the tool's name to get the full body schema, incl
 Run `uv run python main.py` in a terminal. The server logs to stderr and stays quiet on stdout, which carries the MCP protocol, so any stray output there is a bug.
 </details>
 
-There's more in [TROUBLESHOOTING.md](TROUBLESHOOTING.md) and [NETWORK_PLAYBOOK.md](NETWORK_PLAYBOOK.md).
+There's more in [docs/troubleshooting.md](docs/troubleshooting.md) and [docs/network-playbook.md](docs/network-playbook.md).
 
 ## 🗺️ Roadmap
 
-What's done and what's next is in [roadmap.md](roadmap.md).
+What's done and what's next is in [docs/roadmap.md](docs/roadmap.md). Release notes are on the [releases page](https://github.com/ry-ops/unifi-mcp-server/releases).
 
 ## 🙏 Credits
 
-This project started as a fork of [**zcking/mcp-server-unifi**](https://github.com/zcking/mcp-server-unifi) by Zachary King. Version 0.2 rebuilt it around the cloud connector and the full Network API. MIT licensed. See [LICENSE](LICENSE).
+This project started as a fork of [**zcking/mcp-server-unifi**](https://github.com/zcking/mcp-server-unifi) by Zachary King. Version 2.0 rebuilt it around the cloud connector and the full Network API. MIT licensed. See [LICENSE](LICENSE).
 
 <!-- org-footer -->
 ---

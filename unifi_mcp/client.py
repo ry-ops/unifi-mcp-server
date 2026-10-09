@@ -1,4 +1,4 @@
-# unifi_client.py
+# unifi_mcp/client.py
 # Cloud-only HTTP client for the UniFi APIs.
 # - Every request goes to https://api.ui.com with one X-API-KEY
 # - Site Manager calls hit api.ui.com directly
@@ -16,8 +16,8 @@ def log(msg: str) -> None:
     # stdout is the MCP stdio channel, so all logging goes to stderr
     print(msg, file=sys.stderr)
 
-def load_env_file(env_file: Path = Path(__file__).resolve().parent / "secrets.env") -> None:
-    """Load KEY=VALUE lines from secrets.env next to this file. Real env vars win."""
+def load_env_file(env_file: Path = Path(__file__).resolve().parent.parent / "secrets.env") -> None:
+    """Load KEY=VALUE lines from secrets.env at the repo root. Real env vars win."""
     if not env_file.exists():
         return
     for line in env_file.read_text(encoding="utf-8").splitlines():
