@@ -1,7 +1,7 @@
 # main.py
 # UniFi MCP Server — cloud-only (unifi.ui.com), full UniFi Network API + Site Manager
 # - Every call goes to https://api.ui.com with one API key; Network calls use the cloud connector
-# - One tool per API operation, generated from the bundled OpenAPI specs (unifi_tools.py)
+# - One tool per API operation, generated from the bundled OpenAPI specs (unifi_mcp/tools.py)
 # - A few hand-written helpers on top: health, site status, search, describe_operation
 # - UNIFI_READ_ONLY=true registers only the tools that never change anything
 
@@ -14,8 +14,8 @@ from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 from pydantic import Field
 
-import unifi_client as uc
-from unifi_tools import FUNCTIONS, OPERATIONS
+import unifi_mcp.client as uc
+from unifi_mcp.tools import FUNCTIONS, OPERATIONS
 
 ROOT = Path(__file__).resolve().parent
 

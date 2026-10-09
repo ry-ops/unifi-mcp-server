@@ -21,7 +21,7 @@ Things to ask, and the tools the AI uses to answer. Every tool is listed in [com
 | "Which clients are wired?" | `list_connected_clients` with `filter` `type.eq('WIRED')` |
 | "Which devices are U6 access points?" | `list_adopted_devices` with `filter` `name.like('U6*')` |
 | "Any devices waiting to be adopted?" | `list_devices_pending_adoption` |
-| "What's on VLAN 30, and what uses that network?" | `list_networks` → `get_network_references` |
+| "What uses the VLAN 30 network?" | `list_networks` → `get_network_references` |
 
 List tools return 25 items by default. Ask for "all of them" and the AI passes `all_pages=true`.
 

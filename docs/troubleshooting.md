@@ -1,6 +1,6 @@
 # 🔧 UniFi MCP Server: troubleshooting
 
-Since version 0.2 the server is **cloud-only**: every request goes to `https://api.ui.com` with one API key, and Network API calls reach your console through UniFi's cloud connector. There's no console IP, port, TLS setting or username/password any more.
+Since version 2.0 the server is **cloud-only**: every request goes to `https://api.ui.com` with one API key, and Network API calls reach your console through UniFi's cloud connector. There's no console IP, port, TLS setting or username/password any more.
 
 ## Start here
 
@@ -25,7 +25,7 @@ curl -s -H "X-API-KEY: $UNIFI_API_KEY" \
 ## Common problems
 
 ### 401 Unauthorized
-The key is wrong, revoked, or has a stray space or quote. Create a new one at [unifi.ui.com](https://unifi.ui.com) under **API** and put it in `secrets.env` as `UNIFI_API_KEY=...`.
+The key is wrong, revoked, or has a stray space or quote. Create a new one at [unifi.ui.com](https://unifi.ui.com) under **Settings → API Keys** and put it in `secrets.env` as `UNIFI_API_KEY=...`.
 
 ### "No consoles on this UniFi account"
 The key is valid (no 401) but `/v1/hosts` comes back empty. Usually:
@@ -58,14 +58,14 @@ Run the server by hand and read stderr:
 uv run --directory /path/to/unifi-mcp-server python main.py
 ```
 
-The server writes its logs to **stderr** and nothing to stdout, because stdout carries the MCP protocol. Before 0.2, startup messages with emoji went to stdout; that broke the protocol and crashed on Windows consoles using code page cp1252 ([#39](https://github.com/ry-ops/unifi-mcp-server/issues/39)).
+The server writes its logs to **stderr** and nothing to stdout, because stdout carries the MCP protocol. Before 2.0, startup messages with emoji went to stdout; that broke the protocol and crashed on Windows consoles using code page cp1252 ([#39](https://github.com/ry-ops/unifi-mcp-server/issues/39)).
 
 ### The server can't find `secrets.env`
 It reads `secrets.env` from the folder `main.py` is in, wherever the client starts it. Environment variables set by the client win over the file.
 
 ### A tool you expected is missing
 - `UNIFI_READ_ONLY=true` hides the 32 tools that can change things.
-- Tools from before 0.2 (`block_client`, `kick_client`, `locate_device`, `list_hosts`, `wlan_set_enabled_legacy`, Protect and Access tools) were removed. They called the local console or endpoints that aren't in the Network API. See the table below for replacements.
+- Tools from before 2.0 (`block_client`, `kick_client`, `locate_device`, `list_hosts`, `wlan_set_enabled_legacy`, Protect and Access tools) were removed. They called the local console or endpoints that aren't in the Network API. See the table below for replacements.
 
 | Old tool | Use instead |
 |---|---|
