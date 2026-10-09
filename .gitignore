@@ -11,5 +11,6 @@ wheels/
 
 # Secrets and credentials
 secrets.env
+!secrets.env.example
 *.env
 .env

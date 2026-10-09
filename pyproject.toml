@@ -1,7 +1,7 @@
 [project]
 name = "unifi-mcp-server"
-version = "0.1.2"
-description = "Comprehensive Infrastructure Management"
+version = "0.2.0"
+description = "MCP server for the full UniFi Network API, cloud-only through unifi.ui.com"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
