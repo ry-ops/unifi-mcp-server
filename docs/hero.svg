@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="t d">
   <title id="t">UniFi MCP Server: ask your network anything</title>
-  <desc id="d">You ask which client is using the most bandwidth. The UniFi MCP Server queries your local controller's Integration API and legacy API, and UniFi's cloud Site Manager, then answers: the living-room TV, flagged on the network map. All names are examples.</desc>
+  <desc id="d">You ask whether anything on your network is offline. The UniFi MCP Server calls api.ui.com with one key, reaches the Network API on your console through the cloud connector, and answers: the laundry access point, flagged on the network map, with an offer to restart it or power-cycle its PoE port. All names are examples.</desc>
   <defs><linearGradient id="title" x1="0" x2="1"><stop offset="0" stop-color="#1f7cff"/><stop offset=".6" stop-color="#3ec7ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>
   <style>
     text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; fill: #e6ebf5; }
@@ -29,45 +29,45 @@
   </style>
   <rect width="960" height="420" rx="20" fill="#0f1420"/>
   <text x="40" y="66" font-size="44" font-weight="800" style="fill:url(#title)">UniFi MCP Server</text>
-  <text x="42" y="98" font-size="17" class="muted">Ask your UniFi network anything: local controller and cloud, in one conversation.</text>
+  <text x="42" y="98" font-size="17" class="muted">Ask your UniFi network anything: the full Network API, through the cloud, with one key.</text>
 
   <!-- chat -->
   <rect x="30" y="120" width="330" height="272" rx="16" fill="#161d2b" stroke="#2c3750"/>
-  <g class="ask"><rect x="74" y="136" width="270" height="34" rx="12" fill="#2a3550"/><text x="88" y="158" font-size="14">Who's hogging the bandwidth?</text></g>
-  <g class="call1"><rect x="46" y="186" width="210" height="26" rx="8" fill="#1d2536" stroke="#1f7cff"/><text x="58" y="204" font-size="12.5" class="mono" style="fill:#8fbfff">get_client_activity</text></g>
-  <g class="call2"><rect x="46" y="218" width="210" height="26" rx="8" fill="#1d2536" stroke="#1f7cff"/><text x="58" y="236" font-size="12.5" class="mono" style="fill:#8fbfff">find_host_everywhere</text></g>
+  <g class="ask"><rect x="74" y="136" width="270" height="34" rx="12" fill="#2a3550"/><text x="88" y="158" font-size="14">Is anything on my network offline?</text></g>
+  <g class="call1"><rect x="46" y="186" width="210" height="26" rx="8" fill="#1d2536" stroke="#1f7cff"/><text x="58" y="204" font-size="12.5" class="mono" style="fill:#8fbfff">get_site_status</text></g>
+  <g class="call2"><rect x="46" y="218" width="298" height="26" rx="8" fill="#1d2536" stroke="#1f7cff"/><text x="58" y="236" font-size="12.5" class="mono" style="fill:#8fbfff">get_latest_adopted_device_statistics</text></g>
   <g class="ans"><rect x="46" y="262" width="298" height="112" rx="12" fill="#1d2536"/>
-    <text x="60" y="288" font-size="14"><tspan font-weight="700">living-room-tv</tspan> is top today:</text>
-    <text x="60" y="310" font-size="14"><tspan font-weight="700" style="fill:#3ec7ff">4.2 GB</tspan> down on <tspan font-weight="700">Upstairs AP</tspan>.</text>
-    <text x="60" y="336" font-size="12" class="muted">Want me to kick it, block it,</text>
-    <text x="60" y="354" font-size="12" class="muted">or just flash that AP's LED?</text></g>
+    <text x="60" y="288" font-size="14"><tspan font-weight="700">laundry-ap</tspan> is offline:</text>
+    <text x="60" y="310" font-size="14">no heartbeat for <tspan font-weight="700" style="fill:#3ec7ff">2 h 10 m</tspan>.</text>
+    <text x="60" y="336" font-size="12" class="muted">Want me to restart it, or</text>
+    <text x="60" y="354" font-size="12" class="muted">power-cycle its PoE port?</text></g>
 
   <!-- server -->
   <path d="M360 232 H404" stroke="#1f7cff" stroke-width="3" stroke-dasharray="3 6" stroke-linecap="round"/>
   <rect x="404" y="192" width="66" height="80" rx="14" fill="#1d2536" stroke="#1f7cff" stroke-width="2.5"/>
   <text x="437" y="226" text-anchor="middle" font-size="12" font-weight="800">unifi</text>
   <text x="437" y="242" text-anchor="middle" font-size="12" font-weight="800">mcp</text>
-  <text x="437" y="260" text-anchor="middle" font-size="9.5" class="muted">26 tools</text>
+  <text x="437" y="260" text-anchor="middle" font-size="9.5" class="muted">87 tools</text>
   <path d="M470 232 C 520 232, 540 152, 600 152" fill="none" stroke="#3ec7ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
   <circle class="l0" r="6" fill="#3ec7ff" style="offset-path: path('M470 232 C 520 232, 540 152, 600 152');"/>
   <rect x="600" y="130" width="150" height="44" rx="10" fill="#161d2b" stroke="#3ec7ff"/>
-  <text x="612" y="149" font-size="12.5" font-weight="700">Integration API</text>
-  <text x="612" y="165" font-size="9.5" class="muted mono">local controller · v1</text>
+  <text x="612" y="149" font-size="12.5" font-weight="700">Network API</text>
+  <text x="612" y="165" font-size="9.5" class="muted mono">73 calls · v10.6.106</text>
   <path d="M470 232 L 600 232" fill="none" stroke="#7aa7ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
   <circle class="l1" r="6" fill="#7aa7ff" style="offset-path: path('M470 232 L 600 232');"/>
   <rect x="600" y="210" width="150" height="44" rx="10" fill="#161d2b" stroke="#7aa7ff"/>
-  <text x="612" y="229" font-size="12.5" font-weight="700">Legacy API</text>
-  <text x="612" y="245" font-size="9.5" class="muted mono">local controller</text>
+  <text x="612" y="229" font-size="12.5" font-weight="700">Cloud connector</text>
+  <text x="612" y="245" font-size="9.5" class="muted mono">api.ui.com → console</text>
   <path d="M470 232 C 520 232, 540 312, 600 312" fill="none" stroke="#b58cff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
   <circle class="l2" r="6" fill="#b58cff" style="offset-path: path('M470 232 C 520 232, 540 312, 600 312');"/>
   <rect x="600" y="290" width="150" height="44" rx="10" fill="#161d2b" stroke="#b58cff"/>
   <text x="612" y="309" font-size="12.5" font-weight="700">Site Manager</text>
-  <text x="612" y="325" font-size="9.5" class="muted mono">cloud · api.ui.com</text>
+  <text x="612" y="325" font-size="9.5" class="muted mono">consoles · ISP metrics</text>
   
   <!-- network -->
   <text x="770" y="112" font-size="11" font-weight="700" class="muted" letter-spacing=".1em">YOUR NETWORK</text>
   <path d="M750 232 H760" stroke="#2c3750" stroke-width="2"/>
   <line x1="840" y1="132" x2="800" y2="200" stroke="#2c3750" stroke-width="2"/><line x1="840" y1="132" x2="880" y2="200" stroke="#2c3750" stroke-width="2"/><line x1="800" y1="200" x2="770" y2="262" stroke="#2c3750" stroke-width="2"/><line x1="800" y1="200" x2="830" y2="262" stroke="#2c3750" stroke-width="2"/><line x1="880" y1="200" x2="890" y2="262" stroke="#2c3750" stroke-width="2"/><line x1="770" y1="262" x2="760" y2="322" stroke="#2c3750" stroke-width="2"/><line x1="830" y1="262" x2="820" y2="322" stroke="#2c3750" stroke-width="2"/><line x1="890" y1="262" x2="900" y2="322" stroke="#2c3750" stroke-width="2"/><rect class="d0" x="814" y="120" width="52" height="24" rx="6" fill="#2a3550"/><text x="840" y="136" text-anchor="middle" font-size="10" font-weight="700">gateway</text><rect class="d1" x="778" y="191" width="44" height="18" rx="4" fill="#2a3550"/><text x="800" y="204" text-anchor="middle" font-size="9" font-weight="700">switch</text><rect class="d2" x="858" y="191" width="44" height="18" rx="4" fill="#2a3550"/><text x="880" y="204" text-anchor="middle" font-size="9" font-weight="700">switch</text><circle class="d3" cx="770" cy="262" r="13" fill="#2a3550"/><text x="770" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text><circle class="d4" cx="830" cy="262" r="13" fill="#2a3550"/><text x="830" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text><circle class="d5" cx="890" cy="262" r="13" fill="#2a3550"/><text x="890" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text><circle class="d6" cx="760" cy="322" r="8" fill="#2a3550"/><circle class="d7" cx="820" cy="322" r="8" fill="#2a3550"/><circle class="d8" cx="900" cy="322" r="8" fill="#2a3550"/>
-  <g class="hot"><circle class="ping" cx="900" cy="322" r="8" fill="none" stroke="#ff5c8a" stroke-width="2"/><circle cx="900" cy="322" r="8" fill="#ff5c8a"/>
-    <text x="900" y="350" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:#ff9ab5">living-room-tv</text></g>
+  <g class="hot"><circle class="ping" cx="890" cy="262" r="13" fill="none" stroke="#ff5c8a" stroke-width="2"/><circle cx="890" cy="262" r="13" fill="#ff5c8a"/><text x="890" y="265" text-anchor="middle" font-size="8.5" font-weight="700">AP</text>
+    <rect x="858" y="283" width="64" height="16" rx="5" fill="#0f1420"/><text x="890" y="295" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:#ff9ab5">laundry-ap</text></g>
 </svg>

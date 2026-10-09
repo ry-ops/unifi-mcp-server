@@ -1,24 +1,25 @@
 <p align="center">
-  <img src="docs/hero.svg" width="100%" alt="You ask who's hogging the bandwidth; the UniFi MCP server queries the local Integration API, the legacy controller API and the cloud Site Manager, the network map lights up, and the answer flags the living-room TV.">
+  <img src="docs/hero.svg" width="100%" alt="You ask whether anything on your network is offline; the UniFi MCP server calls api.ui.com with one key, reaches the Network API on your console through the cloud connector, and flags the laundry access point with an offer to restart it or power-cycle its PoE port.">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tools-26-1f7cff" alt="26 tools">
-  <img src="https://img.shields.io/badge/resources-13-3ec7ff" alt="13 resources">
-  <img src="https://img.shields.io/badge/playbooks-9-b58cff" alt="9 prompt playbooks">
+  <img src="https://img.shields.io/badge/tools-87-1f7cff" alt="87 tools">
+  <img src="https://img.shields.io/badge/Network%20API-73%2F73%20calls-3ec7ff" alt="All 73 Network API calls">
+  <img src="https://img.shields.io/badge/playbooks-4-b58cff" alt="4 prompt playbooks">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12+-3ddc84" alt="Python 3.12+"></a>
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-FastMCP-ff8a5c" alt="MCP"></a>
   <a href="https://github.com/ry-ops/unifi-mcp-server/pkgs/container/unifi-mcp-server"><img src="https://img.shields.io/badge/docker-ghcr.io-ffb02e" alt="Docker image on ghcr.io"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8b96ad" alt="MIT"></a>
 </p>
 
-<p align="center"><b>Ask your UniFi network anything.</b> An MCP server that lets Claude, or any MCP client, monitor and manage UniFi Network, Protect and Access, on your local console and through UniFi's cloud Site Manager, in plain English.</p>
+<p align="center"><b>Ask your UniFi network anything.</b> An MCP server that gives Claude, or any MCP client, the whole UniFi Network API, every one of its 73 calls, through UniFi's cloud at <code>api.ui.com</code>. One API key from unifi.ui.com, no VPN, no console IP.</p>
 
 <p align="center">
   <a href="#what">What it does</a> ·
   <a href="#toolbox">Toolbox</a> ·
   <a href="#setup">Setup</a> ·
   <a href="#safety">Safety</a> ·
+  <a href="#updating">New API versions</a> ·
   <a href="#a2a">A2A</a> ·
   <a href="#troubleshooting">Troubleshooting</a>
 </p>
@@ -29,108 +30,91 @@
 
 ## ✨ What it does
 
-- 📡 **Watches your network.** System health, device uptime, client activity and bandwidth, and a quick one-line status. Status reports are cached for 5 minutes, so repeat questions are fast.
-- 🔎 **Finds anything.** Hosts on your local console and across every console in your UniFi account, devices by MAC, and site discovery when you don't know the site ID.
-- 🛠️ **Acts when you ask.** Block, unblock or kick a client; flash a device's LED to find it; turn a WLAN on or off; unlock a door; reboot a Protect camera, toggle its LED or privacy mode.
-- 🌐 **Talks to five UniFi APIs:** the Network Integration API (v1) and classic API on your console, the Protect and Access APIs, and the cloud **Site Manager** at `api.ui.com`.
-- 📚 **Comes with playbooks.** 9 MCP prompts walk an AI through common jobs (search, confirm, act), plus an A2A agent card for agent-to-agent discovery.
+- 🌐 **Covers the whole Network API.** One tool for each of the 73 operations in the UniFi Network API v10.6.106: devices, clients, networks, Wi-Fi, firewall zones and policies, ACL rules, DNS policies, traffic matching lists, hotspot vouchers, switching, VPN and WAN.
+- ☁️ **Works from anywhere.** Every call goes to `api.ui.com` with your API key and reaches the console through UniFi's cloud connector. The server finds your console and site by itself.
+- 🛰️ **Sees your whole account.** 9 Site Manager tools list your consoles, sites and devices, ISP metrics, and SD-WAN configs.
+- 🔎 **Has shortcuts for common questions.** `get_site_status` sums up a site in one call, `search_site` finds a client or device by name, MAC or IP, and `describe_operation` returns the exact request schema before a create or update.
+- 🛡️ **Knows what's risky.** Every tool is marked read-only, write or destructive, and `UNIFI_READ_ONLY=true` turns off everything that could change your network.
 
 **Ask things like:**
 
-> *"How's my UniFi network doing?"*
-> *"Who's using the most bandwidth right now?"*
-> *"Find the device with MAC aa:bb:cc:dd:ee:ff and flash its LED."*
-> *"Block the kids' tablet until I say otherwise."*
-> *"Turn off the guest Wi-Fi."*
-> *"List every UniFi console on my account."*
+> *"Is anything on my network offline?"*
+> *"Which clients are on the IoT network right now?"*
+> *"Power-cycle port 7 on the office switch."*
+> *"Make 10 guest Wi-Fi vouchers that last a day."*
+> *"Block traffic from the IoT zone to the LAN, then show me where the rule landed."*
+> *"How was my ISP's latency over the last day?"*
 
 <a id="toolbox"></a>
 
 ## 🧰 The toolbox
 
 <p align="center">
-  <img src="docs/toolbox.svg" width="100%" alt="26 tools in four groups (monitor 6, find and discover 9, act 9, debug 2), 13 read-only resources, the five UniFi APIs, and the block-a-client playbook stepping through read, match, confirm, act, offer an undo.">
+  <img src="docs/toolbox.svg" width="100%" alt="87 tools: 5 helpers, 73 Network API tools in 13 groups, and 9 Site Manager tools. 50 only read, 9 create, 23 delete, replace or restart. 3 read-only resources, one path through api.ui.com and the cloud connector, and the change-firewall-safely playbook stepping through read, schema, confirm, act, check.">
 </p>
 
 | Group | Tools |
 |---|---|
-| **Monitor** (6) | `unifi_health`, `get_system_status`, `get_device_health`, `get_client_activity`, `get_quick_status`, `list_active_clients` |
-| **Find & discover** (9) | `discover_sites`, `list_hosts`, `list_hosts_cloud`, `list_all_hosts`, `find_host_everywhere`, `find_device_by_mac`, `list_hosts_api_format`, `list_hosts_fixed`, `working_list_hosts_example` |
-| **Act** (9) | `block_client`, `unblock_client`, `kick_client`, `locate_device`, `wlan_set_enabled_legacy`, `access_unlock_door`, `protect_camera_reboot`, `protect_camera_led`, `protect_toggle_privacy` |
-| **Debug** (2) | `debug_api_connectivity`, `debug_registry` |
+| **Helpers** (5) | `unifi_health`, `get_site_status`, `search_site`, `list_operations`, `describe_operation` |
+| **Network API** (73) | Every operation in the spec, named after it: `list_adopted_devices`, `execute_port_action`, `list_connected_clients`, `create_network`, `update_wifi_broadcast`, `create_firewall_policy`, `reorder_user_defined_acl_rules`, `generate_vouchers`, `list_wan_interfaces`, … |
+| **Site Manager** (9) | `cloud_list_hosts`, `cloud_get_host_by_id`, `cloud_list_sites`, `cloud_list_devices`, `cloud_get_isp_metrics`, `cloud_query_isp_metrics`, `cloud_list_sd_wan_configs`, `cloud_get_sd_wan_config_by_id`, `cloud_get_sd_wan_config_status` |
 
-**Resources** (read-only, by URI):
-- **Health and status:** `unifi://health` (plus its `health://unifi` and `status://unifi` aliases), `unifi://capabilities`, and `status://system`, `status://devices`, `status://clients`.
-- **Per site:** `sites://{site_id}/devices`, `/clients`, `/clients/active` and `/wlans`.
-- **Search:** `sites://{site_id}/search/clients/{query}` and `/search/devices/{query}`.
+The full list, with each tool's HTTP call and whether it changes anything, is in [commands.md](commands.md). It's generated from the specs, so it always matches the code.
 
-**Prompt playbooks:**
-- **Health and status:** `how_to_check_unifi_health`, `how_to_check_system_status`, `how_to_monitor_devices`, `how_to_check_network_activity`.
-- **Finding things:** `how_to_find_device`, `how_to_list_hosts`.
-- **Changing things:** `how_to_block_client`, `how_to_toggle_wlan`.
-- **Debugging:** `how_to_debug_api_issues`.
+**List tools** take `offset`, `limit` and a `filter` (for example `state.eq('ONLINE')` or `and(type.eq('WIRED'),name.like('pve*'))`), plus `all_pages=true` to fetch everything. **`site_id` is optional** everywhere; leave it out to use the default site.
+
+**Resources** (read-only, by URI): `unifi://health`, `unifi://sites/{site_id}/devices`, `unifi://sites/{site_id}/clients`.
+
+**Prompt playbooks:** `check_unifi_health`, `restart_device`, `change_firewall_safely`, `guest_access`.
 
 <a id="setup"></a>
 
 ## 🚀 Setup
 
-You need **Python 3.12+** with [`uv`](https://github.com/astral-sh/uv), a UniFi OS console running the Network application, and optionally a Site Manager API key for the cloud tools.
+You need **Python 3.12+** with [`uv`](https://github.com/astral-sh/uv), and a UniFi console with remote management turned on and linked to your UniFi account.
 
-**1. Get your keys**
-- **Local console:** in UniFi Network, go to **Settings → Control Plane → Integrations** and create an API key.
-- **Cloud (optional):** at [unifi.ui.com](https://unifi.ui.com), go to **Settings → API** and create a Site Manager API key.
+**1. Get an API key.** At [unifi.ui.com](https://unifi.ui.com), open **API** and create a key. Use the account that owns the console: a key from another account sees no consoles.
 
 **2. Install**
 
 ```bash
 git clone https://github.com/ry-ops/unifi-mcp-server && cd unifi-mcp-server
 uv sync
+cp secrets.env.example secrets.env
 ```
 
-**3. Configure.** The server reads `secrets.env` from the project directory. Environment variables work too.
+**3. Configure.** Put your key in `secrets.env`, which is git-ignored. Environment variables work too, and win over the file.
 
 ```bash
-# Local console
-UNIFI_API_KEY=your_local_api_key
-UNIFI_GATEWAY_HOST=192.168.1.1
-UNIFI_GATEWAY_PORT=443
-UNIFI_VERIFY_TLS=false
-
-# Classic API, for WLAN toggling and advanced config (optional)
-UNIFI_USERNAME=your_unifi_username
-UNIFI_PASSWORD=your_unifi_password
-
-# Cloud Site Manager (optional)
-UNIFI_SITEMGR_BASE=https://api.ui.com
-UNIFI_SITEMGR_TOKEN=your_site_manager_api_key
+UNIFI_API_KEY=your_api_key
 
 # Optional
-UNIFI_TIMEOUT_S=15
+UNIFI_CONSOLE_ID=   # only needed if your account has more than one console
+UNIFI_SITE_ID=      # only needed if the console has several sites and none is "default"
+UNIFI_READ_ONLY=false
+UNIFI_TIMEOUT_S=30
 ```
 
-> [!WARNING]
-> `secrets.env` is tracked in this repository as a template of placeholders. Before you put real keys in it, run `git update-index --skip-worktree secrets.env`, or use environment variables instead, so your credentials can never be committed.
-
-**4. Run it**
+**4. Check it**
 
 ```bash
-uv run mcp dev main.py   # MCP Inspector, to try the tools
-uv run main.py           # stdio server
+uv run mcp dev main.py   # MCP Inspector: run unifi_health
 ```
 
-**5. Connect Claude Desktop.** Add this to `claude_desktop_config.json`:
+**5. Connect your MCP client.** For Claude Code:
+
+```bash
+claude mcp add unifi -- uv run --directory /absolute/path/to/unifi-mcp-server python main.py
+```
+
+For Claude Desktop, add this to `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "unifi": {
       "command": "uv",
-      "args": ["--directory", "/absolute/path/to/unifi-mcp-server", "run", "main.py"],
-      "env": {
-        "UNIFI_API_KEY": "your_local_api_key",
-        "UNIFI_GATEWAY_HOST": "192.168.1.1",
-        "UNIFI_SITEMGR_TOKEN": "your_site_manager_api_key"
-      }
+      "args": ["run", "--directory", "/absolute/path/to/unifi-mcp-server", "python", "main.py"]
     }
   }
 }
@@ -139,60 +123,84 @@ uv run main.py           # stdio server
 <details>
 <summary><b>Docker</b></summary>
 
-An image is built from `main` and published to GitHub Container Registry. MCP talks over stdio, so run it interactively:
+An image is built from `main` and published to GitHub Container Registry. MCP talks over stdio, so run it interactively and pass the key in:
 
 ```bash
-docker run -i --rm --env-file secrets.env ghcr.io/ry-ops/unifi-mcp-server:latest
+docker run -i --rm -e UNIFI_API_KEY=your_api_key ghcr.io/ry-ops/unifi-mcp-server:latest
 ```
+
+`.dockerignore` keeps `secrets.env` out of any image you build yourself.
 </details>
 
 <a id="safety"></a>
 
 ## 🔒 Safety
 
-- **Nine tools change things:** blocking and kicking clients, toggling WLANs, unlocking doors, and rebooting cameras or changing their LED and privacy mode. The **playbooks** tell the AI to search, confirm with you, and then act. The **tools themselves don't enforce confirmation**, so your MCP client's tool-approval setting is the real gate. Keep it on.
-- **Give it the least access that works.** A local API key covers the Integration API. Only add the classic username and password, or the cloud token, if you need those features.
-- **`UNIFI_VERIFY_TLS=false`** is the default because consoles ship self-signed certificates. Turn it on if your console has a valid one.
-- **Never commit real credentials.** See the warning in [Setup](#setup).
+- **32 tools can change your network.** 9 create things (networks, Wi-Fi, firewall zones and policies, ACL and DNS rules, vouchers) or adopt devices. 23 delete, replace or restart things. The **playbooks** tell the AI to read first, fetch the schema, and confirm with you. The **tools themselves don't enforce confirmation**, so keep your MCP client's tool approval on.
+- **Every tool carries MCP hints** (`readOnlyHint`, `destructiveHint`, `idempotentHint`), so clients that respect them can auto-approve reads and stop on the rest.
+- **`UNIFI_READ_ONLY=true`** registers only the 55 tools that can't change anything.
+- **Requests only go to `api.ui.com`.** The server refuses any other host, and it encodes path values and rejects ones like `..` or `a/b`, so a crafted ID can't reach a different path behind the cloud connector.
+- **Never commit real keys.** `secrets.env` is git-ignored; the tracked template is `secrets.env.example`.
+
+<a id="updating"></a>
+
+## 🔄 When UniFi ships a new API version
+
+The tools are generated from the OpenAPI specs in [`specs/`](specs), copied unchanged from [developer.ui.com](https://developer.ui.com/llms.txt).
+
+1. Download the new `openapi.json` into `specs/` and point `SPECS` in [`scripts/generate_tools.py`](scripts/generate_tools.py) at it.
+2. Run `python3 scripts/generate_tools.py`. It rewrites `unifi_tools.py` and `commands.md`.
+3. Run `uv run python -m unittest discover -s tests`. The tests fail if any operation in the spec lacks a tool or a tool sends the wrong request.
+
+CI runs the same tests and checks that the generated files match the specs.
 
 <a id="a2a"></a>
 
 ## 🤝 Agent-to-agent (A2A)
 
-[`agent-card.json`](agent-card.json) describes this server to other agents. It lists its skills (system health, device management, client monitoring, client blocking, WLAN management, Protect, Access, multi-site host discovery and API troubleshooting), how they map to the tools, resources and playbooks above, and its authentication and safety requirements.
+[`agent-card.json`](agent-card.json) describes this server to other agents: 9 skills (site health, devices, clients, networks and Wi-Fi, security policy, hotspot, switching and reference data, the cloud account, and API discovery), the tools and playbooks behind each, how to authenticate, and which tools need confirmation.
 
 <a id="troubleshooting"></a>
 
 ## 🩺 Troubleshooting
 
 <details>
-<summary><b>Start with the built-in diagnostics</b></summary>
+<summary><b>Start with <code>unifi_health</code></b></summary>
 
-Ask your assistant to run **`debug_api_connectivity`**. It tests every API endpoint and suggests fixes. `discover_sites` finds the right site ID, and `debug_registry` shows what the server has loaded.
+It lists the consoles your key can see, the console and site the server picked, and the Network application version, or the exact error.
 </details>
 
 <details>
-<summary><b>401 or 403 from the console</b></summary>
+<summary><b>"No consoles on this UniFi account"</b></summary>
 
-- Check `UNIFI_API_KEY` and that it was created on this console.
-- Classic API features (like WLAN toggling) also need `UNIFI_USERNAME` and `UNIFI_PASSWORD`.
+The key works but belongs to an account that doesn't own the console. Create the key while signed in as the console's owner, and check that remote management is on in the console's settings.
 </details>
 
 <details>
-<summary><b>Can't connect</b></summary>
+<summary><b>"Several consoles found" or "Several sites found"</b></summary>
 
-- `UNIFI_GATEWAY_HOST` is the console's IP or hostname, with no scheme.
-- Self-signed certificate? Keep `UNIFI_VERIFY_TLS=false`.
-- Raise `UNIFI_TIMEOUT_S` on slow links.
+Set `UNIFI_CONSOLE_ID` or `UNIFI_SITE_ID` to one of the IDs in the message, or pass `site_id` to a tool.
 </details>
 
 <details>
-<summary><b>Cloud tools return nothing</b></summary>
+<summary><b>401 Unauthorized</b></summary>
 
-Set `UNIFI_SITEMGR_TOKEN` to a Site Manager key from unifi.ui.com. The local key doesn't work for the cloud.
+The key is wrong, revoked, or has a stray space. Make a new one at unifi.ui.com.
 </details>
 
-There's more in [TROUBLESHOOTING.md](TROUBLESHOOTING.md), [NETWORK_PLAYBOOK.md](NETWORK_PLAYBOOK.md) and [commands.md](commands.md).
+<details>
+<summary><b>400 on a create or update</b></summary>
+
+Call `describe_operation` with the tool's name to get the full body schema, including required fields and allowed values.
+</details>
+
+<details>
+<summary><b>The MCP client can't connect</b></summary>
+
+Run `uv run python main.py` in a terminal. The server logs to stderr and stays quiet on stdout, which carries the MCP protocol, so any stray output there is a bug.
+</details>
+
+There's more in [TROUBLESHOOTING.md](TROUBLESHOOTING.md) and [NETWORK_PLAYBOOK.md](NETWORK_PLAYBOOK.md).
 
 ## 🗺️ Roadmap
 
@@ -200,7 +208,7 @@ What's done and what's next is in [roadmap.md](roadmap.md).
 
 ## 🙏 Credits
 
-This project started as a fork of [**zcking/mcp-server-unifi**](https://github.com/zcking/mcp-server-unifi) by Zachary King, and has since grown Protect, Access, Site Manager, status monitoring, playbooks and A2A support. MIT licensed. See [LICENSE](LICENSE).
+This project started as a fork of [**zcking/mcp-server-unifi**](https://github.com/zcking/mcp-server-unifi) by Zachary King. Version 0.2 rebuilt it around the cloud connector and the full Network API. MIT licensed. See [LICENSE](LICENSE).
 
 <!-- org-footer -->
 ---

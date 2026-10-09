@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install uv
+        run: python3 -m pip install --user uv
+
+      - name: Generated tools match the specs
+        run: python3 scripts/generate_tools.py --check
+
+      - name: Offline tests (no network, no API key)
+        run: uv run python -m unittest discover -s tests -v
