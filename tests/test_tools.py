@@ -130,5 +130,11 @@ class SafetyTest(unittest.TestCase):
         self.assertNotIn("$ref", json.dumps(out["request_body_schema"])[:200])
         self.assertIn("action", out["request_body_schema"]["properties"])
 
+    def test_describe_operation_expands_variants(self):
+        body = main.describe_operation("create_network")["request_body_schema"]
+        self.assertEqual(set(body["variants"]), {"GATEWAY", "SWITCH", "UNMANAGED"})
+        self.assertIn("ipv4Configuration", json.dumps(body["variants"]["GATEWAY"]))
+        self.assertLess(len(json.dumps(main.describe_operation("create_firewall_policy"))), 60000)
+
 if __name__ == "__main__":
     unittest.main()

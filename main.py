@@ -49,18 +49,33 @@ def _spec(spec_file: str) -> Dict[str, Any]:
         _SPECS[spec_file] = json.loads((ROOT / spec_file).read_text())
     return _SPECS[spec_file]
 
-def _inline(spec: Dict[str, Any], node: Any, seen: tuple = (), depth: int = 0) -> Any:
+def _inline(spec: Dict[str, Any], node: Any, seen: tuple = (), depth: int = 0, in_variant: bool = False) -> Any:
     """Inline $refs so the caller sees one self-contained schema. Cycles and deep nesting stop at a stub."""
     if isinstance(node, list):
-        return [_inline(spec, n, seen, depth) for n in node]
+        return [_inline(spec, n, seen, depth, in_variant) for n in node]
     if not isinstance(node, dict):
         return node
     if "$ref" in node:
         name = node["$ref"].split("/")[-1]
         if name in seen or depth > 12:
             return {"$ref": node["$ref"], "note": "see above"}
-        return _inline(spec, spec["components"]["schemas"][name], seen + (name,), depth + 1)
-    return {k: _inline(spec, v, seen, depth) for k, v in node.items()}
+        return _inline(spec, spec["components"]["schemas"][name], seen + (name,), depth + 1, in_variant)
+    out = {k: _inline(spec, v, seen, depth, in_variant) for k, v in node.items()}
+    mapping = node.get("discriminator", {}).get("mapping")
+    if mapping:
+        # The base schema only names the discriminator; each variant holds the real fields.
+        # Variants nested inside a variant are named, not expanded, to keep the result small.
+        if in_variant:
+            out["variants"] = sorted(mapping)
+        else:
+            base = set(out.get("properties", {}))
+            out["variants"] = {}
+            for key, ref in mapping.items():
+                v = _inline(spec, {"$ref": ref}, seen, depth, True)
+                if "properties" in v:
+                    v["properties"] = {k: p for k, p in v["properties"].items() if k not in base}
+                out["variants"][key] = v
+    return out
 
 def _op(tool_name: str) -> Dict[str, Any]:
     op = next((o for o in OPERATIONS if o["name"] == tool_name), None)
@@ -141,7 +156,7 @@ def list_operations(
 def describe_operation(
     tool_name: Annotated[str, Field(description="Name of an API tool, e.g. create_firewall_policy.")],
 ) -> Dict[str, Any]:
-    """Full request-body JSON schema of an API tool, with references inlined. Use before create/update calls."""
+    """Full request-body JSON schema of an API tool, with references inlined and the fields of each type-specific variant listed under "variants". Use before create/update calls."""
     op = _op(tool_name)
     spec = _spec(op["spec"])
     method = spec["paths"][op["path"]][op["method"].lower()]
