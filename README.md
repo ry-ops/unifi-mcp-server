@@ -126,11 +126,21 @@ For Claude Desktop, add this to `claude_desktop_config.json`:
 
 ## 🔒 Safety
 
+<p align="center">
+  <img src="docs/safety.svg" width="100%" alt="87 tool tiles: 55 that only read, 9 that create or adopt, and 23 that delete, replace or restart. When UNIFI_READ_ONLY switches to true, the 32 tiles that can change the network fade out and the count drops from 87 tools to 55.">
+</p>
+
 - **32 tools can change your network.** 9 create things (networks, Wi-Fi, firewall zones and policies, ACL rules, DNS policies, traffic matching lists, vouchers) or adopt devices. 23 delete, replace or restart things. The **playbooks** tell the AI to read first, fetch the schema, and confirm with you. The **tools themselves don't enforce confirmation**, so keep your MCP client's tool approval on.
 - **Every tool carries MCP hints** (`readOnlyHint`, `destructiveHint`, `idempotentHint`), so clients that respect them can auto-approve reads and stop on the rest.
 - **`UNIFI_READ_ONLY=true`** registers only the 55 tools that can't change anything.
 - **Requests only go to `api.ui.com`.** The server refuses any other host, and it encodes path values and rejects ones like `..` or `a/b`, so a crafted ID can't reach a different path behind the cloud connector.
 - **Never commit real keys.** `secrets.env` is git-ignored; the tracked template is `secrets.env.example`.
+
+**How the tools were tested.** Every API tool has been run against a UniFi Dream Machine Pro through the cloud. The tools that change a network created, changed and deleted `mcp-test-*` objects, with the network and Wi-Fi created disabled. Restart, power-cycle, client and adoption actions were sent a made-up ID, so the console refused them and nothing rebooted.
+
+<p align="center">
+  <img src="docs/live-test.svg" width="100%" alt="A replay of the live test of all 32 tools that change a network, on a UniFi Dream Machine Pro running Network 11.0.83. Each create adds an mcp-test object to the site map; updates follow; restart, power-cycle, client, adopt and unadopt actions are sent to an unknown ID and refused with 404 while every real device stays online; the deletes remove every test object. 32 of 32 passed and nothing was left behind.">
+</p>
 
 <a id="updating"></a>
 
@@ -156,7 +166,7 @@ CI runs the same tests and checks that the generated files match the specs.
 | `specs/` | The OpenAPI specs the tools are generated from |
 | `scripts/generate_tools.py` | Generates `unifi_mcp/tools.py` and `docs/commands.md` from `specs/` |
 | `tests/` | Offline tests, no network or key needed |
-| `docs/` | Command reference, playbook, troubleshooting, roadmap, agent card, README images |
+| `docs/` | Command reference, playbook, troubleshooting, roadmap, agent card, README images, social preview |
 
 <a id="a2a"></a>
 
