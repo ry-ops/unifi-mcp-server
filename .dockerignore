@@ -1,8 +1,0 @@
-# Never bake credentials into an image
-secrets.env
-*.env
-.env
-!secrets.env.example
-.git
-.venv
-__pycache__/

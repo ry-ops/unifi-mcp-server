@@ -8,7 +8,6 @@
   <img src="https://img.shields.io/badge/playbooks-4-b58cff" alt="4 prompt playbooks">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12+-3ddc84" alt="Python 3.12+"></a>
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-FastMCP-ff8a5c" alt="MCP"></a>
-  <a href="https://github.com/ry-ops/unifi-mcp-server/pkgs/container/unifi-mcp-server"><img src="https://img.shields.io/badge/docker-ghcr.io-ffb02e" alt="Docker image on ghcr.io"></a>
   <a href="https://github.com/ry-ops/unifi-mcp-server/releases"><img src="https://img.shields.io/github/v/release/ry-ops/unifi-mcp-server?color=1f7cff" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8b96ad" alt="MIT"></a>
 </p>
@@ -121,18 +120,6 @@ For Claude Desktop, add this to `claude_desktop_config.json`:
   }
 }
 ```
-
-<details>
-<summary><b>Docker</b></summary>
-
-An image is built from `main` (tag `latest`) and from each release tag (for example `2.0.0`) and published to GitHub Container Registry. MCP talks over stdio, so run it interactively and pass the key in:
-
-```bash
-docker run -i --rm -e UNIFI_API_KEY=your_api_key ghcr.io/ry-ops/unifi-mcp-server:latest
-```
-
-`.dockerignore` keeps `secrets.env` out of any image you build yourself.
-</details>
 
 <a id="safety"></a>
 
