@@ -1,6 +1,14 @@
 # 🗺️ UniFi MCP Server roadmap
 
-**Last updated:** October 9, 2026
+**Last updated:** October 10, 2026
+
+## ✅ 2.1.0: verified writes, leaner project (done)
+
+- [x] Every write endpoint verified against a live console (UDM Pro, Network 11.0.83): create, update and delete cycles on test objects, and device, port, client and adoption actions sent with an unknown ID so nothing restarts
+- [x] `describe_operation` lists the fields of each variant (network management type, Wi-Fi type, firewall action and filters, DNS record type)
+- [x] Rules the console enforces that the spec doesn't mention, documented in [troubleshooting.md](troubleshooting.md#400-on-a-create-or-update)
+- [x] Docker image and workflow removed; the server runs with `uv`
+- [x] Direct dependencies cut to `mcp`, `pydantic` and `requests`; security minimums for indirect packages kept as uv constraints
 
 ## ✅ 2.0.0: cloud-only, full Network API (done)
 
@@ -19,7 +27,6 @@
 - [x] Logs on stderr only, so stdout stays clean for MCP ([#39](https://github.com/ry-ops/unifi-mcp-server/issues/39))
 - [x] Offline test suite covering every operation, run in CI with a check that generated files match the specs
 - [x] Every read endpoint verified against a live console (UDM Pro, Network 11.0.81)
-- [x] Every write endpoint verified against the same console on Network 11.0.83: create, update and delete cycles on test objects, and device, port, client and adoption actions sent with an unknown ID so nothing restarts
 
 ### Removed in 2.0.0
 

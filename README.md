@@ -35,6 +35,7 @@
 - ☁️ **Works from anywhere.** Every call goes to `api.ui.com` with your API key and reaches the console through UniFi's cloud connector. The server finds your console and site by itself.
 - 🛰️ **Sees your whole account.** 9 Site Manager tools list your consoles, sites and devices, ISP metrics, and SD-WAN configs.
 - 🔎 **Has shortcuts for common questions.** `get_site_status` sums up a site in one call, `search_site` finds a client or device by name, MAC or IP, and `describe_operation` returns the exact request schema before a create or update.
+- ✅ **Tested on a real console.** All 82 API tools have been run against a UniFi Dream Machine Pro through the cloud. Write tools created, changed and deleted test objects; restart and power-cycle tools were sent a made-up ID so nothing rebooted.
 - 🛡️ **Knows what's risky.** Every tool is marked read-only, write or destructive, and `UNIFI_READ_ONLY=true` turns off everything that could change your network.
 
 **Ask things like:**
@@ -155,7 +156,7 @@ CI runs the same tests and checks that the generated files match the specs.
 | `specs/` | The OpenAPI specs the tools are generated from |
 | `scripts/generate_tools.py` | Generates `unifi_mcp/tools.py` and `docs/commands.md` from `specs/` |
 | `tests/` | Offline tests, no network or key needed |
-| `docs/` | Command reference, playbook, troubleshooting, roadmap, agent card, images |
+| `docs/` | Command reference, playbook, troubleshooting, roadmap, agent card, README images |
 
 <a id="a2a"></a>
 
