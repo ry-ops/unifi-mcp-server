@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="t d">
+  <title id="t">Tested on a real console</title>
+  <desc id="d">A replay of the live test of all 32 tools that change a network, on a UniFi Dream Machine Pro running Network 11.0.83. Each create adds an mcp-test object to the site map; updates, patches and reorders follow; restart, power-cycle, client, adopt and unadopt actions are sent to an unknown ID and refused with 404 while every real device stays online; the deletes remove every test object. 32 of 32 passed and nothing was left behind.</desc>
+  <defs><linearGradient id="title" x1="0" x2="1"><stop offset="0" stop-color="#1f7cff"/><stop offset=".6" stop-color="#3ec7ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; fill: #e6ebf5; }
+    .muted { fill: #8b96ad; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    @keyframes r0 { 0%,6.00% { opacity: 0; transform: translateY(6px); } 8.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r0 { animation: r0 16.0s infinite; }
+    @keyframes k0 { 0%,8.50% { opacity: 0; } 10.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k0 { animation: k0 16.0s infinite; }
+    @keyframes r1 { 0%,12.00% { opacity: 0; transform: translateY(6px); } 14.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r1 { animation: r1 16.0s infinite; }
+    @keyframes k1 { 0%,14.50% { opacity: 0; } 16.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k1 { animation: k1 16.0s infinite; }
+    @keyframes r2 { 0%,18.00% { opacity: 0; transform: translateY(6px); } 20.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r2 { animation: r2 16.0s infinite; }
+    @keyframes k2 { 0%,20.50% { opacity: 0; } 22.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k2 { animation: k2 16.0s infinite; }
+    @keyframes r3 { 0%,24.00% { opacity: 0; transform: translateY(6px); } 26.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r3 { animation: r3 16.0s infinite; }
+    @keyframes k3 { 0%,26.50% { opacity: 0; } 28.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k3 { animation: k3 16.0s infinite; }
+    @keyframes r4 { 0%,30.00% { opacity: 0; transform: translateY(6px); } 32.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r4 { animation: r4 16.0s infinite; }
+    @keyframes k4 { 0%,32.50% { opacity: 0; } 34.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k4 { animation: k4 16.0s infinite; }
+    @keyframes r5 { 0%,36.00% { opacity: 0; transform: translateY(6px); } 38.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r5 { animation: r5 16.0s infinite; }
+    @keyframes k5 { 0%,38.50% { opacity: 0; } 40.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k5 { animation: k5 16.0s infinite; }
+    @keyframes r6 { 0%,42.00% { opacity: 0; transform: translateY(6px); } 44.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r6 { animation: r6 16.0s infinite; }
+    @keyframes k6 { 0%,44.50% { opacity: 0; } 46.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k6 { animation: k6 16.0s infinite; }
+    @keyframes r7 { 0%,48.00% { opacity: 0; transform: translateY(6px); } 50.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r7 { animation: r7 16.0s infinite; }
+    @keyframes k7 { 0%,50.50% { opacity: 0; } 52.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k7 { animation: k7 16.0s infinite; }
+    @keyframes r8 { 0%,54.00% { opacity: 0; transform: translateY(6px); } 56.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r8 { animation: r8 16.0s infinite; }
+    @keyframes k8 { 0%,56.50% { opacity: 0; } 58.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k8 { animation: k8 16.0s infinite; }
+    @keyframes r9 { 0%,60.00% { opacity: 0; transform: translateY(6px); } 62.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r9 { animation: r9 16.0s infinite; }
+    @keyframes k9 { 0%,62.50% { opacity: 0; } 64.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k9 { animation: k9 16.0s infinite; }
+    @keyframes r10 { 0%,66.00% { opacity: 0; transform: translateY(6px); } 68.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .r10 { animation: r10 16.0s infinite; }
+    @keyframes k10 { 0%,68.50% { opacity: 0; } 70.50%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .k10 { animation: k10 16.0s infinite; }
+    @keyframes sum { 0%,72.00% { opacity: 0; transform: translateY(6px); } 74.00%,95.00% { opacity: 1; transform: translateY(0); } 97.00%,100% { opacity: 0; } } .sum { animation: sum 16.0s infinite; }
+    @keyframes cz { 0%,13.00% { opacity: 0; transform: translateY(6px); } 15.00%,67.00% { opacity: 1; transform: translateY(0); } 69.00%,100% { opacity: 0; } } .cz { animation: cz 16.0s infinite; }
+    @keyframes cp { 0%,19.00% { opacity: 0; transform: translateY(6px); } 21.00%,67.00% { opacity: 1; transform: translateY(0); } 69.00%,100% { opacity: 0; } } .cp { animation: cp 16.0s infinite; }
+    @keyframes cn { 0%,37.00% { opacity: 0; transform: translateY(6px); } 39.00%,67.00% { opacity: 1; transform: translateY(0); } 69.00%,100% { opacity: 0; } } .cn { animation: cn 16.0s infinite; }
+    @keyframes cv { 0%,31.00% { opacity: 0; transform: translateY(6px); } 33.00%,67.00% { opacity: 1; transform: translateY(0); } 69.00%,100% { opacity: 0; } } .cv { animation: cv 16.0s infinite; }
+    @keyframes cw { 0%,43.00% { opacity: 0; transform: translateY(6px); } 45.00%,67.00% { opacity: 1; transform: translateY(0); } 69.00%,100% { opacity: 0; } } .cw { animation: cw 16.0s infinite; }
+    @keyframes shot { 0%,54.00% { offset-distance: 0%; opacity: 0; } 55.00% { opacity: 1; } 58.00% { offset-distance: 100%; opacity: 1; } 59.00%,100% { offset-distance: 100%; opacity: 0; } } .shot { animation: shot 16.0s infinite; }
+    @keyframes e404 { 0%,58.00% { opacity: 0; } 60.00%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .e404 { animation: e404 16.0s infinite; }
+    @keyframes ok { 0%,59.00% { opacity: 0; } 61.00%,95.00% { opacity: 1; } 97.00%,100% { opacity: 0; } } .ok { animation: ok 16.0s infinite; }
+    .ping { animation: ping 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes ping { from { transform: scale(1); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+  <rect width="960" height="420" rx="20" fill="#0f1420"/>
+  <text x="40" y="62" font-size="34" font-weight="800" style="fill:url(#title)">Tested on a real console</text>
+  <text x="42" y="90" font-size="15" class="muted">All 32 tools that change a network, run through the cloud against a live site.</text>
+
+  <!-- terminal -->
+  <rect x="30" y="112" width="530" height="296" rx="14" fill="#161d2b" stroke="#2c3750"/>
+  <circle cx="50" cy="130" r="5" fill="#ff5c8a"/><circle cx="66" cy="130" r="5" fill="#ffb02e"/><circle cx="82" cy="130" r="5" fill="#3ddc84"/>
+  <text x="100" y="134" font-size="11.5" class="mono muted">live write test · UDM Pro · Network 11.0.83</text>
+    <g class="r0"><text x="50" y="168" font-size="12" class="mono" style="fill:#8fbfff">create_traffic_matching_list</text><text x="300" y="168" font-size="12" class="mono" style="fill:#8b96ad">mcp-test-ports</text></g><text class="k0" x="524" y="168" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r1"><text x="50" y="188" font-size="12" class="mono" style="fill:#8fbfff">create_custom_firewall_zone</text><text x="300" y="188" font-size="12" class="mono" style="fill:#8b96ad">mcp-test-zone</text></g><text class="k1" x="524" y="188" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r2"><text x="50" y="208" font-size="12" class="mono" style="fill:#8fbfff">create_firewall_policy</text><text x="300" y="208" font-size="12" class="mono" style="fill:#8b96ad">mcp-test-policy</text></g><text class="k2" x="524" y="208" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r3"><text x="50" y="228" font-size="12" class="mono" style="fill:#8fbfff">create_acl_rule, _dns_policy</text><text x="300" y="228" font-size="12" class="mono" style="fill:#8b96ad">rule + DNS record</text></g><text class="k3" x="524" y="228" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r4"><text x="50" y="248" font-size="12" class="mono" style="fill:#8fbfff">generate_vouchers</text><text x="300" y="248" font-size="12" class="mono" style="fill:#8b96ad">2 vouchers</text></g><text class="k4" x="524" y="248" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r5"><text x="50" y="268" font-size="12" class="mono" style="fill:#8fbfff">create_network</text><text x="300" y="268" font-size="12" class="mono" style="fill:#8b96ad">mcp-test-net, disabled</text></g><text class="k5" x="524" y="268" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r6"><text x="50" y="288" font-size="12" class="mono" style="fill:#8fbfff">create_wifi_broadcast</text><text x="300" y="288" font-size="12" class="mono" style="fill:#8b96ad">mcp-test-wifi, disabled</text></g><text class="k6" x="524" y="288" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r7"><text x="50" y="308" font-size="12" class="mono" style="fill:#8fbfff">update · patch · reorder</text><text x="300" y="308" font-size="12" class="mono" style="fill:#8b96ad">10 tools</text></g><text class="k7" x="524" y="308" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r8"><text x="50" y="328" font-size="12" class="mono" style="fill:#8fbfff">restart · power-cycle · client</text><text x="300" y="328" font-size="12" class="mono" style="fill:#ffb02e">unknown ID → 404</text></g><text class="k8" x="524" y="328" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r9"><text x="50" y="348" font-size="12" class="mono" style="fill:#8fbfff">adopt · unadopt</text><text x="300" y="348" font-size="12" class="mono" style="fill:#ffb02e">unknown device → refused</text></g><text class="k9" x="524" y="348" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="r10"><text x="50" y="368" font-size="12" class="mono" style="fill:#8fbfff">delete_* (9 tools)</text><text x="300" y="368" font-size="12" class="mono" style="fill:#8b96ad">everything removed</text></g><text class="k10" x="524" y="368" font-size="13" font-weight="800" style="fill:#3ddc84">✓</text>
+  <g class="sum"><rect x="44" y="380" width="502" height="1" fill="#2c3750"/>
+    <text x="50" y="398" font-size="13" font-weight="800" class="mono" style="fill:#3ddc84">32 / 32 passed · nothing left behind · nothing restarted</text></g>
+
+  <!-- site map -->
+  <text x="590" y="108" font-size="11" font-weight="700" class="muted" letter-spacing=".1em">YOUR SITE</text>
+  <line x1="756" y1="196" x2="700" y2="256" stroke="#2c3750" stroke-width="2"/><line x1="756" y1="196" x2="812" y2="256" stroke="#2c3750" stroke-width="2"/>
+  <line x1="700" y1="256" x2="660" y2="316" stroke="#2c3750" stroke-width="2"/><line x1="700" y1="256" x2="740" y2="316" stroke="#2c3750" stroke-width="2"/><line x1="812" y1="256" x2="820" y2="316" stroke="#2c3750" stroke-width="2"/>
+  <rect x="722" y="182" width="68" height="28" rx="7" fill="#1f7cff"/><text x="756" y="200" text-anchor="middle" font-size="11" font-weight="700">gateway</text>
+  <rect x="676" y="247" width="48" height="18" rx="4" fill="#1f7cff"/><text x="700" y="260" text-anchor="middle" font-size="9" font-weight="700">switch</text>
+  <rect x="788" y="247" width="48" height="18" rx="4" fill="#1f7cff"/><text x="812" y="260" text-anchor="middle" font-size="9" font-weight="700">switch</text>
+  <circle cx="660" cy="316" r="13" fill="#1f7cff"/><text x="660" y="319" text-anchor="middle" font-size="8.5" font-weight="700">AP</text>
+  <circle cx="740" cy="316" r="13" fill="#1f7cff"/><text x="740" y="319" text-anchor="middle" font-size="8.5" font-weight="700">AP</text>
+  <circle cx="820" cy="316" r="13" fill="#1f7cff"/><text x="820" y="319" text-anchor="middle" font-size="8.5" font-weight="700">AP</text>
+    <g class="cz"><rect x="590" y="120" width="112" height="20" rx="6" fill="#1d2536" stroke="#ffb02e" stroke-dasharray="3 3"/><text x="646.0" y="134" text-anchor="middle" font-size="10.5" class="mono" style="fill:#ffd08a">mcp-test-zone</text></g>
+  <g class="cp"><line x1="702" y1="166" x2="728" y2="182" stroke="#ffb02e" stroke-opacity=".5" stroke-dasharray="2 3"/><rect x="590" y="146" width="112" height="20" rx="6" fill="#1d2536" stroke="#ffb02e" stroke-dasharray="3 3"/><text x="646.0" y="160" text-anchor="middle" font-size="10.5" class="mono" style="fill:#ffd08a">mcp-test-policy</text></g>
+  <g class="cn"><rect x="818" y="120" width="104" height="20" rx="6" fill="#1d2536" stroke="#ffb02e" stroke-dasharray="3 3"/><text x="870.0" y="134" text-anchor="middle" font-size="10.5" class="mono" style="fill:#ffd08a">mcp-test-net</text></g>
+  <g class="cv"><line x1="818" y1="162" x2="784" y2="182" stroke="#ffb02e" stroke-opacity=".5" stroke-dasharray="2 3"/><rect x="818" y="146" width="104" height="20" rx="6" fill="#1d2536" stroke="#ffb02e" stroke-dasharray="3 3"/><text x="870.0" y="160" text-anchor="middle" font-size="10.5" class="mono" style="fill:#ffd08a">2 vouchers</text></g>
+  <g class="cw"><line x1="830" y1="326" x2="846" y2="342" stroke="#ffb02e" stroke-opacity=".5" stroke-dasharray="2 3"/><rect x="838" y="342" width="104" height="20" rx="6" fill="#1d2536" stroke="#ffb02e" stroke-dasharray="3 3"/><text x="890.0" y="356" text-anchor="middle" font-size="10.5" class="mono" style="fill:#ffd08a">mcp-test-wifi</text></g>
+
+  <!-- the restart that reaches nothing -->
+  <circle cx="900" cy="232" r="15" fill="none" stroke="#8b96ad" stroke-dasharray="3 3"/><text x="900" y="236" text-anchor="middle" font-size="12" font-weight="700" class="muted">?</text>
+  <text x="900" y="262" text-anchor="middle" font-size="9.5" class="mono muted">unknown ID</text>
+  <circle class="shot" r="6" fill="#ffb02e" style="offset-path: path('M600 232 C 680 232, 760 232, 884 232'); opacity: 0;"/>
+  <g class="e404"><rect x="880" y="198" width="40" height="18" rx="5" fill="#ff5c8a"/><text x="900" y="211" text-anchor="middle" font-size="11" font-weight="800">404</text></g>
+  <g class="ok"><rect class="ping" x="719" y="179" width="74" height="34" rx="9" fill="none" stroke="#3ddc84" stroke-width="2"/>
+    <text x="756" y="398" text-anchor="middle" font-size="12" style="fill:#3ddc84">every device stayed online</text></g>
+</svg>
