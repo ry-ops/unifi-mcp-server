@@ -1,7 +1,7 @@
 version: 2
 updates:
-  # Python dependencies (pip/pyproject.toml)
-  - package-ecosystem: "pip"
+  # Python dependencies (pyproject.toml and uv.lock)
+  - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -10,10 +10,6 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
-      - "security"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

@@ -1,19 +1,25 @@
 [project]
 name = "unifi-mcp-server"
-version = "2.0.0"
+version = "2.1.0"
 description = "MCP server for the full UniFi Network API, cloud-only through unifi.ui.com"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "httpx>=0.28.1",
-    "mcp[cli]>=1.23.0",
+    "mcp[cli]>=1.28.1",
+    "pydantic>=2.11",
     "requests>=2.33.0",
-    "urllib3>=2.8.0",
-    "starlette>=0.49.1",
+]
+
+[tool.uv]
+# Minimum versions for indirect dependencies, kept for security fixes.
+constraint-dependencies = [
+    "cryptography>=50.0.0",
     "h11>=0.16.0",
+    "httpx>=0.28.1",
+    "idna>=3.15",
+    "pygments>=2.20.0",
     "python-dotenv>=1.2.2",
     "python-multipart>=0.0.27",
-    "cryptography>=50.0.0",
-    "Pygments>=2.20.0",
-    "idna>=3.15",
+    "starlette>=0.49.1",
+    "urllib3>=2.8.0",
 ]
