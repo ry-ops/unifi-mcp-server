@@ -19,7 +19,7 @@
 - [x] Logs on stderr only, so stdout stays clean for MCP ([#39](https://github.com/ry-ops/unifi-mcp-server/issues/39))
 - [x] Offline test suite covering every operation, run in CI with a check that generated files match the specs
 - [x] Every read endpoint verified against a live console (UDM Pro, Network 11.0.81)
-- [x] Every write endpoint verified against the same console: create, update and delete cycles on test objects, and device, port, client and adoption actions sent with an unknown ID so nothing restarts
+- [x] Every write endpoint verified against the same console on Network 11.0.83: create, update and delete cycles on test objects, and device, port, client and adoption actions sent with an unknown ID so nothing restarts
 
 ### Removed in 2.0.0
 

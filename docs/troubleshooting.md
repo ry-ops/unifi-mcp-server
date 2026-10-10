@@ -43,7 +43,7 @@ The endpoint exists but the ID doesn't. List the collection first (for example `
 ### 400 on a create or update
 The body doesn't match the schema. Call **`describe_operation`** with the tool name (for example `create_firewall_policy`) to get the full schema with required fields and allowed values. Many bodies use a field such as `type`, `management` or `action` to pick a variant; the fields each variant adds are listed under `variants`.
 
-The console also checks rules the spec doesn't spell out. These came up in live testing on Network 11.0.81:
+The console also checks rules the spec doesn't spell out. These came up in live testing on Network 11.0.83:
 
 | Error code or message | Fix |
 |---|---|
