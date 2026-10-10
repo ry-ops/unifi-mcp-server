@@ -41,7 +41,16 @@ The server only guesses when there's exactly one console, and exactly one site o
 The endpoint exists but the ID doesn't. List the collection first (for example `list_adopted_devices`) and use an `id` from it. Network API IDs are UUIDs, not MAC addresses.
 
 ### 400 on a create or update
-The body doesn't match the schema. Call **`describe_operation`** with the tool name (for example `create_firewall_policy`) to get the full schema with required fields and allowed values. Many bodies use an `action` or `type` field to pick a variant.
+The body doesn't match the schema. Call **`describe_operation`** with the tool name (for example `create_firewall_policy`) to get the full schema with required fields and allowed values. Many bodies use a field such as `type`, `management` or `action` to pick a variant; the fields each variant adds are listed under `variants`.
+
+The console also checks rules the spec doesn't spell out. These came up in live testing on Network 11.0.83:
+
+| Error code or message | Fix |
+|---|---|
+| `api.network.validation.missing-zone-id` | `create_network` needs `zoneId` (for example the Internal zone's ID from `list_firewall_zones`), although the spec marks it optional. |
+| "WPA security combined with standard WiFi requires fast roaming setting" | Set `securityConfiguration.fastRoamingEnabled` on a `STANDARD` Wi-Fi with WPA security. |
+| "band steering setting requires broadcasting on multiple bands" | Leave out `bandSteeringEnabled`, or list more than one band in `broadcastingFrequenciesGHz`. |
+| `api.wifi-broadcast.validation.too-many-wifi-broadcasts` | An access point already broadcasts as many Wi-Fi networks as it can. Use `broadcastingDeviceFilter` to put the new one on access points that have room, or remove one. |
 
 ### 400 on a list with `filter`
 Check the syntax: `name.like('U*')`, `state.eq('ONLINE')`, `and(type.eq('WIRED'),name.like('pve*'))`. Each list tool's description lists the fields it can filter on and the functions each field allows.

@@ -194,7 +194,7 @@ The key is wrong, revoked, or has a stray space. Make a new one at unifi.ui.com.
 <details>
 <summary><b>400 on a create or update</b></summary>
 
-Call `describe_operation` with the tool's name to get the full body schema, including required fields and allowed values.
+Call `describe_operation` with the tool's name to get the full body schema, including required fields, allowed values and the fields of each variant. [Troubleshooting](docs/troubleshooting.md#400-on-a-create-or-update) lists rules the console enforces that the spec doesn't mention.
 </details>
 
 <details>
