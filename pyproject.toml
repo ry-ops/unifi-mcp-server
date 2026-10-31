@@ -5,7 +5,7 @@ description = "MCP server for the full UniFi Network API, cloud-only through uni
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "mcp[cli]>=1.28.1",
+    "mcp[cli]>=1.30.0,<2",
     "pydantic>=2.11",
     "requests>=2.33.0",
 ]
