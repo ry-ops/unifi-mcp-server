@@ -929,6 +929,10 @@
             "minLength": 1,
             "type": "string"
           },
+          "reportFlowEnabled": {
+            "description": "Report traffic matched by this policy in Insights Flows. Defaults to true when omitted.",
+            "type": "boolean"
+          },
           "schedule": {
             "$ref": "#/components/schemas/Firewall schedule"
           },
@@ -1673,6 +1677,10 @@
             "example": "My firewall policy",
             "type": "string"
           },
+          "reportFlowEnabled": {
+            "description": "Report traffic matched by this policy in Insights Flows. Always false for the predefined Allow Return Traffic policies and the predefined policies allowing only multicast or IPv6 neighbor discovery traffic, which are never reported.",
+            "type": "boolean"
+          },
           "schedule": {
             "$ref": "#/components/schemas/Firewall schedule"
           },
@@ -1690,6 +1698,7 @@
           "loggingEnabled",
           "metadata",
           "name",
+          "reportFlowEnabled",
           "source"
         ],
         "type": "object"
@@ -8098,6 +8107,7 @@
         "properties": {
           "frequencyGHz": {
             "enum": [
+              0.9,
               2.4,
               5,
               6,
@@ -8618,6 +8628,10 @@
       "Patch firewall policy": {
         "properties": {
           "loggingEnabled": {
+            "type": "boolean"
+          },
+          "reportFlowEnabled": {
+            "description": "Report traffic matched by this policy in Insights Flows. Ignored for the predefined Allow Return Traffic policies and the predefined policies allowing only multicast or IPv6 neighbor discovery traffic, which are never reported.",
             "type": "boolean"
           }
         },
@@ -10171,12 +10185,24 @@
           },
           "frequencyGHz": {
             "enum": [
+              0.9,
               2.4,
               5,
               6,
               60
             ],
             "type": "number"
+          },
+          "txPowerMode": {
+            "enum": [
+              "AUTO",
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "CUSTOM",
+              "DISABLED"
+            ],
+            "type": "string"
           },
           "wlanStandard": {
             "enum": [
@@ -10186,7 +10212,8 @@
               "802.11n",
               "802.11ac",
               "802.11ax",
-              "802.11be"
+              "802.11be",
+              "802.11ah"
             ],
             "type": "string"
           }
@@ -10194,6 +10221,7 @@
         "required": [
           "channelWidthMHz",
           "frequencyGHz",
+          "txPowerMode",
           "wlanStandard"
         ],
         "type": "object"
@@ -10260,7 +10288,7 @@
     "description": "",
     "license": {},
     "title": "UniFi Network API",
-    "version": "10.6.106"
+    "version": "11.0.97"
   },
   "openapi": "3.1.0",
   "paths": {

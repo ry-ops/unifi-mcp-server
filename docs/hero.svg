@@ -52,7 +52,7 @@
   <circle class="l0" r="6" fill="#3ec7ff" style="offset-path: path('M470 232 C 520 232, 540 152, 600 152');"/>
   <rect x="600" y="130" width="150" height="44" rx="10" fill="#161d2b" stroke="#3ec7ff"/>
   <text x="612" y="149" font-size="12.5" font-weight="700">Network API</text>
-  <text x="612" y="165" font-size="9.5" class="muted mono">73 calls · v10.6.106</text>
+  <text x="612" y="165" font-size="9.5" class="muted mono">73 calls · v11.0.97</text>
   <path d="M470 232 L 600 232" fill="none" stroke="#7aa7ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="3 6"/>
   <circle class="l1" r="6" fill="#7aa7ff" style="offset-path: path('M470 232 L 600 232');"/>
   <rect x="600" y="210" width="150" height="44" rx="10" fill="#161d2b" stroke="#7aa7ff"/>

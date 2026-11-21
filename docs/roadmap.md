@@ -1,6 +1,13 @@
 # 🗺️ UniFi MCP Server roadmap
 
-**Last updated:** October 10, 2026
+**Last updated:** November 21, 2026
+
+## ✅ 2.2.0: Network API v11.0.97 (done)
+
+- [x] Tools regenerated from the UniFi Network API v11.0.97 spec (same 73 operations, no paths added or removed)
+- [x] Firewall policies gain `reportFlowEnabled` (report matched traffic in Insights Flows; defaults to true on create)
+- [x] Wireless radios report `txPowerMode` (AUTO, LOW, MEDIUM, HIGH, CUSTOM, DISABLED), and the 0.9 GHz band / 802.11ah standard
+- [x] Read tools checked against a live console (UDM Pro, Network 11.1.50)
 
 ## ✅ 2.1.0: verified writes, leaner project (done)
 
@@ -45,7 +52,7 @@ These depended on reaching the console directly, or called endpoints that aren't
 - [ ] UniFi Protect API through the same cloud connector, generated from its spec
 - [ ] Typed request bodies for the most-used writes (firewall policy, network, Wi-Fi) instead of a free-form `body`
 - [ ] Optional local mode (direct to the console) using the same generated tools and a different base URL
-- [ ] Watch developer.ui.com for a Network API newer than 10.6.106 and regenerate
+- [ ] Watch developer.ui.com for a Network API newer than 11.0.97 and regenerate
 
 ## 🌟 Later
 

@@ -1,8 +1,8 @@
 {
   "$schema": "https://modelcontextprotocol.io/schemas/agent-card.schema.json",
   "name": "UniFi MCP Server",
-  "description": "Cloud-only MCP server for UniFi: one tool for each of the 73 UniFi Network API v10.6.106 operations, reached through the Site Manager cloud connector at api.ui.com, plus the 9 Site Manager API operations and 5 helpers.",
-  "version": "2.1.0",
+  "description": "Cloud-only MCP server for UniFi: one tool for each of the 73 UniFi Network API v11.0.97 operations, reached through the Site Manager cloud connector at api.ui.com, plus the 9 Site Manager API operations and 5 helpers.",
+  "version": "2.2.0",
   "url": "https://github.com/ry-ops/unifi-mcp-server",
   "protocol": {
     "type": "mcp",
@@ -322,7 +322,7 @@
     "documentation": "https://github.com/ry-ops/unifi-mcp-server/blob/main/README.md",
     "playbook": "https://github.com/ry-ops/unifi-mcp-server/blob/main/docs/network-playbook.md",
     "api_specs": [
-      "https://developer.ui.com/network/v10.6.106/openapi.json",
+      "https://developer.ui.com/network/v11.0.97/openapi.json",
       "https://developer.ui.com/site-manager/v1.0.0/openapi.json"
     ]
   }
