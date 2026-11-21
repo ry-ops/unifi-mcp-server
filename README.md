@@ -31,7 +31,7 @@
 
 ## ✨ What it does
 
-- 🌐 **Covers the whole Network API.** One tool for each of the 73 operations in the UniFi Network API v10.6.106: devices, clients, networks, Wi-Fi, firewall zones and policies, ACL rules, DNS policies, traffic matching lists, hotspot vouchers, switching, VPN and WAN.
+- 🌐 **Covers the whole Network API.** One tool for each of the 73 operations in the UniFi Network API v11.0.97: devices, clients, networks, Wi-Fi, firewall zones and policies, ACL rules, DNS policies, traffic matching lists, hotspot vouchers, switching, VPN and WAN.
 - ☁️ **Works from anywhere.** Every call goes to `api.ui.com` with your API key and reaches the console through UniFi's cloud connector. The server finds your console and site by itself.
 - 🛰️ **Sees your whole account.** 9 Site Manager tools list your consoles, sites and devices, ISP metrics, and SD-WAN configs.
 - 🔎 **Has shortcuts for common questions.** `get_site_status` sums up a site in one call, `search_site` finds a client or device by name, MAC or IP, and `describe_operation` returns the exact request schema before a create or update.
@@ -218,7 +218,7 @@ There's more in [docs/troubleshooting.md](docs/troubleshooting.md) and [docs/net
 
 ## 🗺️ Roadmap
 
-What's done and what's next is in [docs/roadmap.md](docs/roadmap.md). Release notes are on the [releases page](https://github.com/ry-ops/unifi-mcp-server/releases).
+What's done and what's next is in [docs/roadmap.md](docs/roadmap.md). **2.2.0** moves to Network API v11.0.97: firewall policies gain `reportFlowEnabled`, and Wi-Fi radios report `txPowerMode` and the 0.9 GHz (802.11ah) band. Release notes are on the [releases page](https://github.com/ry-ops/unifi-mcp-server/releases).
 
 ## 🙏 Credits
 

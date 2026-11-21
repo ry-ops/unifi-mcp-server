@@ -18,7 +18,7 @@ import unifi_mcp.tools as unifi_tools
 import main
 
 SPECS = {
-    "network": ROOT / "specs/network-v10.6.106.openapi.json",
+    "network": ROOT / "specs/network-v11.0.97.openapi.json",
     "cloud": ROOT / "specs/site-manager-v1.0.0.openapi.json",
 }
 

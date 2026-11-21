@@ -10,7 +10,7 @@ def list_countries(offset: Annotated[Optional[int], Field(description='Number of
     """List Countries.
     Returns ISO-standard country codes and names, used for region-based configuration or regulatory compliance. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`code`|`STRING`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`|
     GET /v1/countries
-    Docs: https://developer.ui.com/network/v10.6.106/getcountries
+    Docs: https://developer.ui.com/network/v11.0.97/getcountries
     """
     return network_call('GET', '/v1/countries', {}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -18,7 +18,7 @@ def list_dpi_applications(offset: Annotated[Optional[int], Field(description='Nu
     """List DPI Applications.
     Lists DPI-recognized applications grouped under categories. Useful for firewall or traffic analytics integration. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`INTEGER`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`|
     GET /v1/dpi/applications
-    Docs: https://developer.ui.com/network/v10.6.106/getdpiapplications
+    Docs: https://developer.ui.com/network/v11.0.97/getdpiapplications
     """
     return network_call('GET', '/v1/dpi/applications', {}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -26,7 +26,7 @@ def list_dpi_application_categories(offset: Annotated[Optional[int], Field(descr
     """List DPI Application Categories.
     Returns predefined Deep Packet Inspection (DPI) application categories used for traffic identification and filtering. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`INTEGER`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`|
     GET /v1/dpi/categories
-    Docs: https://developer.ui.com/network/v10.6.106/getdpiapplicationcategories
+    Docs: https://developer.ui.com/network/v11.0.97/getdpiapplicationcategories
     """
     return network_call('GET', '/v1/dpi/categories', {}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -34,7 +34,7 @@ def get_application_info() -> Any:
     """Get Application Info.
     Retrieve general information about the UniFi Network application.
     GET /v1/info
-    Docs: https://developer.ui.com/network/v10.6.106/getinfo
+    Docs: https://developer.ui.com/network/v11.0.97/getinfo
     """
     return network_call('GET', '/v1/info', {}, {})
 
@@ -42,7 +42,7 @@ def list_devices_pending_adoption(offset: Annotated[Optional[int], Field(descrip
     """List Devices Pending Adoption.
     Retrieve a paginated list of devices pending adoption, including basic device information. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`macAddress`|`STRING`|`eq` `ne` `in` `notIn`| |`ipAddress`|`STRING`|`eq` `ne` `in` `notIn`| |`model`|`STRING`|`eq` `ne` `in` `notIn`| |`state`|`STRING`|`eq` `ne` `in` `notIn`| |`supported`|`BOOLEAN`|`eq` `ne`| |`firmwareVersion`|`STRING`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le` `like` `in` `notIn`| |`firmwareUpdatable`|`BOOLEAN`|`eq` `ne`| |`features`|`SET(STRING)`|`isEmpty` `contains` `containsAny` `containsAll` `containsExactly`|
     GET /v1/pending-devices
-    Docs: https://developer.ui.com/network/v10.6.106/getpendingdevicepage
+    Docs: https://developer.ui.com/network/v11.0.97/getpendingdevicepage
     """
     return network_call('GET', '/v1/pending-devices', {}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -50,7 +50,7 @@ def list_local_sites(offset: Annotated[Optional[int], Field(description='Number 
     """List Local Sites.
     Retrieve a paginated list of local sites managed by this Network application. Site ID is required for other UniFi Network API calls. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`internalReference`|`STRING`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites
-    Docs: https://developer.ui.com/network/v10.6.106/getsiteoverviewpage
+    Docs: https://developer.ui.com/network/v11.0.97/getsiteoverviewpage
     """
     return network_call('GET', '/v1/sites', {}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -58,7 +58,7 @@ def list_acl_rules(site_id: Annotated[Optional[str], Field(description='Site ID 
     """List ACL Rules.
     Retrieve a paginated list of all ACL rules on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`enabled`|`BOOLEAN`|`eq` `ne`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`description`|`STRING`|`isNull` `isNotNull` `eq` `ne` `in` `notIn` `like`| |`action`|`STRING`|`eq` `ne` `in` `notIn`| |`index`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`| |`protocolFilter`|`SET(STRING)`|`isNull` `isNotNull` `contains` `containsAny` `containsAll` `containsExactly`| |`networkId`|`UUID`|`isNull` `isNotNull` `eq` `ne` `in` `notIn`| |`enforcingDeviceFilter.deviceIds`|`SET(UUID)`|`isNull` `isNotNull` `contains` `containsAny` `containsAll` `containsExactly`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`| |`sourceFilter.type`|`STRING`|`isNull` `isNotNull` `eq` `ne` `in` `notIn`| |`sourceFilter.ipAddressesOrSubnets`|`SET(STRING)`|`contains` `containsAny` `containsAll` `containsExactly`| |`sourceFilter.portFilter`|`SET(INTEGER)`|`isNull` `isNotNull` `contains` `containsAny` `containsAll` `containsExactly`| |`sourceFilter.networkIds`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`| |`sourceFilter.macAddresses`|`SET(STRING)`|`contains` `containsAny` `containsAll` `containsExactly`| |`sourceFilter.prefixLength`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`| |`destinationFilter.type`|`STRING`|`isNull` `isNotNull` `eq` `ne` `in` `notIn`| |`destinationFilter.ipAddressesOrSubnets`|`SET(STRING)`|`contains` `containsAny` `containsAll` `containsExactly`| |`destinationFilter.portFilter`|`SET(INTEGER)`|`isNull` `isNotNull` `contains` `containsAny` `containsAll` `containsExactly`| |`destinationFilter.networkIds`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`| |`destinationFilter.macAddresses`|`SET(STRING)`|`contains` `containsAny` `containsAll` `containsExactly`| |`destinationFilter.prefixLength`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`|
     GET /v1/sites/{siteId}/acl-rules
-    Docs: https://developer.ui.com/network/v10.6.106/getaclrulepage
+    Docs: https://developer.ui.com/network/v11.0.97/getaclrulepage
     """
     return network_call('GET', '/v1/sites/{siteId}/acl-rules', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -70,7 +70,7 @@ def create_acl_rule(body: Annotated[Dict[str, Any], Field(description='JSON requ
         Set `type` to pick a variant:
           IPV4: action*, description, destinationFilter, enabled*, enforcingDeviceFilter, index, name*, sourceFilter, protocolFilter
           MAC: action*, description, destinationFilter, enabled*, enforcingDeviceFilter, index, name*, sourceFilter, networkIdFilter*
-    Docs: https://developer.ui.com/network/v10.6.106/createaclrule
+    Docs: https://developer.ui.com/network/v11.0.97/createaclrule
     """
     return network_call('POST', '/v1/sites/{siteId}/acl-rules', {'siteId': site_id}, {}, body)
 
@@ -78,7 +78,7 @@ def get_user_defined_acl_rule_ordering(site_id: Annotated[Optional[str], Field(d
     """Get User-Defined ACL Rule Ordering.
     Retrieve user-defined ACL rule ordering on a site.
     GET /v1/sites/{siteId}/acl-rules/ordering
-    Docs: https://developer.ui.com/network/v10.6.106/getaclruleordering
+    Docs: https://developer.ui.com/network/v11.0.97/getaclruleordering
     """
     return network_call('GET', '/v1/sites/{siteId}/acl-rules/ordering', {'siteId': site_id}, {})
 
@@ -88,7 +88,7 @@ def reorder_user_defined_acl_rules(body: Annotated[Dict[str, Any], Field(descrip
     PUT /v1/sites/{siteId}/acl-rules/ordering
     Body fields (* = required):
         orderedAclRuleIds* (array of string)
-    Docs: https://developer.ui.com/network/v10.6.106/updateaclruleordering
+    Docs: https://developer.ui.com/network/v11.0.97/updateaclruleordering
     """
     return network_call('PUT', '/v1/sites/{siteId}/acl-rules/ordering', {'siteId': site_id}, {}, body)
 
@@ -96,14 +96,14 @@ def delete_acl_rule(acl_rule_id: Annotated[str, Field(description='aclRuleId (uu
     """Delete ACL Rule.
     Delete an existing user defined ACL rule on a site.
     DELETE /v1/sites/{siteId}/acl-rules/{aclRuleId}
-    Docs: https://developer.ui.com/network/v10.6.106/deleteaclrule
+    Docs: https://developer.ui.com/network/v11.0.97/deleteaclrule
     """
     return network_call('DELETE', '/v1/sites/{siteId}/acl-rules/{aclRuleId}', {'aclRuleId': acl_rule_id, 'siteId': site_id}, {})
 
 def get_acl_rule(acl_rule_id: Annotated[str, Field(description='aclRuleId (uuid)')], site_id: Annotated[Optional[str], Field(description='Site ID (UUID). Leave empty to use the default site.')] = None) -> Any:
     """Get ACL Rule.
     GET /v1/sites/{siteId}/acl-rules/{aclRuleId}
-    Docs: https://developer.ui.com/network/v10.6.106/getaclrule
+    Docs: https://developer.ui.com/network/v11.0.97/getaclrule
     """
     return network_call('GET', '/v1/sites/{siteId}/acl-rules/{aclRuleId}', {'aclRuleId': acl_rule_id, 'siteId': site_id}, {})
 
@@ -115,7 +115,7 @@ def update_acl_rule(acl_rule_id: Annotated[str, Field(description='aclRuleId (uu
         Set `type` to pick a variant:
           IPV4: action*, description, destinationFilter, enabled*, enforcingDeviceFilter, index, name*, sourceFilter, protocolFilter
           MAC: action*, description, destinationFilter, enabled*, enforcingDeviceFilter, index, name*, sourceFilter, networkIdFilter*
-    Docs: https://developer.ui.com/network/v10.6.106/updateaclrule
+    Docs: https://developer.ui.com/network/v11.0.97/updateaclrule
     """
     return network_call('PUT', '/v1/sites/{siteId}/acl-rules/{aclRuleId}', {'aclRuleId': acl_rule_id, 'siteId': site_id}, {}, body)
 
@@ -123,7 +123,7 @@ def list_connected_clients(site_id: Annotated[Optional[str], Field(description='
     """List Connected Clients.
     Retrieve a paginated list of all connected clients on a site, including physical devices (computers, smartphones) and active VPN connections. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`macAddress`|`STRING`|`isNull` `isNotNull` `eq` `ne` `in` `notIn`| |`ipAddress`|`STRING`|`isNull` `isNotNull` `eq` `ne` `in` `notIn`| |`connectedAt`|`TIMESTAMP`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`access.type`|`STRING`|`eq` `ne` `in` `notIn`| |`access.authorized`|`BOOLEAN`|`isNull` `isNotNull` `eq` `ne`|
     GET /v1/sites/{siteId}/clients
-    Docs: https://developer.ui.com/network/v10.6.106/getconnectedclientoverviewpage
+    Docs: https://developer.ui.com/network/v11.0.97/getconnectedclientoverviewpage
     """
     return network_call('GET', '/v1/sites/{siteId}/clients', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -131,7 +131,7 @@ def get_connected_client_details(client_id: Annotated[str, Field(description='cl
     """Get Connected Client Details.
     Retrieve detailed information about a specific connected client, including name, IP address, MAC address, connection type and access information.
     GET /v1/sites/{siteId}/clients/{clientId}
-    Docs: https://developer.ui.com/network/v10.6.106/getconnectedclientdetails
+    Docs: https://developer.ui.com/network/v11.0.97/getconnectedclientdetails
     """
     return network_call('GET', '/v1/sites/{siteId}/clients/{clientId}', {'clientId': client_id, 'siteId': site_id}, {})
 
@@ -143,7 +143,7 @@ def execute_client_action(client_id: Annotated[str, Field(description='clientId 
         Set `action` to pick a variant:
           AUTHORIZE_GUEST_ACCESS: dataUsageLimitMBytes, rxRateLimitKbps, timeLimitMinutes, txRateLimitKbps
           UNAUTHORIZE_GUEST_ACCESS
-    Docs: https://developer.ui.com/network/v10.6.106/executeconnectedclientaction
+    Docs: https://developer.ui.com/network/v11.0.97/executeconnectedclientaction
     """
     return network_call('POST', '/v1/sites/{siteId}/clients/{clientId}/actions', {'clientId': client_id, 'siteId': site_id}, {}, body)
 
@@ -151,7 +151,7 @@ def list_device_tags(site_id: Annotated[Optional[str], Field(description='Site I
     """List Device Tags.
     Returns all device tags defined within a site, which can be used for WiFi Broadcast assignments. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`deviceIds`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`|
     GET /v1/sites/{siteId}/device-tags
-    Docs: https://developer.ui.com/network/v10.6.106/getdevicetagpage
+    Docs: https://developer.ui.com/network/v11.0.97/getdevicetagpage
     """
     return network_call('GET', '/v1/sites/{siteId}/device-tags', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -159,7 +159,7 @@ def list_adopted_devices(site_id: Annotated[Optional[str], Field(description='Si
     """List Adopted Devices.
     Retrieve a paginated list of all adopted devices on a site, including basic device information. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`macAddress`|`STRING`|`eq` `ne` `in` `notIn`| |`ipAddress`|`STRING`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`model`|`STRING`|`eq` `ne` `in` `notIn`| |`state`|`STRING`|`eq` `ne` `in` `notIn`| |`supported`|`BOOLEAN`|`eq` `ne`| |`firmwareVersion`|`STRING`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le` `like` `in` `notIn`| |`firmwareUpdatable`|`BOOLEAN`|`eq` `ne`| |`features`|`SET(STRING)`|`isEmpty` `contains` `containsAny` `containsAll` `containsExactly`| |`interfaces`|`SET(STRING)`|`isEmpty` `contains` `containsAny` `containsAll` `containsExactly`|
     GET /v1/sites/{siteId}/devices
-    Docs: https://developer.ui.com/network/v10.6.106/getadopteddeviceoverviewpage
+    Docs: https://developer.ui.com/network/v11.0.97/getadopteddeviceoverviewpage
     """
     return network_call('GET', '/v1/sites/{siteId}/devices', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -170,7 +170,7 @@ def adopt_devices(body: Annotated[Dict[str, Any], Field(description='JSON reques
     Body fields (* = required):
         ignoreDeviceLimit* (boolean)
         macAddress* (string)
-    Docs: https://developer.ui.com/network/v10.6.106/adoptdevice
+    Docs: https://developer.ui.com/network/v11.0.97/adoptdevice
     """
     return network_call('POST', '/v1/sites/{siteId}/devices', {'siteId': site_id}, {}, body)
 
@@ -178,7 +178,7 @@ def remove_unadopt_device(device_id: Annotated[str, Field(description='deviceId 
     """Remove (Unadopt) Device.
     Removes (unadopts) an adopted device from the site. If the device is online, it will be reset to factory defaults.
     DELETE /v1/sites/{siteId}/devices/{deviceId}
-    Docs: https://developer.ui.com/network/v10.6.106/removedevice
+    Docs: https://developer.ui.com/network/v11.0.97/removedevice
     """
     return network_call('DELETE', '/v1/sites/{siteId}/devices/{deviceId}', {'siteId': site_id, 'deviceId': device_id}, {})
 
@@ -186,7 +186,7 @@ def get_adopted_device_details(device_id: Annotated[str, Field(description='devi
     """Get Adopted Device Details.
     Retrieve detailed information about a specific adopted device, including firmware versioning, uplink state, details about device features and interfaces (ports, radios) and other key attributes.
     GET /v1/sites/{siteId}/devices/{deviceId}
-    Docs: https://developer.ui.com/network/v10.6.106/getadopteddevicedetails
+    Docs: https://developer.ui.com/network/v11.0.97/getadopteddevicedetails
     """
     return network_call('GET', '/v1/sites/{siteId}/devices/{deviceId}', {'siteId': site_id, 'deviceId': device_id}, {})
 
@@ -197,7 +197,7 @@ def execute_adopted_device_action(device_id: Annotated[str, Field(description='d
     Body fields (* = required):
         Set `action` to pick a variant:
           RESTART
-    Docs: https://developer.ui.com/network/v10.6.106/executeadopteddeviceaction
+    Docs: https://developer.ui.com/network/v11.0.97/executeadopteddeviceaction
     """
     return network_call('POST', '/v1/sites/{siteId}/devices/{deviceId}/actions', {'siteId': site_id, 'deviceId': device_id}, {}, body)
 
@@ -208,7 +208,7 @@ def execute_port_action(port_idx: Annotated[int, Field(description='portIdx (int
     Body fields (* = required):
         Set `action` to pick a variant:
           POWER_CYCLE
-    Docs: https://developer.ui.com/network/v10.6.106/executeportaction
+    Docs: https://developer.ui.com/network/v11.0.97/executeportaction
     """
     return network_call('POST', '/v1/sites/{siteId}/devices/{deviceId}/interfaces/ports/{portIdx}/actions', {'portIdx': port_idx, 'siteId': site_id, 'deviceId': device_id}, {}, body)
 
@@ -216,7 +216,7 @@ def get_latest_adopted_device_statistics(device_id: Annotated[str, Field(descrip
     """Get Latest Adopted Device Statistics.
     Retrieve the latest real-time statistics of a specific adopted device, such as uptime, data transmission rates, CPU and memory utilization.
     GET /v1/sites/{siteId}/devices/{deviceId}/statistics/latest
-    Docs: https://developer.ui.com/network/v10.6.106/getadopteddevicelateststatistics
+    Docs: https://developer.ui.com/network/v11.0.97/getadopteddevicelateststatistics
     """
     return network_call('GET', '/v1/sites/{siteId}/devices/{deviceId}/statistics/latest', {'siteId': site_id, 'deviceId': device_id}, {})
 
@@ -224,7 +224,7 @@ def list_dns_policies(site_id: Annotated[Optional[str], Field(description='Site 
     """List DNS Policies.
     Retrieve a paginated list of all DNS policies on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`enabled`|`BOOLEAN`|`eq` `ne`| |`domain`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`ipv4Address`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`ipv6Address`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`targetDomain`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`mailServerDomain`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`text`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`serverDomain`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`ipAddress`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`ttlSeconds`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`| |`priority`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`| |`service`|`STRING`|`eq` `ne` `in` `notIn`| |`protocol`|`STRING`|`eq` `ne` `in` `notIn`| |`port`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`| |`weight`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`|
     GET /v1/sites/{siteId}/dns/policies
-    Docs: https://developer.ui.com/network/v10.6.106/getdnspolicypage
+    Docs: https://developer.ui.com/network/v11.0.97/getdnspolicypage
     """
     return network_call('GET', '/v1/sites/{siteId}/dns/policies', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -241,7 +241,7 @@ def create_dns_policy(body: Annotated[Dict[str, Any], Field(description='JSON re
           MX_RECORD: enabled*, domain*, mailServerDomain*, priority*
           SRV_RECORD: enabled*, domain*, port*, priority*, protocol*, serverDomain*, service*, weight*
           TXT_RECORD: enabled*, domain*, text*
-    Docs: https://developer.ui.com/network/v10.6.106/creatednspolicy
+    Docs: https://developer.ui.com/network/v11.0.97/creatednspolicy
     """
     return network_call('POST', '/v1/sites/{siteId}/dns/policies', {'siteId': site_id}, {}, body)
 
@@ -249,7 +249,7 @@ def delete_dns_policy(dns_policy_id: Annotated[str, Field(description='dnsPolicy
     """Delete DNS Policy.
     Delete an existing DNS policy on a site.
     DELETE /v1/sites/{siteId}/dns/policies/{dnsPolicyId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletednspolicy
+    Docs: https://developer.ui.com/network/v11.0.97/deletednspolicy
     """
     return network_call('DELETE', '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', {'dnsPolicyId': dns_policy_id, 'siteId': site_id}, {})
 
@@ -257,7 +257,7 @@ def get_dns_policy(dns_policy_id: Annotated[str, Field(description='dnsPolicyId 
     """Get DNS Policy.
     Retrieve specific DNS policy.
     GET /v1/sites/{siteId}/dns/policies/{dnsPolicyId}
-    Docs: https://developer.ui.com/network/v10.6.106/getdnspolicy
+    Docs: https://developer.ui.com/network/v11.0.97/getdnspolicy
     """
     return network_call('GET', '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', {'dnsPolicyId': dns_policy_id, 'siteId': site_id}, {})
 
@@ -274,7 +274,7 @@ def update_dns_policy(dns_policy_id: Annotated[str, Field(description='dnsPolicy
           MX_RECORD: enabled*, domain*, mailServerDomain*, priority*
           SRV_RECORD: enabled*, domain*, port*, priority*, protocol*, serverDomain*, service*, weight*
           TXT_RECORD: enabled*, domain*, text*
-    Docs: https://developer.ui.com/network/v10.6.106/updatednspolicy
+    Docs: https://developer.ui.com/network/v11.0.97/updatednspolicy
     """
     return network_call('PUT', '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', {'dnsPolicyId': dns_policy_id, 'siteId': site_id}, {}, body)
 
@@ -282,7 +282,7 @@ def list_firewall_policies(site_id: Annotated[Optional[str], Field(description='
     """List Firewall Policies.
     Retrieve a list of all firewall policies on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`source.zoneId`|`UUID`|`eq` `ne` `in` `notIn`| |`destination.zoneId`|`UUID`|`eq` `ne` `in` `notIn`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/firewall/policies
-    Docs: https://developer.ui.com/network/v10.6.106/getfirewallpolicies
+    Docs: https://developer.ui.com/network/v11.0.97/getfirewallpolicies
     """
     return network_call('GET', '/v1/sites/{siteId}/firewall/policies', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -300,9 +300,10 @@ def create_firewall_policy(body: Annotated[Dict[str, Any], Field(description='JS
         ipsecFilter (MATCH_ENCRYPTED|MATCH_NOT_ENCRYPTED): Match on traffic encrypted, or not encrypted by IPsec. If null, matche
         loggingEnabled* (boolean): Generate syslog entries when traffic is matched. Such entries are sent
         name* (string)
+        reportFlowEnabled (boolean): Report traffic matched by this policy in Insights Flows. Defaults to t
         schedule (one of CUSTOM|EVERY_DAY|EVERY_WEEK|ONE_TIME_ONLY): Defines date and time when the entity is active. If null, the entity i
         source* (object)
-    Docs: https://developer.ui.com/network/v10.6.106/createfirewallpolicy
+    Docs: https://developer.ui.com/network/v11.0.97/createfirewallpolicy
     """
     return network_call('POST', '/v1/sites/{siteId}/firewall/policies', {'siteId': site_id}, {}, body)
 
@@ -310,7 +311,7 @@ def get_user_defined_firewall_policy_ordering(source_firewall_zone_id: Annotated
     """Get User-Defined Firewall Policy Ordering.
     Retrieve user-defined firewall policy ordering for a specific source/destination zone pair.
     GET /v1/sites/{siteId}/firewall/policies/ordering
-    Docs: https://developer.ui.com/network/v10.6.106/getfirewallpolicyordering
+    Docs: https://developer.ui.com/network/v11.0.97/getfirewallpolicyordering
     """
     return network_call('GET', '/v1/sites/{siteId}/firewall/policies/ordering', {'siteId': site_id}, {'sourceFirewallZoneId': source_firewall_zone_id, 'destinationFirewallZoneId': destination_firewall_zone_id})
 
@@ -320,7 +321,7 @@ def reorder_user_defined_firewall_policies(source_firewall_zone_id: Annotated[st
     PUT /v1/sites/{siteId}/firewall/policies/ordering
     Body fields (* = required):
         orderedFirewallPolicyIds* (object)
-    Docs: https://developer.ui.com/network/v10.6.106/updatefirewallpolicyordering
+    Docs: https://developer.ui.com/network/v11.0.97/updatefirewallpolicyordering
     """
     return network_call('PUT', '/v1/sites/{siteId}/firewall/policies/ordering', {'siteId': site_id}, {'sourceFirewallZoneId': source_firewall_zone_id, 'destinationFirewallZoneId': destination_firewall_zone_id}, body)
 
@@ -328,7 +329,7 @@ def delete_firewall_policy(firewall_policy_id: Annotated[str, Field(description=
     """Delete Firewall Policy.
     Delete an existing firewall policy on a site.
     DELETE /v1/sites/{siteId}/firewall/policies/{firewallPolicyId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletefirewallpolicy
+    Docs: https://developer.ui.com/network/v11.0.97/deletefirewallpolicy
     """
     return network_call('DELETE', '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', {'firewallPolicyId': firewall_policy_id, 'siteId': site_id}, {})
 
@@ -336,7 +337,7 @@ def get_firewall_policy(firewall_policy_id: Annotated[str, Field(description='fi
     """Get Firewall Policy.
     Retrieve specific firewall policy.
     GET /v1/sites/{siteId}/firewall/policies/{firewallPolicyId}
-    Docs: https://developer.ui.com/network/v10.6.106/getfirewallpolicy
+    Docs: https://developer.ui.com/network/v11.0.97/getfirewallpolicy
     """
     return network_call('GET', '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', {'firewallPolicyId': firewall_policy_id, 'siteId': site_id}, {})
 
@@ -346,7 +347,8 @@ def patch_firewall_policy(firewall_policy_id: Annotated[str, Field(description='
     PATCH /v1/sites/{siteId}/firewall/policies/{firewallPolicyId}
     Body fields (* = required):
         loggingEnabled (boolean)
-    Docs: https://developer.ui.com/network/v10.6.106/patchfirewallpolicy
+        reportFlowEnabled (boolean): Report traffic matched by this policy in Insights Flows. Ignored for t
+    Docs: https://developer.ui.com/network/v11.0.97/patchfirewallpolicy
     """
     return network_call('PATCH', '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', {'firewallPolicyId': firewall_policy_id, 'siteId': site_id}, {}, body)
 
@@ -364,9 +366,10 @@ def update_firewall_policy(firewall_policy_id: Annotated[str, Field(description=
         ipsecFilter (MATCH_ENCRYPTED|MATCH_NOT_ENCRYPTED): Match on traffic encrypted, or not encrypted by IPsec. If null, matche
         loggingEnabled* (boolean): Generate syslog entries when traffic is matched. Such entries are sent
         name* (string)
+        reportFlowEnabled (boolean): Report traffic matched by this policy in Insights Flows. Defaults to t
         schedule (one of CUSTOM|EVERY_DAY|EVERY_WEEK|ONE_TIME_ONLY): Defines date and time when the entity is active. If null, the entity i
         source* (object)
-    Docs: https://developer.ui.com/network/v10.6.106/updatefirewallpolicy
+    Docs: https://developer.ui.com/network/v11.0.97/updatefirewallpolicy
     """
     return network_call('PUT', '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', {'firewallPolicyId': firewall_policy_id, 'siteId': site_id}, {}, body)
 
@@ -374,7 +377,7 @@ def list_firewall_zones(site_id: Annotated[Optional[str], Field(description='Sit
     """List Firewall Zones.
     Retrieve a list of all firewall zones on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`| |`metadata.configurable`|`BOOLEAN`|`eq` `ne` `isNull` `isNotNull`|
     GET /v1/sites/{siteId}/firewall/zones
-    Docs: https://developer.ui.com/network/v10.6.106/getfirewallzones
+    Docs: https://developer.ui.com/network/v11.0.97/getfirewallzones
     """
     return network_call('GET', '/v1/sites/{siteId}/firewall/zones', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -385,7 +388,7 @@ def create_custom_firewall_zone(body: Annotated[Dict[str, Any], Field(descriptio
     Body fields (* = required):
         name* (string): Name of a firewall zone
         networkIds* (array of string): List of Network IDs
-    Docs: https://developer.ui.com/network/v10.6.106/createfirewallzone
+    Docs: https://developer.ui.com/network/v11.0.97/createfirewallzone
     """
     return network_call('POST', '/v1/sites/{siteId}/firewall/zones', {'siteId': site_id}, {}, body)
 
@@ -393,7 +396,7 @@ def delete_custom_firewall_zone(firewall_zone_id: Annotated[str, Field(descripti
     """Delete Custom Firewall Zone.
     Delete a custom firewall zone from a site.
     DELETE /v1/sites/{siteId}/firewall/zones/{firewallZoneId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletefirewallzone
+    Docs: https://developer.ui.com/network/v11.0.97/deletefirewallzone
     """
     return network_call('DELETE', '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', {'firewallZoneId': firewall_zone_id, 'siteId': site_id}, {})
 
@@ -401,7 +404,7 @@ def get_firewall_zone(firewall_zone_id: Annotated[str, Field(description='firewa
     """Get Firewall Zone.
     Get a firewall zone on a site.
     GET /v1/sites/{siteId}/firewall/zones/{firewallZoneId}
-    Docs: https://developer.ui.com/network/v10.6.106/getfirewallzone
+    Docs: https://developer.ui.com/network/v11.0.97/getfirewallzone
     """
     return network_call('GET', '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', {'firewallZoneId': firewall_zone_id, 'siteId': site_id}, {})
 
@@ -412,7 +415,7 @@ def update_firewall_zone(firewall_zone_id: Annotated[str, Field(description='fir
     Body fields (* = required):
         name* (string): Name of a firewall zone
         networkIds* (array of string): List of Network IDs
-    Docs: https://developer.ui.com/network/v10.6.106/updatefirewallzone
+    Docs: https://developer.ui.com/network/v11.0.97/updatefirewallzone
     """
     return network_call('PUT', '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', {'firewallZoneId': firewall_zone_id, 'siteId': site_id}, {}, body)
 
@@ -420,7 +423,7 @@ def delete_vouchers(filter: Annotated[str, Field(description="Filter expression,
     """Delete Vouchers.
     Remove Hotspot vouchers based on the specified filter criteria. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`createdAt`|`TIMESTAMP`|`eq` `ne` `gt` `ge` `lt` `le`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`code`|`STRING`|`eq` `ne` `in` `notIn`| |`authorizedGuestLimit`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`authorizedGuestCount`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le`| |`activatedAt`|`TIMESTAMP`|`eq` `ne` `gt` `ge` `lt` `le`| |`expiresAt`|`TIMESTAMP`|`eq` `ne` `gt` `ge` `lt` `le`| |`expired`|`BOOLEAN`|`eq` `ne`| |`timeLimitMinutes`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le`| |`dataUsageLimitMBytes`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`rxRateLimitKbps`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`txRateLimitKbps`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`|
     DELETE /v1/sites/{siteId}/hotspot/vouchers
-    Docs: https://developer.ui.com/network/v10.6.106/deletevouchers
+    Docs: https://developer.ui.com/network/v11.0.97/deletevouchers
     """
     return network_call('DELETE', '/v1/sites/{siteId}/hotspot/vouchers', {'siteId': site_id}, {'filter': filter})
 
@@ -428,7 +431,7 @@ def list_vouchers(site_id: Annotated[Optional[str], Field(description='Site ID (
     """List Vouchers.
     Retrieve a paginated list of Hotspot vouchers. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`createdAt`|`TIMESTAMP`|`eq` `ne` `gt` `ge` `lt` `le`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`code`|`STRING`|`eq` `ne` `in` `notIn`| |`authorizedGuestLimit`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`authorizedGuestCount`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le`| |`activatedAt`|`TIMESTAMP`|`eq` `ne` `gt` `ge` `lt` `le`| |`expiresAt`|`TIMESTAMP`|`eq` `ne` `gt` `ge` `lt` `le`| |`expired`|`BOOLEAN`|`eq` `ne`| |`timeLimitMinutes`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le`| |`dataUsageLimitMBytes`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`rxRateLimitKbps`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`| |`txRateLimitKbps`|`INTEGER`|`isNull` `isNotNull` `eq` `ne` `gt` `ge` `lt` `le`|
     GET /v1/sites/{siteId}/hotspot/vouchers
-    Docs: https://developer.ui.com/network/v10.6.106/getvouchers
+    Docs: https://developer.ui.com/network/v11.0.97/getvouchers
     """
     return network_call('GET', '/v1/sites/{siteId}/hotspot/vouchers', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -444,7 +447,7 @@ def generate_vouchers(body: Annotated[Dict[str, Any], Field(description='JSON re
         rxRateLimitKbps (integer): (Optional) download rate limit in kilobits per second
         timeLimitMinutes* (integer): How long (in minutes) the voucher will provide access to the network s
         txRateLimitKbps (integer): (Optional) upload rate limit in kilobits per second
-    Docs: https://developer.ui.com/network/v10.6.106/createvouchers
+    Docs: https://developer.ui.com/network/v11.0.97/createvouchers
     """
     return network_call('POST', '/v1/sites/{siteId}/hotspot/vouchers', {'siteId': site_id}, {}, body)
 
@@ -452,7 +455,7 @@ def delete_voucher(voucher_id: Annotated[str, Field(description='voucherId (uuid
     """Delete Voucher.
     Remove a specific Hotspot voucher.
     DELETE /v1/sites/{siteId}/hotspot/vouchers/{voucherId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletevoucher
+    Docs: https://developer.ui.com/network/v11.0.97/deletevoucher
     """
     return network_call('DELETE', '/v1/sites/{siteId}/hotspot/vouchers/{voucherId}', {'voucherId': voucher_id, 'siteId': site_id}, {})
 
@@ -460,7 +463,7 @@ def get_voucher_details(voucher_id: Annotated[str, Field(description='voucherId 
     """Get Voucher Details.
     Retrieve details of a specific Hotspot voucher.
     GET /v1/sites/{siteId}/hotspot/vouchers/{voucherId}
-    Docs: https://developer.ui.com/network/v10.6.106/getvoucher
+    Docs: https://developer.ui.com/network/v11.0.97/getvoucher
     """
     return network_call('GET', '/v1/sites/{siteId}/hotspot/vouchers/{voucherId}', {'voucherId': voucher_id, 'siteId': site_id}, {})
 
@@ -468,7 +471,7 @@ def list_networks(site_id: Annotated[Optional[str], Field(description='Site ID (
     """List Networks.
     Retrieve a paginated list of all Networks on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`management`|`STRING`|`eq` `ne` `in` `notIn`| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`enabled`|`BOOLEAN`|`eq` `ne`| |`vlanId`|`INTEGER`|`eq` `ne` `gt` `ge` `lt` `le` `in` `notIn`| |`deviceId`|`UUID`|`eq` `ne` `in` `notIn` `isNull` `isNotNull`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/networks
-    Docs: https://developer.ui.com/network/v10.6.106/getnetworksoverviewpage
+    Docs: https://developer.ui.com/network/v11.0.97/getnetworksoverviewpage
     """
     return network_call('GET', '/v1/sites/{siteId}/networks', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -481,7 +484,7 @@ def create_network(body: Annotated[Dict[str, Any], Field(description='JSON reque
           GATEWAY: dhcpGuarding, enabled*, name*, vlanId*, cellularBackupEnabled*, internetAccessEnabled*, ipv4Configuration*, ipv6Configuration, isolationEnabled*, mdnsForwardingEnabled, zoneId
           SWITCH: dhcpGuarding, enabled*, name*, vlanId*, cellularBackupEnabled*, deviceId*, ipv4Configuration*, isolationEnabled*
           UNMANAGED: dhcpGuarding, enabled*, name*, vlanId*
-    Docs: https://developer.ui.com/network/v10.6.106/createnetwork
+    Docs: https://developer.ui.com/network/v11.0.97/createnetwork
     """
     return network_call('POST', '/v1/sites/{siteId}/networks', {'siteId': site_id}, {}, body)
 
@@ -489,7 +492,7 @@ def delete_network(network_id: Annotated[str, Field(description='networkId (uuid
     """Delete Network.
     Delete an existing network on a site.
     DELETE /v1/sites/{siteId}/networks/{networkId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletenetwork
+    Docs: https://developer.ui.com/network/v11.0.97/deletenetwork
     """
     return network_call('DELETE', '/v1/sites/{siteId}/networks/{networkId}', {'networkId': network_id, 'siteId': site_id}, {'force': force})
 
@@ -497,7 +500,7 @@ def get_network_details(network_id: Annotated[str, Field(description='networkId 
     """Get Network Details.
     Retrieve detailed information about a specific network.
     GET /v1/sites/{siteId}/networks/{networkId}
-    Docs: https://developer.ui.com/network/v10.6.106/getnetworkdetails
+    Docs: https://developer.ui.com/network/v11.0.97/getnetworkdetails
     """
     return network_call('GET', '/v1/sites/{siteId}/networks/{networkId}', {'networkId': network_id, 'siteId': site_id}, {})
 
@@ -510,7 +513,7 @@ def update_network(network_id: Annotated[str, Field(description='networkId (uuid
           GATEWAY: dhcpGuarding, enabled*, name*, vlanId*, cellularBackupEnabled*, internetAccessEnabled*, ipv4Configuration*, ipv6Configuration, isolationEnabled*, mdnsForwardingEnabled, zoneId
           SWITCH: dhcpGuarding, enabled*, name*, vlanId*, cellularBackupEnabled*, deviceId*, ipv4Configuration*, isolationEnabled*
           UNMANAGED: dhcpGuarding, enabled*, name*, vlanId*
-    Docs: https://developer.ui.com/network/v10.6.106/updatenetwork
+    Docs: https://developer.ui.com/network/v11.0.97/updatenetwork
     """
     return network_call('PUT', '/v1/sites/{siteId}/networks/{networkId}', {'networkId': network_id, 'siteId': site_id}, {}, body)
 
@@ -518,7 +521,7 @@ def get_network_references(network_id: Annotated[str, Field(description='network
     """Get Network References.
     Retrieve references to a specific network.
     GET /v1/sites/{siteId}/networks/{networkId}/references
-    Docs: https://developer.ui.com/network/v10.6.106/getnetworkreferences
+    Docs: https://developer.ui.com/network/v11.0.97/getnetworkreferences
     """
     return network_call('GET', '/v1/sites/{siteId}/networks/{networkId}/references', {'networkId': network_id, 'siteId': site_id}, {})
 
@@ -526,7 +529,7 @@ def list_radius_profiles(site_id: Annotated[Optional[str], Field(description='Si
     """List Radius Profiles.
     Returns available RADIUS authentication profiles, including configuration origin metadata. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/radius/profiles
-    Docs: https://developer.ui.com/network/v10.6.106/getradiusprofileoverviewpage
+    Docs: https://developer.ui.com/network/v11.0.97/getradiusprofileoverviewpage
     """
     return network_call('GET', '/v1/sites/{siteId}/radius/profiles', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -534,7 +537,7 @@ def list_lags(site_id: Annotated[Optional[str], Field(description='Site ID (UUID
     """List LAGs.
     Retrieve a paginated list of all LAGs (Link Aggregation Groups) on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`switchStackId`|`UUID`|`eq` `ne` `in` `notIn` `isNull` `isNotNull`| |`mcLagDomainId`|`UUID`|`eq` `ne` `in` `notIn` `isNull` `isNotNull`| |`members.deviceId`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`| |`members.portIdxs`|`SET(INTEGER)`|`contains` `containsAny` `containsAll` `containsExactly`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/switching/lags
-    Docs: https://developer.ui.com/network/v10.6.106/getlagpage
+    Docs: https://developer.ui.com/network/v11.0.97/getlagpage
     """
     return network_call('GET', '/v1/sites/{siteId}/switching/lags', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -542,7 +545,7 @@ def get_lag_details(lag_id: Annotated[str, Field(description='lagId (uuid)')], s
     """Get LAG Details.
     Retrieve LAG details.
     GET /v1/sites/{siteId}/switching/lags/{lagId}
-    Docs: https://developer.ui.com/network/v10.6.106/getlag
+    Docs: https://developer.ui.com/network/v11.0.97/getlag
     """
     return network_call('GET', '/v1/sites/{siteId}/switching/lags/{lagId}', {'lagId': lag_id, 'siteId': site_id}, {})
 
@@ -550,7 +553,7 @@ def list_mc_lag_domains(site_id: Annotated[Optional[str], Field(description='Sit
     """List MC-LAG Domains.
     Retrieve a paginated list of all MC-LAG Domains on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`peers.deviceId`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/switching/mc-lag-domains
-    Docs: https://developer.ui.com/network/v10.6.106/getmclagdomainpage
+    Docs: https://developer.ui.com/network/v11.0.97/getmclagdomainpage
     """
     return network_call('GET', '/v1/sites/{siteId}/switching/mc-lag-domains', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -558,7 +561,7 @@ def get_mc_lag_domain(mc_lag_domain_id: Annotated[str, Field(description='mcLagD
     """Get MC-LAG Domain.
     Retrieve MC-LAG Domain details.
     GET /v1/sites/{siteId}/switching/mc-lag-domains/{mcLagDomainId}
-    Docs: https://developer.ui.com/network/v10.6.106/getmclagdomain
+    Docs: https://developer.ui.com/network/v11.0.97/getmclagdomain
     """
     return network_call('GET', '/v1/sites/{siteId}/switching/mc-lag-domains/{mcLagDomainId}', {'mcLagDomainId': mc_lag_domain_id, 'siteId': site_id}, {})
 
@@ -566,7 +569,7 @@ def list_switch_stacks(site_id: Annotated[Optional[str], Field(description='Site
     """List Switch Stacks.
     Retrieve a paginated list of all Switch Stacks on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`units.id`|`SET(INTEGER)`|`contains` `containsAny` `containsAll` `containsExactly`| |`units.macAddress`|`SET(STRING)`|`contains` `containsAny` `containsAll` `containsExactly`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/switching/switch-stacks
-    Docs: https://developer.ui.com/network/v10.6.106/getswitchstackpage
+    Docs: https://developer.ui.com/network/v11.0.97/getswitchstackpage
     """
     return network_call('GET', '/v1/sites/{siteId}/switching/switch-stacks', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -574,7 +577,7 @@ def get_switch_stack(switch_stack_id: Annotated[str, Field(description='switchSt
     """Get Switch Stack.
     Retrieve Switch Stack details.
     GET /v1/sites/{siteId}/switching/switch-stacks/{switchStackId}
-    Docs: https://developer.ui.com/network/v10.6.106/getswitchstack
+    Docs: https://developer.ui.com/network/v11.0.97/getswitchstack
     """
     return network_call('GET', '/v1/sites/{siteId}/switching/switch-stacks/{switchStackId}', {'switchStackId': switch_stack_id, 'siteId': site_id}, {})
 
@@ -582,7 +585,7 @@ def list_traffic_matching_lists(site_id: Annotated[Optional[str], Field(descript
     """List Traffic Matching Lists.
     Retrieve all traffic matching lists on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`|
     GET /v1/sites/{siteId}/traffic-matching-lists
-    Docs: https://developer.ui.com/network/v10.6.106/gettrafficmatchinglists
+    Docs: https://developer.ui.com/network/v11.0.97/gettrafficmatchinglists
     """
     return network_call('GET', '/v1/sites/{siteId}/traffic-matching-lists', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -595,7 +598,7 @@ def create_traffic_matching_list(body: Annotated[Dict[str, Any], Field(descripti
           IPV4_ADDRESSES: name*, items*
           IPV6_ADDRESSES: name*, items*
           PORTS: name*, items*
-    Docs: https://developer.ui.com/network/v10.6.106/createtrafficmatchinglist
+    Docs: https://developer.ui.com/network/v11.0.97/createtrafficmatchinglist
     """
     return network_call('POST', '/v1/sites/{siteId}/traffic-matching-lists', {'siteId': site_id}, {}, body)
 
@@ -603,7 +606,7 @@ def delete_traffic_matching_list(traffic_matching_list_id: Annotated[str, Field(
     """Delete Traffic Matching List.
     Delete an exist traffic matching list on a site.
     DELETE /v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletetrafficmatchinglist
+    Docs: https://developer.ui.com/network/v11.0.97/deletetrafficmatchinglist
     """
     return network_call('DELETE', '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', {'trafficMatchingListId': traffic_matching_list_id, 'siteId': site_id}, {})
 
@@ -611,7 +614,7 @@ def get_traffic_matching_list(traffic_matching_list_id: Annotated[str, Field(des
     """Get Traffic Matching List.
     Get an exist traffic matching list on a site.
     GET /v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}
-    Docs: https://developer.ui.com/network/v10.6.106/gettrafficmatchinglist
+    Docs: https://developer.ui.com/network/v11.0.97/gettrafficmatchinglist
     """
     return network_call('GET', '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', {'trafficMatchingListId': traffic_matching_list_id, 'siteId': site_id}, {})
 
@@ -624,7 +627,7 @@ def update_traffic_matching_list(traffic_matching_list_id: Annotated[str, Field(
           IPV4_ADDRESSES: name*, items*
           IPV6_ADDRESSES: name*, items*
           PORTS: name*, items*
-    Docs: https://developer.ui.com/network/v10.6.106/updatetrafficmatchinglist
+    Docs: https://developer.ui.com/network/v11.0.97/updatetrafficmatchinglist
     """
     return network_call('PUT', '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', {'trafficMatchingListId': traffic_matching_list_id, 'siteId': site_id}, {}, body)
 
@@ -632,7 +635,7 @@ def list_vpn_servers(site_id: Annotated[Optional[str], Field(description='Site I
     """List VPN Servers.
     Retrieve a paginated list of all VPN servers on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`enabled`|`BOOLEAN`|`eq` `ne`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/vpn/servers
-    Docs: https://developer.ui.com/network/v10.6.106/getvpnserverpage
+    Docs: https://developer.ui.com/network/v11.0.97/getvpnserverpage
     """
     return network_call('GET', '/v1/sites/{siteId}/vpn/servers', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -640,7 +643,7 @@ def list_site_to_site_vpn_tunnels(site_id: Annotated[Optional[str], Field(descri
     """List Site-To-Site VPN Tunnels.
     Retrieve a paginated list of all site-to-site VPN tunnels on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`| |`metadata.source`|`STRING`|`eq` `ne` `in` `notIn` `isNull` `isNotNull`|
     GET /v1/sites/{siteId}/vpn/site-to-site-tunnels
-    Docs: https://developer.ui.com/network/v10.6.106/getsitetositevpntunnelpage
+    Docs: https://developer.ui.com/network/v11.0.97/getsitetositevpntunnelpage
     """
     return network_call('GET', '/v1/sites/{siteId}/vpn/site-to-site-tunnels', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -648,7 +651,7 @@ def list_wan_interfaces(site_id: Annotated[Optional[str], Field(description='Sit
     """List WAN Interfaces.
     Returns available WAN interface definitions for a given site, including identifiers and names. Useful for network and NAT configuration.
     GET /v1/sites/{siteId}/wans
-    Docs: https://developer.ui.com/network/v10.6.106/getwansoverviewpage
+    Docs: https://developer.ui.com/network/v11.0.97/getwansoverviewpage
     """
     return network_call('GET', '/v1/sites/{siteId}/wans', {'siteId': site_id}, {'offset': offset, 'limit': limit}, all_pages=all_pages)
 
@@ -656,7 +659,7 @@ def list_wifi_broadcasts(site_id: Annotated[Optional[str], Field(description='Si
     """List Wifi Broadcasts.
     Retrieve a paginated list of all Wifi Broadcasts on a site. Filterable properties: |Name|Type|Allowed functions| |-|-|-| |`type`|`STRING`|`eq` `ne` `in` `notIn`| |`id`|`UUID`|`eq` `ne` `in` `notIn`| |`enabled`|`BOOLEAN`|`eq` `ne`| |`name`|`STRING`|`eq` `ne` `in` `notIn` `like`| |`broadcastingFrequenciesGHz`|`SET(DECIMAL)`|`contains` `containsAny` `containsAll` `containsExactly`| |`metadata.origin`|`STRING`|`eq` `ne` `in` `notIn`| |`network.type`|`STRING`|`eq` `ne` `in` `notIn` `isNull` `isNotNull`| |`network.networkId`|`UUID`|`eq` `ne` `in` `notIn`| |`securityConfiguration.type`|`STRING`|`eq` `ne` `in` `notIn`| |`broadcastingDeviceFilter.type`|`STRING`|`eq` `ne` `in` `notIn` `isNull` `isNotNull`| |`broadcastingDeviceFilter.deviceIds`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`| |`broadcastingDeviceFilter.deviceTagIds`|`SET(UUID)`|`contains` `containsAny` `containsAll` `containsExactly`| |`hotspotConfiguration.type`|`STRING`|`eq` `ne` `in` `notIn`|
     GET /v1/sites/{siteId}/wifi/broadcasts
-    Docs: https://developer.ui.com/network/v10.6.106/getwifibroadcastpage
+    Docs: https://developer.ui.com/network/v11.0.97/getwifibroadcastpage
     """
     return network_call('GET', '/v1/sites/{siteId}/wifi/broadcasts', {'siteId': site_id}, {'offset': offset, 'limit': limit, 'filter': filter}, all_pages=all_pages)
 
@@ -668,7 +671,7 @@ def create_wifi_broadcast(body: Annotated[Dict[str, Any], Field(description='JSO
         Set `type` to pick a variant:
           IOT_OPTIMIZED: basicDataRateKbpsByFrequencyGHz, blackoutScheduleConfiguration, broadcastingDeviceFilter, channel2gLockedTo6*, clientFilteringPolicy, clientIsolationEnabled*, dtimPeriod2gLockedTo3*, enabled*, hideName*, mdnsProxyConfiguration, multicastFilteringPolicy, multicastToUnicastConversionEnabled*, name*, network, securityConfiguration*, uapsdEnabled*
           STANDARD: basicDataRateKbpsByFrequencyGHz, blackoutScheduleConfiguration, broadcastingDeviceFilter, channel2gLockedTo6*, clientFilteringPolicy, clientIsolationEnabled*, dtimPeriod2gLockedTo3*, enabled*, hideName*, mdnsProxyConfiguration, multicastFilteringPolicy, multicastToUnicastConversionEnabled*, name*, network, securityConfiguration*, uapsdEnabled*, advertiseDeviceName*, arpProxyEnabled*, bandSteeringEnabled, broadcastingFrequenciesGHz*, bssTransitionEnabled*, dnsAssistanceConfiguration, dtimPeriodByFrequencyGHzOverride, handoffSuggestionsConfiguration, hotspotConfiguration, mloEnabled
-    Docs: https://developer.ui.com/network/v10.6.106/createwifibroadcast
+    Docs: https://developer.ui.com/network/v11.0.97/createwifibroadcast
     """
     return network_call('POST', '/v1/sites/{siteId}/wifi/broadcasts', {'siteId': site_id}, {}, body)
 
@@ -676,7 +679,7 @@ def delete_wifi_broadcast(wifi_broadcast_id: Annotated[str, Field(description='w
     """Delete Wifi Broadcast.
     Delete an existing Wifi Broadcast from the specified site.
     DELETE /v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}
-    Docs: https://developer.ui.com/network/v10.6.106/deletewifibroadcast
+    Docs: https://developer.ui.com/network/v11.0.97/deletewifibroadcast
     """
     return network_call('DELETE', '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', {'wifiBroadcastId': wifi_broadcast_id, 'siteId': site_id}, {'force': force})
 
@@ -684,7 +687,7 @@ def get_wifi_broadcast_details(wifi_broadcast_id: Annotated[str, Field(descripti
     """Get Wifi Broadcast Details.
     Retrieve detailed information about a specific Wifi.
     GET /v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}
-    Docs: https://developer.ui.com/network/v10.6.106/getwifibroadcastdetails
+    Docs: https://developer.ui.com/network/v11.0.97/getwifibroadcastdetails
     """
     return network_call('GET', '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', {'wifiBroadcastId': wifi_broadcast_id, 'siteId': site_id}, {})
 
@@ -696,7 +699,7 @@ def update_wifi_broadcast(wifi_broadcast_id: Annotated[str, Field(description='w
         Set `type` to pick a variant:
           IOT_OPTIMIZED: basicDataRateKbpsByFrequencyGHz, blackoutScheduleConfiguration, broadcastingDeviceFilter, channel2gLockedTo6*, clientFilteringPolicy, clientIsolationEnabled*, dtimPeriod2gLockedTo3*, enabled*, hideName*, mdnsProxyConfiguration, multicastFilteringPolicy, multicastToUnicastConversionEnabled*, name*, network, securityConfiguration*, uapsdEnabled*
           STANDARD: basicDataRateKbpsByFrequencyGHz, blackoutScheduleConfiguration, broadcastingDeviceFilter, channel2gLockedTo6*, clientFilteringPolicy, clientIsolationEnabled*, dtimPeriod2gLockedTo3*, enabled*, hideName*, mdnsProxyConfiguration, multicastFilteringPolicy, multicastToUnicastConversionEnabled*, name*, network, securityConfiguration*, uapsdEnabled*, advertiseDeviceName*, arpProxyEnabled*, bandSteeringEnabled, broadcastingFrequenciesGHz*, bssTransitionEnabled*, dnsAssistanceConfiguration, dtimPeriodByFrequencyGHzOverride, handoffSuggestionsConfiguration, hotspotConfiguration, mloEnabled
-    Docs: https://developer.ui.com/network/v10.6.106/updatewifibroadcast
+    Docs: https://developer.ui.com/network/v11.0.97/updatewifibroadcast
     """
     return network_call('PUT', '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', {'wifiBroadcastId': wifi_broadcast_id, 'siteId': site_id}, {}, body)
 
@@ -775,79 +778,79 @@ def cloud_list_sites(page_size: Annotated[Optional[str], Field(description='Page
     return cloud_call('GET', '/v1/sites', {}, {'pageSize': page_size, 'nextToken': next_token}, all_pages=all_pages)
 
 OPERATIONS: List[Dict[str, Any]] = [
-    {'name': 'list_countries', 'api': 'network', 'method': 'GET', 'path': '/v1/countries', 'operation_id': 'getCountries', 'summary': 'List Countries', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_dpi_applications', 'api': 'network', 'method': 'GET', 'path': '/v1/dpi/applications', 'operation_id': 'getDpiApplications', 'summary': 'List DPI Applications', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_dpi_application_categories', 'api': 'network', 'method': 'GET', 'path': '/v1/dpi/categories', 'operation_id': 'getDpiApplicationCategories', 'summary': 'List DPI Application Categories', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'get_application_info', 'api': 'network', 'method': 'GET', 'path': '/v1/info', 'operation_id': 'getInfo', 'summary': 'Get Application Info', 'tag': 'Application Info', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_devices_pending_adoption', 'api': 'network', 'method': 'GET', 'path': '/v1/pending-devices', 'operation_id': 'getPendingDevicePage', 'summary': 'List Devices Pending Adoption', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_local_sites', 'api': 'network', 'method': 'GET', 'path': '/v1/sites', 'operation_id': 'getSiteOverviewPage', 'summary': 'List Local Sites', 'tag': 'Sites', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_acl_rules', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/acl-rules', 'operation_id': 'getAclRulePage', 'summary': 'List ACL Rules', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_acl_rule', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/acl-rules', 'operation_id': 'createAclRule', 'summary': 'Create ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/ACL rule update', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'get_user_defined_acl_rule_ordering', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/acl-rules/ordering', 'operation_id': 'getAclRuleOrdering', 'summary': 'Get User-Defined ACL Rule Ordering', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'reorder_user_defined_acl_rules', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/acl-rules/ordering', 'operation_id': 'updateAclRuleOrdering', 'summary': 'Reorder User-Defined ACL Rules', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/ACL rule ordering', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'delete_acl_rule', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/acl-rules/{aclRuleId}', 'operation_id': 'deleteAclRule', 'summary': 'Delete ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_acl_rule', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/acl-rules/{aclRuleId}', 'operation_id': 'getAclRule', 'summary': 'Get ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'update_acl_rule', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/acl-rules/{aclRuleId}', 'operation_id': 'updateAclRule', 'summary': 'Update ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/ACL rule update', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'list_connected_clients', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/clients', 'operation_id': 'getConnectedClientOverviewPage', 'summary': 'List Connected Clients', 'tag': 'Clients', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'get_connected_client_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/clients/{clientId}', 'operation_id': 'getConnectedClientDetails', 'summary': 'Get Connected Client Details', 'tag': 'Clients', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'execute_client_action', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/clients/{clientId}/actions', 'operation_id': 'executeConnectedClientAction', 'summary': 'Execute Client Action', 'tag': 'Clients', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Client action request', 'read_only': False, 'destructive': True, 'idempotent': False},
-    {'name': 'list_device_tags', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/device-tags', 'operation_id': 'getDeviceTagPage', 'summary': 'List Device Tags', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_adopted_devices', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/devices', 'operation_id': 'getAdoptedDeviceOverviewPage', 'summary': 'List Adopted Devices', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'adopt_devices', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/devices', 'operation_id': 'adoptDevice', 'summary': 'Adopt Devices', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/IntegrationDeviceAdoptionRequestDto', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'remove_unadopt_device', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/devices/{deviceId}', 'operation_id': 'removeDevice', 'summary': 'Remove (Unadopt) Device', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_adopted_device_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/devices/{deviceId}', 'operation_id': 'getAdoptedDeviceDetails', 'summary': 'Get Adopted Device Details', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'execute_adopted_device_action', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/devices/{deviceId}/actions', 'operation_id': 'executeAdoptedDeviceAction', 'summary': 'Execute Adopted Device Action', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Device action request', 'read_only': False, 'destructive': True, 'idempotent': False},
-    {'name': 'execute_port_action', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/devices/{deviceId}/interfaces/ports/{portIdx}/actions', 'operation_id': 'executePortAction', 'summary': 'Execute Port Action', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Port action request', 'read_only': False, 'destructive': True, 'idempotent': False},
-    {'name': 'get_latest_adopted_device_statistics', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/devices/{deviceId}/statistics/latest', 'operation_id': 'getAdoptedDeviceLatestStatistics', 'summary': 'Get Latest Adopted Device Statistics', 'tag': 'UniFi Devices', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_dns_policies', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/dns/policies', 'operation_id': 'getDnsPolicyPage', 'summary': 'List DNS Policies', 'tag': 'DNS Policies', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_dns_policy', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/dns/policies', 'operation_id': 'createDnsPolicy', 'summary': 'Create DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update DNS policy', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'delete_dns_policy', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', 'operation_id': 'deleteDnsPolicy', 'summary': 'Delete DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_dns_policy', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', 'operation_id': 'getDnsPolicy', 'summary': 'Get DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'update_dns_policy', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', 'operation_id': 'updateDnsPolicy', 'summary': 'Update DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update DNS policy', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'list_firewall_policies', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/policies', 'operation_id': 'getFirewallPolicies', 'summary': 'List Firewall Policies', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_firewall_policy', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/firewall/policies', 'operation_id': 'createFirewallPolicy', 'summary': 'Create Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall policy', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'get_user_defined_firewall_policy_ordering', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/policies/ordering', 'operation_id': 'getFirewallPolicyOrdering', 'summary': 'Get User-Defined Firewall Policy Ordering', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'reorder_user_defined_firewall_policies', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/firewall/policies/ordering', 'operation_id': 'updateFirewallPolicyOrdering', 'summary': 'Reorder User-Defined Firewall Policies', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/IntegrationFirewallPolicyOrderingDto', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'delete_firewall_policy', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'deleteFirewallPolicy', 'summary': 'Delete Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_firewall_policy', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'getFirewallPolicy', 'summary': 'Get Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'patch_firewall_policy', 'api': 'network', 'method': 'PATCH', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'patchFirewallPolicy', 'summary': 'Patch Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Patch firewall policy', 'read_only': False, 'destructive': True, 'idempotent': False},
-    {'name': 'update_firewall_policy', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'updateFirewallPolicy', 'summary': 'Update Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall policy', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'list_firewall_zones', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/zones', 'operation_id': 'getFirewallZones', 'summary': 'List Firewall Zones', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_custom_firewall_zone', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/firewall/zones', 'operation_id': 'createFirewallZone', 'summary': 'Create Custom Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall zone', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'delete_custom_firewall_zone', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', 'operation_id': 'deleteFirewallZone', 'summary': 'Delete Custom Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_firewall_zone', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', 'operation_id': 'getFirewallZone', 'summary': 'Get Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'update_firewall_zone', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', 'operation_id': 'updateFirewallZone', 'summary': 'Update Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall zone', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'delete_vouchers', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/hotspot/vouchers', 'operation_id': 'deleteVouchers', 'summary': 'Delete Vouchers', 'tag': 'Hotspot', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'list_vouchers', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/hotspot/vouchers', 'operation_id': 'getVouchers', 'summary': 'List Vouchers', 'tag': 'Hotspot', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'generate_vouchers', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/hotspot/vouchers', 'operation_id': 'createVouchers', 'summary': 'Generate Vouchers', 'tag': 'Hotspot', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Hotspot voucher creation request', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'delete_voucher', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/hotspot/vouchers/{voucherId}', 'operation_id': 'deleteVoucher', 'summary': 'Delete Voucher', 'tag': 'Hotspot', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_voucher_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/hotspot/vouchers/{voucherId}', 'operation_id': 'getVoucher', 'summary': 'Get Voucher Details', 'tag': 'Hotspot', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_networks', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/networks', 'operation_id': 'getNetworksOverviewPage', 'summary': 'List Networks', 'tag': 'Networks', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_network', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/networks', 'operation_id': 'createNetwork', 'summary': 'Create Network', 'tag': 'Networks', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update Network', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'delete_network', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/networks/{networkId}', 'operation_id': 'deleteNetwork', 'summary': 'Delete Network', 'tag': 'Networks', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_network_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/networks/{networkId}', 'operation_id': 'getNetworkDetails', 'summary': 'Get Network Details', 'tag': 'Networks', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'update_network', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/networks/{networkId}', 'operation_id': 'updateNetwork', 'summary': 'Update Network', 'tag': 'Networks', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update Network', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_network_references', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/networks/{networkId}/references', 'operation_id': 'getNetworkReferences', 'summary': 'Get Network References', 'tag': 'Networks', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_radius_profiles', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/radius/profiles', 'operation_id': 'getRadiusProfileOverviewPage', 'summary': 'List Radius Profiles', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_lags', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/lags', 'operation_id': 'getLagPage', 'summary': 'List LAGs', 'tag': 'Switching', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'get_lag_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/lags/{lagId}', 'operation_id': 'getLag', 'summary': 'Get LAG Details', 'tag': 'Switching', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_mc_lag_domains', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/mc-lag-domains', 'operation_id': 'getMcLagDomainPage', 'summary': 'List MC-LAG Domains', 'tag': 'Switching', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'get_mc_lag_domain', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/mc-lag-domains/{mcLagDomainId}', 'operation_id': 'getMcLagDomain', 'summary': 'Get MC-LAG Domain', 'tag': 'Switching', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_switch_stacks', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/switch-stacks', 'operation_id': 'getSwitchStackPage', 'summary': 'List Switch Stacks', 'tag': 'Switching', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'get_switch_stack', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/switch-stacks/{switchStackId}', 'operation_id': 'getSwitchStack', 'summary': 'Get Switch Stack', 'tag': 'Switching', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_traffic_matching_lists', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/traffic-matching-lists', 'operation_id': 'getTrafficMatchingLists', 'summary': 'List Traffic Matching Lists', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_traffic_matching_list', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/traffic-matching-lists', 'operation_id': 'createTrafficMatchingList', 'summary': 'Create Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update traffic matching list', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'delete_traffic_matching_list', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', 'operation_id': 'deleteTrafficMatchingList', 'summary': 'Delete Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_traffic_matching_list', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', 'operation_id': 'getTrafficMatchingList', 'summary': 'Get Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'update_traffic_matching_list', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', 'operation_id': 'updateTrafficMatchingList', 'summary': 'Update Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Create or update traffic matching list', 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'list_vpn_servers', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/vpn/servers', 'operation_id': 'getVpnServerPage', 'summary': 'List VPN Servers', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_site_to_site_vpn_tunnels', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/vpn/site-to-site-tunnels', 'operation_id': 'getSiteToSiteVpnTunnelPage', 'summary': 'List Site-To-Site VPN Tunnels', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_wan_interfaces', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/wans', 'operation_id': 'getWansOverviewPage', 'summary': 'List WAN Interfaces', 'tag': 'Supporting Resources', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'list_wifi_broadcasts', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/wifi/broadcasts', 'operation_id': 'getWifiBroadcastPage', 'summary': 'List Wifi Broadcasts', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'create_wifi_broadcast', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/wifi/broadcasts', 'operation_id': 'createWifiBroadcast', 'summary': 'Create Wifi Broadcast', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Wifi broadcast create or update', 'read_only': False, 'destructive': False, 'idempotent': False},
-    {'name': 'delete_wifi_broadcast', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', 'operation_id': 'deleteWifiBroadcast', 'summary': 'Delete Wifi Broadcast', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
-    {'name': 'get_wifi_broadcast_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', 'operation_id': 'getWifiBroadcastDetails', 'summary': 'Get Wifi Broadcast Details', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
-    {'name': 'update_wifi_broadcast', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', 'operation_id': 'updateWifiBroadcast', 'summary': 'Update Wifi Broadcast', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v10.6.106.openapi.json', 'body_schema': '#/components/schemas/Wifi broadcast create or update', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'list_countries', 'api': 'network', 'method': 'GET', 'path': '/v1/countries', 'operation_id': 'getCountries', 'summary': 'List Countries', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_dpi_applications', 'api': 'network', 'method': 'GET', 'path': '/v1/dpi/applications', 'operation_id': 'getDpiApplications', 'summary': 'List DPI Applications', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_dpi_application_categories', 'api': 'network', 'method': 'GET', 'path': '/v1/dpi/categories', 'operation_id': 'getDpiApplicationCategories', 'summary': 'List DPI Application Categories', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'get_application_info', 'api': 'network', 'method': 'GET', 'path': '/v1/info', 'operation_id': 'getInfo', 'summary': 'Get Application Info', 'tag': 'Application Info', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_devices_pending_adoption', 'api': 'network', 'method': 'GET', 'path': '/v1/pending-devices', 'operation_id': 'getPendingDevicePage', 'summary': 'List Devices Pending Adoption', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_local_sites', 'api': 'network', 'method': 'GET', 'path': '/v1/sites', 'operation_id': 'getSiteOverviewPage', 'summary': 'List Local Sites', 'tag': 'Sites', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_acl_rules', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/acl-rules', 'operation_id': 'getAclRulePage', 'summary': 'List ACL Rules', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_acl_rule', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/acl-rules', 'operation_id': 'createAclRule', 'summary': 'Create ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/ACL rule update', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'get_user_defined_acl_rule_ordering', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/acl-rules/ordering', 'operation_id': 'getAclRuleOrdering', 'summary': 'Get User-Defined ACL Rule Ordering', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'reorder_user_defined_acl_rules', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/acl-rules/ordering', 'operation_id': 'updateAclRuleOrdering', 'summary': 'Reorder User-Defined ACL Rules', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/ACL rule ordering', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'delete_acl_rule', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/acl-rules/{aclRuleId}', 'operation_id': 'deleteAclRule', 'summary': 'Delete ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_acl_rule', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/acl-rules/{aclRuleId}', 'operation_id': 'getAclRule', 'summary': 'Get ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'update_acl_rule', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/acl-rules/{aclRuleId}', 'operation_id': 'updateAclRule', 'summary': 'Update ACL Rule', 'tag': 'Access Control (ACL Rules)', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/ACL rule update', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'list_connected_clients', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/clients', 'operation_id': 'getConnectedClientOverviewPage', 'summary': 'List Connected Clients', 'tag': 'Clients', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'get_connected_client_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/clients/{clientId}', 'operation_id': 'getConnectedClientDetails', 'summary': 'Get Connected Client Details', 'tag': 'Clients', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'execute_client_action', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/clients/{clientId}/actions', 'operation_id': 'executeConnectedClientAction', 'summary': 'Execute Client Action', 'tag': 'Clients', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Client action request', 'read_only': False, 'destructive': True, 'idempotent': False},
+    {'name': 'list_device_tags', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/device-tags', 'operation_id': 'getDeviceTagPage', 'summary': 'List Device Tags', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_adopted_devices', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/devices', 'operation_id': 'getAdoptedDeviceOverviewPage', 'summary': 'List Adopted Devices', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'adopt_devices', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/devices', 'operation_id': 'adoptDevice', 'summary': 'Adopt Devices', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/IntegrationDeviceAdoptionRequestDto', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'remove_unadopt_device', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/devices/{deviceId}', 'operation_id': 'removeDevice', 'summary': 'Remove (Unadopt) Device', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_adopted_device_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/devices/{deviceId}', 'operation_id': 'getAdoptedDeviceDetails', 'summary': 'Get Adopted Device Details', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'execute_adopted_device_action', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/devices/{deviceId}/actions', 'operation_id': 'executeAdoptedDeviceAction', 'summary': 'Execute Adopted Device Action', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Device action request', 'read_only': False, 'destructive': True, 'idempotent': False},
+    {'name': 'execute_port_action', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/devices/{deviceId}/interfaces/ports/{portIdx}/actions', 'operation_id': 'executePortAction', 'summary': 'Execute Port Action', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Port action request', 'read_only': False, 'destructive': True, 'idempotent': False},
+    {'name': 'get_latest_adopted_device_statistics', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/devices/{deviceId}/statistics/latest', 'operation_id': 'getAdoptedDeviceLatestStatistics', 'summary': 'Get Latest Adopted Device Statistics', 'tag': 'UniFi Devices', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_dns_policies', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/dns/policies', 'operation_id': 'getDnsPolicyPage', 'summary': 'List DNS Policies', 'tag': 'DNS Policies', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_dns_policy', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/dns/policies', 'operation_id': 'createDnsPolicy', 'summary': 'Create DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update DNS policy', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'delete_dns_policy', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', 'operation_id': 'deleteDnsPolicy', 'summary': 'Delete DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_dns_policy', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', 'operation_id': 'getDnsPolicy', 'summary': 'Get DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'update_dns_policy', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/dns/policies/{dnsPolicyId}', 'operation_id': 'updateDnsPolicy', 'summary': 'Update DNS Policy', 'tag': 'DNS Policies', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update DNS policy', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'list_firewall_policies', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/policies', 'operation_id': 'getFirewallPolicies', 'summary': 'List Firewall Policies', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_firewall_policy', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/firewall/policies', 'operation_id': 'createFirewallPolicy', 'summary': 'Create Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall policy', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'get_user_defined_firewall_policy_ordering', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/policies/ordering', 'operation_id': 'getFirewallPolicyOrdering', 'summary': 'Get User-Defined Firewall Policy Ordering', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'reorder_user_defined_firewall_policies', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/firewall/policies/ordering', 'operation_id': 'updateFirewallPolicyOrdering', 'summary': 'Reorder User-Defined Firewall Policies', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/IntegrationFirewallPolicyOrderingDto', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'delete_firewall_policy', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'deleteFirewallPolicy', 'summary': 'Delete Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_firewall_policy', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'getFirewallPolicy', 'summary': 'Get Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'patch_firewall_policy', 'api': 'network', 'method': 'PATCH', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'patchFirewallPolicy', 'summary': 'Patch Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Patch firewall policy', 'read_only': False, 'destructive': True, 'idempotent': False},
+    {'name': 'update_firewall_policy', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/firewall/policies/{firewallPolicyId}', 'operation_id': 'updateFirewallPolicy', 'summary': 'Update Firewall Policy', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall policy', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'list_firewall_zones', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/zones', 'operation_id': 'getFirewallZones', 'summary': 'List Firewall Zones', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_custom_firewall_zone', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/firewall/zones', 'operation_id': 'createFirewallZone', 'summary': 'Create Custom Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall zone', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'delete_custom_firewall_zone', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', 'operation_id': 'deleteFirewallZone', 'summary': 'Delete Custom Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_firewall_zone', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', 'operation_id': 'getFirewallZone', 'summary': 'Get Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'update_firewall_zone', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/firewall/zones/{firewallZoneId}', 'operation_id': 'updateFirewallZone', 'summary': 'Update Firewall Zone', 'tag': 'Firewall', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update firewall zone', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'delete_vouchers', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/hotspot/vouchers', 'operation_id': 'deleteVouchers', 'summary': 'Delete Vouchers', 'tag': 'Hotspot', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'list_vouchers', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/hotspot/vouchers', 'operation_id': 'getVouchers', 'summary': 'List Vouchers', 'tag': 'Hotspot', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'generate_vouchers', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/hotspot/vouchers', 'operation_id': 'createVouchers', 'summary': 'Generate Vouchers', 'tag': 'Hotspot', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Hotspot voucher creation request', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'delete_voucher', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/hotspot/vouchers/{voucherId}', 'operation_id': 'deleteVoucher', 'summary': 'Delete Voucher', 'tag': 'Hotspot', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_voucher_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/hotspot/vouchers/{voucherId}', 'operation_id': 'getVoucher', 'summary': 'Get Voucher Details', 'tag': 'Hotspot', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_networks', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/networks', 'operation_id': 'getNetworksOverviewPage', 'summary': 'List Networks', 'tag': 'Networks', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_network', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/networks', 'operation_id': 'createNetwork', 'summary': 'Create Network', 'tag': 'Networks', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update Network', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'delete_network', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/networks/{networkId}', 'operation_id': 'deleteNetwork', 'summary': 'Delete Network', 'tag': 'Networks', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_network_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/networks/{networkId}', 'operation_id': 'getNetworkDetails', 'summary': 'Get Network Details', 'tag': 'Networks', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'update_network', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/networks/{networkId}', 'operation_id': 'updateNetwork', 'summary': 'Update Network', 'tag': 'Networks', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update Network', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_network_references', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/networks/{networkId}/references', 'operation_id': 'getNetworkReferences', 'summary': 'Get Network References', 'tag': 'Networks', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_radius_profiles', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/radius/profiles', 'operation_id': 'getRadiusProfileOverviewPage', 'summary': 'List Radius Profiles', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_lags', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/lags', 'operation_id': 'getLagPage', 'summary': 'List LAGs', 'tag': 'Switching', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'get_lag_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/lags/{lagId}', 'operation_id': 'getLag', 'summary': 'Get LAG Details', 'tag': 'Switching', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_mc_lag_domains', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/mc-lag-domains', 'operation_id': 'getMcLagDomainPage', 'summary': 'List MC-LAG Domains', 'tag': 'Switching', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'get_mc_lag_domain', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/mc-lag-domains/{mcLagDomainId}', 'operation_id': 'getMcLagDomain', 'summary': 'Get MC-LAG Domain', 'tag': 'Switching', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_switch_stacks', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/switch-stacks', 'operation_id': 'getSwitchStackPage', 'summary': 'List Switch Stacks', 'tag': 'Switching', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'get_switch_stack', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/switching/switch-stacks/{switchStackId}', 'operation_id': 'getSwitchStack', 'summary': 'Get Switch Stack', 'tag': 'Switching', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_traffic_matching_lists', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/traffic-matching-lists', 'operation_id': 'getTrafficMatchingLists', 'summary': 'List Traffic Matching Lists', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_traffic_matching_list', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/traffic-matching-lists', 'operation_id': 'createTrafficMatchingList', 'summary': 'Create Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update traffic matching list', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'delete_traffic_matching_list', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', 'operation_id': 'deleteTrafficMatchingList', 'summary': 'Delete Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_traffic_matching_list', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', 'operation_id': 'getTrafficMatchingList', 'summary': 'Get Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'update_traffic_matching_list', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/traffic-matching-lists/{trafficMatchingListId}', 'operation_id': 'updateTrafficMatchingList', 'summary': 'Update Traffic Matching List', 'tag': 'Traffic Matching Lists', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Create or update traffic matching list', 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'list_vpn_servers', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/vpn/servers', 'operation_id': 'getVpnServerPage', 'summary': 'List VPN Servers', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_site_to_site_vpn_tunnels', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/vpn/site-to-site-tunnels', 'operation_id': 'getSiteToSiteVpnTunnelPage', 'summary': 'List Site-To-Site VPN Tunnels', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_wan_interfaces', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/wans', 'operation_id': 'getWansOverviewPage', 'summary': 'List WAN Interfaces', 'tag': 'Supporting Resources', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'list_wifi_broadcasts', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/wifi/broadcasts', 'operation_id': 'getWifiBroadcastPage', 'summary': 'List Wifi Broadcasts', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'create_wifi_broadcast', 'api': 'network', 'method': 'POST', 'path': '/v1/sites/{siteId}/wifi/broadcasts', 'operation_id': 'createWifiBroadcast', 'summary': 'Create Wifi Broadcast', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Wifi broadcast create or update', 'read_only': False, 'destructive': False, 'idempotent': False},
+    {'name': 'delete_wifi_broadcast', 'api': 'network', 'method': 'DELETE', 'path': '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', 'operation_id': 'deleteWifiBroadcast', 'summary': 'Delete Wifi Broadcast', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': False, 'destructive': True, 'idempotent': True},
+    {'name': 'get_wifi_broadcast_details', 'api': 'network', 'method': 'GET', 'path': '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', 'operation_id': 'getWifiBroadcastDetails', 'summary': 'Get Wifi Broadcast Details', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
+    {'name': 'update_wifi_broadcast', 'api': 'network', 'method': 'PUT', 'path': '/v1/sites/{siteId}/wifi/broadcasts/{wifiBroadcastId}', 'operation_id': 'updateWifiBroadcast', 'summary': 'Update Wifi Broadcast', 'tag': 'WiFi Broadcasts', 'spec': 'specs/network-v11.0.97.openapi.json', 'body_schema': '#/components/schemas/Wifi broadcast create or update', 'read_only': False, 'destructive': True, 'idempotent': True},
     {'name': 'cloud_list_devices', 'api': 'cloud', 'method': 'GET', 'path': '/v1/devices', 'operation_id': 'listDevices', 'summary': 'List Devices', 'tag': '', 'spec': 'specs/site-manager-v1.0.0.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
     {'name': 'cloud_list_hosts', 'api': 'cloud', 'method': 'GET', 'path': '/v1/hosts', 'operation_id': 'listHosts', 'summary': 'List Hosts', 'tag': '', 'spec': 'specs/site-manager-v1.0.0.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
     {'name': 'cloud_get_host_by_id', 'api': 'cloud', 'method': 'GET', 'path': '/v1/hosts/{id}', 'operation_id': 'getHostByID', 'summary': 'Get Host by ID', 'tag': '', 'spec': 'specs/site-manager-v1.0.0.openapi.json', 'body_schema': None, 'read_only': True, 'destructive': False, 'idempotent': True},
